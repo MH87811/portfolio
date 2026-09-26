@@ -412,7 +412,7 @@
     var STORAGE_KEY = "maziar-lang";
     var titleEl = document.querySelector("title");
     var descEl = document.querySelector('meta[name="description"]');
-    var toggleLabel = document.getElementById("lang-toggle-label");
+    var toggleLabels = document.querySelectorAll(".lang-toggle-label");
 
     function applyLang(lang) {
       var dict = I18N[lang];
@@ -431,7 +431,7 @@
       if (dict["meta.title"] && titleEl) titleEl.textContent = dict["meta.title"];
       if (dict["meta.desc"] && descEl) descEl.setAttribute("content", dict["meta.desc"]);
 
-      toggleLabel.textContent = lang === "fa" ? "EN" : "FA";
+      toggleLabels.forEach(function (el) { el.textContent = lang === "fa" ? "EN" : "FA"; });
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
     }
 
@@ -442,9 +442,11 @@
     } catch (e) {}
     applyLang(initial);
 
-    document.getElementById("lang-toggle").addEventListener("click", function () {
-      var current = document.documentElement.getAttribute("lang");
-      applyLang(current === "fa" ? "en" : "fa");
+    document.querySelectorAll(".lang-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("lang");
+        applyLang(current === "fa" ? "en" : "fa");
+      });
     });
 
     // Links
