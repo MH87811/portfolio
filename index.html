@@ -3,30 +3,646 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Maziar Heydari · Backend Developer</title>
-<meta name="description" content="Maziar Heydari is a backend developer building APIs, backend systems and real-time applications with Python/Django and PHP/Laravel.">
+<title data-i18n="meta.title">Maziar Heydari · Backend Developer</title>
+<meta name="description" data-i18n-attr="content" data-i18n="meta.desc" content="Maziar Heydari is a backend developer building APIs, backend systems and real-time applications with Python/Django and PHP/Laravel.">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0B0D10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js');</script>
-<link rel="stylesheet" href="styles.css" type="text/css">
+<style>
+  :root {
+    --bg: #0B0D10;
+    --surface: #111419;
+    --surface-2: #171A20;
+    --text: #F1F3F5;
+    --muted: #9AA1AC;
+    --accent: #6EE7B7;
+    --accent-soft: rgba(110, 231, 183, 0.10);
+    --line: #20252D;
+    --line-strong: #2C333D;
+
+    --sans: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --sans-fa: "Vazirmatn", "Geist", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+    --wrap: 1180px;
+    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+    --section-y: clamp(4.5rem, 10vw, 8.5rem);
+    --nav-h: 64px;
+
+    color-scheme: dark;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html {
+    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 12px);
+    -webkit-text-size-adjust: 100%;
+    background: var(--bg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  html[lang="fa"] body { font-family: var(--sans-fa); }
+  html[lang="fa"] h1, html[lang="fa"] .role, html[lang="fa"] h2,
+  html[lang="fa"] .project h3, html[lang="fa"] .phil-list p,
+  html[lang="fa"] .contact h2, html[lang="fa"] .error-code + h2 {
+    letter-spacing: 0;
+  }
+  html[lang="fa"] h1 { text-transform: none; }
+
+  h1, h2, h3, p, ol, ul, dl, dd { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: var(--mono); }
+  ::selection { background: var(--accent); color: #06110c; }
+
+  /* Technical/code content always stays left-to-right, in both languages */
+  [dir="ltr"] { unicode-bidi: isolate; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: calc(var(--wrap) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  section { position: relative; }
+  .section { padding-block: var(--section-y); }
+
+  /* ---------- Navigation ---------- */
+  .nav {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: rgba(11, 13, 16, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    font-family: var(--sans);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    font-size: 0.95rem;
+    flex: 0 0 auto;
+  }
+  .nav-right { display: flex; align-items: center; gap: 0.6rem; flex: 0 0 auto; }
+  .links { display: flex; align-items: center; gap: 0.25rem; }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 0.8rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+    border-radius: 6px;
+    transition: color .18s ease, background-color .18s ease;
+    white-space: nowrap;
+  }
+  .links a:hover { color: var(--text); background: var(--surface); }
+  .links .sep {
+    width: 1px; height: 16px; background: var(--line-strong); margin-inline: 0.5rem;
+  }
+  .menu-btn, .lang-btn {
+    display: none;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    font: 500 0.85rem var(--mono);
+    cursor: pointer;
+  }
+  .menu-btn { display: none; }
+  .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    direction: ltr;
+  }
+  .lang-btn:hover { border-color: var(--accent); background: var(--surface-2); }
+  .lang-btn .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  /* ---------- Buttons & tags ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 1.3rem;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+    font: 500 0.95rem var(--sans);
+    cursor: pointer;
+    transition: border-color .18s ease, background-color .18s ease, color .18s ease, filter .18s ease;
+  }
+  html[lang="fa"] .btn { font-family: var(--sans-fa); }
+  .btn:hover { border-color: var(--accent); background: var(--surface-2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #06110c; }
+  .btn-primary:hover { background: var(--accent); filter: brightness(1.08); }
+  .btn-sm { min-height: 42px; padding: 0 1.1rem; font-size: 0.9rem; }
+
+  .tag {
+    display: inline-block;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    border-radius: 4px;
+    font: 400 0.78rem/1.5 var(--mono);
+    color: var(--muted);
+  }
+
+  /* ---------- Reveal ---------- */
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  html.js .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(4rem, 8vw, 6.5rem);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+            mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 6.4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+  h1 span { display: block; }
+  .role {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    margin-top: 0.6rem;
+    max-width: 32ch;
+    color: var(--muted);
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    line-height: 1.5;
+  }
+  .stack-line {
+    margin-top: 1.75rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: left;
+  }
+  .cta-row { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* Terminal card — always LTR, both languages */
+  .term {
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 40px 90px -50px rgba(110, 231, 183, 0.22);
+    font-family: var(--mono);
+    direction: ltr;
+    text-align: left;
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .term-body { padding: 1.4rem 1.5rem 1.6rem; font-size: 0.95rem; line-height: 1.7; }
+  .tl { margin: 0; }
+  .tl + .tl { margin-top: 0.15rem; }
+  .tl.gap { margin-top: 1.1rem; }
+  .tl .p { color: var(--accent); margin-right: 0.6rem; }
+  .tl .out { color: var(--text); display: block; padding-left: 1.4rem; }
+  .tl .out.dim { color: var(--muted); }
+  .out .gap-x { display: inline-block; width: 1.4ch; }
+  .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 0.55rem;
+    vertical-align: 0.05em;
+    box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.5);
+  }
+  .cursor {
+    display: inline-block;
+    width: 0.6ch;
+    height: 1.1em;
+    vertical-align: -0.18em;
+    background: var(--accent);
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes line-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes soft-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.45); }
+    70%, 100% { box-shadow: 0 0 0 7px rgba(110, 231, 183, 0); }
+  }
+  html.js .term .tl {
+    opacity: 0;
+    animation: line-in .45s ease forwards;
+    animation-delay: var(--d, 0s);
+  }
+  .term .status-dot { animation: soft-pulse 2.4s ease-out infinite; }
+
+  /* ---------- Section heads ---------- */
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    flex-wrap: wrap;
+    margin-bottom: clamp(2rem, 4vw, 3.25rem);
+  }
+  h2 {
+    font-size: clamp(2rem, 4.4vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .meta { font: 400 0.85rem var(--mono); color: var(--muted); direction: ltr; }
+
+  /* ---------- About ---------- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .about-copy p {
+    margin-top: 1.5rem;
+    max-width: 46ch;
+    font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .about-copy p:first-of-type { color: var(--text); }
+  .cat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+  .cat {
+    padding: 1.25rem 1.25rem 1.35rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color .2s ease;
+  }
+  .cat:hover { border-color: var(--line-strong); }
+  .cat h3 {
+    font: 500 0.82rem var(--mono);
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+    direction: ltr;
+    text-align: left;
+  }
+  .cat .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; direction: ltr; text-align: left; }
+
+  /* ---------- Projects ---------- */
+  .projects { display: grid; gap: clamp(1.25rem, 2.5vw, 2rem); }
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color .25s ease;
+  }
+  .project:hover { border-color: rgba(110, 231, 183, 0.35); }
+  .project-body {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.5rem, 3.2vw, 2.75rem);
+    min-width: 0;
+  }
+  .viz { order: 2; }
+  .project.reverse .viz { order: 0; border-left: 0; border-right: 1px solid var(--line); }
+  .project.reverse .project-body { order: 1; }
+  .repo { font: 400 0.82rem var(--mono); color: var(--accent); direction: ltr; display: inline-block; }
+  .project h3 {
+    margin-top: 1rem;
+    font-size: clamp(1.5rem, 2.9vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .project .desc {
+    margin-top: 1rem;
+    max-width: 40ch;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+  .project .tags { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; direction: ltr; }
+  .project .actions { margin-top: auto; padding-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+  .viz {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    background-color: #0D1015;
+    background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-left: 1px solid var(--line);
+    min-height: 280px;
+    direction: ltr;
+  }
+  .viz svg { width: 100%; max-width: 440px; height: auto; display: block; overflow: visible; }
+  svg .svg-mono { font-family: var(--mono); }
+
+  .packet { opacity: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    .project:hover .packet,
+    .project:focus-within .packet { animation: travel 2.6s ease-in-out infinite; }
+  }
+  @keyframes travel {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(256px); opacity: 0; }
+  }
+
+  .details {
+    grid-column: 1 / -1;
+    order: 3;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .32s ease;
+    border-top: 0 solid var(--line);
+  }
+  .details.open { grid-template-rows: 1fr; border-top-width: 1px; }
+  .details-inner {
+    overflow: hidden;
+    visibility: hidden;
+    transition: visibility 0s linear .32s;
+  }
+  .details.open .details-inner { visibility: visible; transition-delay: 0s; }
+  .details dl {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.7rem 2rem;
+    padding: 1.5rem clamp(1.5rem, 3.2vw, 2.75rem) 1.75rem;
+    font-size: 0.95rem;
+  }
+  .details dt { font: 400 0.85rem var(--mono); color: var(--muted); padding-top: 0.05rem; direction: ltr; text-align: left; }
+  .details dd { color: var(--text); }
+  .details dd[dir="ltr"] { text-align: left; }
+
+  /* ---------- Skills ---------- */
+  .skill-rows { border-top: 1px solid var(--line); }
+  .skill-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
+    gap: 1rem 2rem;
+    padding-block: clamp(1.4rem, 2.6vw, 2.1rem);
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .skill-row h3 { font: 400 0.9rem var(--mono); color: var(--muted); }
+  .skill-row ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 2rem;
+    font-size: clamp(1.15rem, 2.1vw, 1.55rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    direction: ltr;
+    justify-content: flex-start;
+  }
+  .skill-row li { transition: color .2s ease; font-family: var(--sans); }
+  .skill-row li:hover { color: var(--accent); }
+
+  /* ---------- Currently learning ---------- */
+  .learning-wrap {
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: var(--surface-2);
+    border: 1px dashed #3a424e;
+    border-radius: 10px;
+  }
+  .learning-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem 2rem; }
+  .learning-head p { color: var(--muted); max-width: 44ch; }
+  .learn-grid {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .learn {
+    padding: 1.35rem 1.35rem 1.5rem;
+    border: 1px dashed #3a424e;
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .learn .state { font: 400 0.78rem var(--mono); color: var(--accent); display: flex; align-items: center; }
+  .learn .state .status-dot { width: 7px; height: 7px; margin-right: 0.5rem; animation: none; }
+  .learn h3 { margin-top: 1.1rem; font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; }
+  .learn .with { margin-top: 0.5rem; font: 400 0.88rem var(--mono); color: var(--muted); direction: ltr; text-align: left; }
+
+  /* ---------- Philosophy ---------- */
+  .phil-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .phil-grid h2 {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 2rem);
+    color: var(--muted);
+    font-weight: 500;
+    font-size: clamp(2rem, 4.6vw, 3.4rem);
+  }
+  .phil-list { border-bottom: 1px solid var(--line); }
+  .phil-list li {
+    display: grid;
+    grid-template-columns: clamp(3.5rem, 8vw, 6rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    padding-block: clamp(1.75rem, 3.6vw, 2.9rem);
+    border-top: 1px solid var(--line);
+  }
+  .phil-list .n {
+    font: 300 clamp(1.8rem, 4vw, 3rem)/1 var(--mono);
+    color: #465060;
+    transition: color .25s ease;
+    direction: ltr;
+  }
+  .phil-list li:hover .n { color: var(--accent); }
+  .phil-list p {
+    max-width: 30ch;
+    font-size: clamp(1.35rem, 2.6vw, 2rem);
+    line-height: 1.35;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact { border-top: 1px solid var(--line); }
+  .contact h2 {
+    font-size: clamp(2.4rem, 7vw, 5.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .contact p {
+    margin-top: 1.75rem;
+    max-width: 34ch;
+    color: var(--muted);
+    font-size: clamp(1.1rem, 1.9vw, 1.35rem);
+    line-height: 1.5;
+  }
+  .contact .cta-row { margin-top: 2.5rem; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--line); padding-block: 1.75rem 2rem; }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .foot .mono { font-size: 0.82rem; direction: ltr; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); }
+    .term { max-width: 520px; }
+    .about-grid { grid-template-columns: minmax(0, 1fr); }
+    .project { grid-template-columns: minmax(0, 1fr); }
+    .project-body, .project.reverse .project-body { order: 1; }
+    .viz, .project.reverse .viz {
+      order: 2;
+      border-left: 0;
+      border-right: 0;
+      border-top: 1px solid var(--line);
+      min-height: 240px;
+    }
+    .learn-grid { grid-template-columns: minmax(0, 1fr); }
+    .phil-grid { grid-template-columns: minmax(0, 1fr); }
+    .phil-grid h2 { position: static; }
+    .skill-row { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
+  }
+  @media (max-width: 860px) {
+    .menu-btn { display: inline-flex; align-items: center; }
+    .links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0.5rem var(--gutter) 1rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .links.open { display: flex; }
+    .links a { min-height: 48px; padding: 0 0.25rem; font-size: 1rem; border-radius: 0; border-bottom: 1px solid var(--line); }
+    .links a:hover { background: transparent; }
+    .links .sep { display: none; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 1rem; }
+    .cat-grid { grid-template-columns: minmax(0, 1fr); }
+    .cta-row .btn { flex: 1 1 auto; }
+    .project .actions .btn { flex: 1 1 auto; }
+    .details dl { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+    .details dd { margin-bottom: 0.7rem; }
+    .term-body { font-size: 0.88rem; padding: 1.15rem 1.15rem 1.3rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+    html.js .reveal { opacity: 1; transform: none; }
+    html.js .term .tl { opacity: 1; animation: none; }
+    .cursor { animation: none; }
+  }
+</style>
 </head>
 <body>
 
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Maziar, back to top">MH87811</a>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <a class="brand" href="#top" aria-label="Maziar, back to top">MAZIAR</a>
+    <div class="nav-right">
+      <button class="lang-btn mono" type="button" id="lang-toggle" aria-label="Switch language">
+        <span class="dot" aria-hidden="true"></span><span id="lang-toggle-label">FA</span>
+      </button>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" data-i18n="nav.menu">Menu</button>
+    </div>
     <nav id="nav-links" class="links" aria-label="Primary">
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#contact">Contact</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#projects" data-i18n="nav.projects">Projects</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
       <span class="sep" aria-hidden="true"></span>
-      <a href="#" data-link="github">GitHub</a>
-      <a href="#" data-link="linkedin">LinkedIn</a>
+      <a href="#" data-link="github" data-i18n="nav.github">GitHub</a>
+      <a href="#" data-link="linkedin" data-i18n="nav.linkedin">LinkedIn</a>
     </nav>
   </div>
 </header>
@@ -37,24 +653,23 @@
   <section class="hero" id="top">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <h1><span>Maziar</span><span>Heydari</span></h1>
-        <p class="role">Backend Developer</p>
-        <p class="lede">building APIs, backend systems<br>and real-time applications.</p>
-        <p class="stack-line mono">Python · Django · DRF · PHP · Laravel</p>
+        <h1 data-i18n-html="hero.name"><span>Maziar</span><span>Heydari</span></h1>
+        <p class="role" data-i18n="hero.role">Backend Developer</p>
+        <p class="lede" data-i18n-html="hero.lede">building APIs, backend systems<br>and real-time applications.</p>
+        <p class="stack-line mono" dir="ltr">Python · Django · DRF · PHP · Laravel</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="#projects">View Projects</a>
-          <a class="btn" href="#" data-link="github">GitHub</a>
+          <a class="btn btn-primary" href="#projects" data-i18n="hero.cta1">View Projects</a>
+          <a class="btn" href="#" data-link="github" data-i18n="hero.cta2">GitHub</a>
         </div>
       </div>
 
-      <div class="term" aria-hidden="true">
+      <div class="term" aria-hidden="true" dir="ltr">
         <div class="term-bar"><span>~/maziar</span><span>zsh</span></div>
         <div class="term-body">
           <p class="tl" style="--d:.35s"><span class="p">$</span>whoami</p>
           <p class="tl" style="--d:.7s"><span class="out">backend_developer</span></p>
           <p class="tl gap" style="--d:1.15s"><span class="p">$</span>stack</p>
-          <p class="tl" style="--d:1.5s">
-            <span class="out">Django<span class="gap-x"></span><span class="gap-x"></span>Laravel</span></p>
+          <p class="tl" style="--d:1.5s"><span class="out">Django<span class="gap-x"></span>Redis<span class="gap-x"></span>Laravel</span></p>
           <p class="tl gap" style="--d:1.95s"><span class="p">$</span>status</p>
           <p class="tl" style="--d:2.3s"><span class="out"><i class="status-dot"></i>building</span></p>
           <p class="tl gap" style="--d:2.75s"><span class="p">$</span><span class="cursor"></span></p>
@@ -67,25 +682,25 @@
   <section class="section" id="about">
     <div class="wrap about-grid">
       <div class="about-copy reveal">
-        <h2>About</h2>
-        <p>I'm a backend developer focused on building reliable web applications, APIs and real-time systems.</p>
-        <p>My main stack is Python/Django and PHP/Laravel, with a growing focus on system architecture, performance and infrastructure.</p>
+        <h2 data-i18n="about.headline">About</h2>
+        <p data-i18n="about.p1">I'm a backend developer focused on building reliable web applications, APIs and real-time systems.</p>
+        <p data-i18n="about.p2">My main stack is Python/Django and PHP/Laravel, with a growing focus on system architecture, performance and infrastructure.</p>
       </div>
       <div class="cat-grid reveal">
         <div class="cat">
-          <h3>Backend</h3>
+          <h3 data-i18n="about.cat.backend">Backend</h3>
           <div class="tags"><span class="tag">Python</span><span class="tag">Django</span><span class="tag">Django REST Framework</span><span class="tag">PHP</span><span class="tag">Laravel</span></div>
         </div>
         <div class="cat">
-          <h3>Data</h3>
+          <h3 data-i18n="about.cat.data">Data</h3>
           <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">SQLite</span><span class="tag">Redis</span></div>
         </div>
         <div class="cat">
-          <h3>Real-time</h3>
-          <div class="tags"><span class="tag">WebSocket</span><!--<span class="tag">ASGI</span>--><span class="tag">Celery</span></div>
+          <h3 data-i18n="about.cat.realtime">Real-time</h3>
+          <div class="tags"><span class="tag">WebSocket</span><span class="tag">ASGI</span><span class="tag">Celery</span></div>
         </div>
         <div class="cat">
-          <h3>Infrastructure</h3>
+          <h3 data-i18n="about.cat.infra">Infrastructure</h3>
           <div class="tags"><span class="tag">Linux</span><span class="tag">Git</span><span class="tag">GitHub</span></div>
         </div>
       </div>
@@ -96,8 +711,8 @@
   <section class="section" id="projects" style="padding-top:0">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Featured projects</h2>
-        <span class="meta">2 repositories on GitHub</span>
+        <h2 data-i18n="projects.headline">Featured projects</h2>
+        <span class="meta" data-i18n="projects.meta">2 repositories on GitHub</span>
       </div>
 
       <div class="projects">
@@ -106,14 +721,14 @@
         <article class="project reveal">
           <div class="project-body">
             <span class="repo">Market-Django</span>
-            <h3>Django E-Commerce Platform</h3>
-            <p class="desc">A multi-vendor e-commerce application built with Django.</p>
+            <h3 data-i18n="project1.title">Django E-Commerce Platform</h3>
+            <p class="desc" data-i18n="project1.desc">A multi-vendor e-commerce application built with Django.</p>
             <div class="tags">
               <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">Authentication</span><span class="tag">Django Templates</span>
             </div>
             <div class="actions">
-              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Market-Django">GitHub</a>
-              <button class="btn btn-sm" type="button" data-toggle="details-market" aria-expanded="false" aria-controls="details-market">Details</button>
+              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Market-Django" data-i18n="project.github">GitHub</a>
+              <button class="btn btn-sm" type="button" data-toggle="details-market" aria-expanded="false" aria-controls="details-market" data-i18n="project.details">Details</button>
             </div>
           </div>
 
@@ -124,7 +739,6 @@
               <rect x="14" y="9" width="150" height="12" rx="6" fill="#171A20"/>
               <rect x="346" y="9" width="40" height="12" rx="6" fill="#171A20"/>
 
-              <!-- card 1 -->
               <rect x="14.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
               <rect x="22" y="52" width="92" height="66" rx="3" fill="#171A20"/>
               <rect x="22" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
@@ -132,7 +746,6 @@
               <rect x="22" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
               <text class="svg-mono" x="30" y="180.5" font-size="9" fill="#9AA1AC">vendor_a</text>
 
-              <!-- card 2 (highlighted) -->
               <rect x="146.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#6EE7B7" stroke-opacity="0.55"/>
               <rect x="154" y="52" width="92" height="66" rx="3" fill="#171A20"/>
               <rect x="154" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
@@ -140,7 +753,6 @@
               <rect x="154" y="168" width="64" height="18" rx="3" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.6"/>
               <text class="svg-mono" x="162" y="180.5" font-size="9" fill="#6EE7B7">vendor_b</text>
 
-              <!-- card 3 -->
               <rect x="278.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
               <rect x="286" y="52" width="92" height="66" rx="3" fill="#171A20"/>
               <rect x="286" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
@@ -153,9 +765,9 @@
           <div class="details" id="details-market">
             <div class="details-inner">
               <dl>
-                <dt>repository</dt><dd>Market-Django</dd>
-                <dt>type</dt><dd>Multi-vendor e-commerce application</dd>
-                <dt>stack</dt><dd>Django, PostgreSQL, Authentication, Django Templates</dd>
+                <dt data-i18n="details.repository">repository</dt><dd dir="ltr">Market-Django</dd>
+                <dt data-i18n="details.type">type</dt><dd data-i18n="project1.detail.type">Multi-vendor e-commerce application</dd>
+                <dt data-i18n="details.stack">stack</dt><dd dir="ltr">Django, PostgreSQL, Authentication, Django Templates</dd>
               </dl>
             </div>
           </div>
@@ -165,31 +777,28 @@
         <article class="project reverse reveal">
           <div class="project-body">
             <span class="repo">Django-Chat</span>
-            <h3>Real-Time Chat Platform</h3>
-            <p class="desc">A real-time messaging system built with Django, WebSocket and Redis.</p>
+            <h3 data-i18n="project2.title">Real-Time Chat Platform</h3>
+            <p class="desc" data-i18n="project2.desc">A real-time messaging system built with Django, WebSocket and Redis.</p>
             <div class="tags">
               <span class="tag">Django</span><span class="tag">WebSocket</span><span class="tag">Redis</span><span class="tag">ASGI</span>
             </div>
             <div class="actions">
-              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Django-Chat">GitHub</a>
-              <button class="btn btn-sm" type="button" data-toggle="details-chat" aria-expanded="false" aria-controls="details-chat">Details</button>
+              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Django-Chat" data-i18n="project.github">GitHub</a>
+              <button class="btn btn-sm" type="button" data-toggle="details-chat" aria-expanded="false" aria-controls="details-chat" data-i18n="project.details">Details</button>
             </div>
           </div>
 
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="presentation">
-              <!-- chat bubbles -->
               <rect x="0" y="14" width="124" height="16" rx="8" fill="#171A20"/>
               <rect x="52" y="38" width="96" height="16" rx="8" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.45"/>
 
-              <!-- connectors -->
               <g stroke="#2C333D" stroke-width="1.5" stroke-dasharray="3 4">
                 <line x1="72" y1="114" x2="110" y2="114"/>
                 <line x1="182" y1="114" x2="218" y2="114"/>
                 <line x1="290" y1="114" x2="328" y2="114"/>
               </g>
 
-              <!-- nodes -->
               <g class="svg-mono" font-size="12" text-anchor="middle">
                 <rect x="0.75" y="88.75" width="70.5" height="50.5" rx="6" fill="#171A20" stroke="#2C333D" stroke-width="1.5"/>
                 <text x="36" y="118" fill="#F1F3F5">Client</text>
@@ -205,7 +814,6 @@
                 <text x="364" y="118" fill="#F1F3F5">Redis</text>
               </g>
 
-              <!-- captions -->
               <g class="svg-mono" font-size="10" text-anchor="middle" fill="#6b7480">
                 <text x="36" y="160">browser</text>
                 <text x="146" y="160">persistent</text>
@@ -213,7 +821,6 @@
                 <text x="364" y="160">in-memory</text>
               </g>
 
-              <!-- packet (moves only on card hover) -->
               <circle class="packet" cx="72" cy="114" r="3.5" fill="#6EE7B7"/>
             </svg>
           </div>
@@ -221,10 +828,10 @@
           <div class="details" id="details-chat">
             <div class="details-inner">
               <dl>
-                <dt>repository</dt><dd>Django-Chat</dd>
-                <dt>type</dt><dd>Real-time messaging system</dd>
-                <dt>transport</dt><dd>WebSocket</dd>
-                <dt>stack</dt><dd>Django, ASGI, Redis</dd>
+                <dt data-i18n="details.repository">repository</dt><dd dir="ltr">Django-Chat</dd>
+                <dt data-i18n="details.type">type</dt><dd data-i18n="project2.detail.type">Real-time messaging system</dd>
+                <dt data-i18n="details.transport">transport</dt><dd dir="ltr">WebSocket</dd>
+                <dt data-i18n="details.stack">stack</dt><dd dir="ltr">Django, ASGI, Redis</dd>
               </dl>
             </div>
           </div>
@@ -238,24 +845,24 @@
   <section class="section" id="skills" style="padding-top:0">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Skills</h2>
+        <h2 data-i18n="skills.headline">Skills</h2>
       </div>
       <div class="skill-rows reveal">
         <div class="skill-row">
-          <h3>core backend</h3>
-          <ul><li>Python</li>|<li>Django</li>|<li>Django REST Framework</li>|<li>PHP</li>|<li>Laravel</li></ul>
+          <h3 data-i18n="skills.core">core backend</h3>
+          <ul><li>Python</li><li>Django</li><li>Django REST Framework</li><li>PHP</li><li>Laravel</li></ul>
         </div>
         <div class="skill-row">
-          <h3>database</h3>
-          <ul><li>PostgreSQL</li>|<li>SQLite</li>|<li>Redis</li>|<li>Linux</li></ul>
+          <h3 data-i18n="skills.database">database &amp; infrastructure</h3>
+          <ul><li>PostgreSQL</li><li>SQLite</li><li>Redis</li><li>Linux</li></ul>
         </div>
         <div class="skill-row">
-          <h3>real-time &amp; background</h3>
-          <ul><li>WebSocket</li>|<li>ASGI</li>|<li>Celery</li></ul>
+          <h3 data-i18n="skills.realtime">real-time &amp; background</h3>
+          <ul><li>WebSocket</li><li>ASGI</li><li>Celery</li></ul>
         </div>
         <div class="skill-row">
-          <h3>tools</h3>
-          <ul><li>Git</li>|<li>GitHub</li></ul>
+          <h3 data-i18n="skills.tools">tools</h3>
+          <ul><li>Git</li><li>GitHub</li></ul>
         </div>
       </div>
     </div>
@@ -266,24 +873,24 @@
     <div class="wrap">
       <div class="learning-wrap reveal">
         <div class="learning-head">
-          <h2>Currently learning</h2>
-          <p>Areas I'm actively working through. These are in progress, not finished skills.</p>
+          <h2 data-i18n="learning.headline">Currently learning</h2>
+          <p data-i18n="learning.sub">Areas I'm actively working through. These are in progress, not finished skills.</p>
         </div>
         <div class="learn-grid">
           <div class="learn">
-            <div class="state"><i class="status-dot"></i>in progress</div>
-            <h3>Testing</h3>
-            <p class="with">pytest · Django testing</p>
+            <div class="state"><i class="status-dot"></i><span data-i18n="learning.state">in progress</span></div>
+            <h3 data-i18n="learning.testing.title">Testing</h3>
+            <p class="with" dir="ltr">pytest · Django testing</p>
           </div>
           <div class="learn">
-            <div class="state"><i class="status-dot"></i>in progress</div>
-            <h3>Background Processing</h3>
-            <p class="with">Celery · Redis</p>
+            <div class="state"><i class="status-dot"></i><span data-i18n="learning.state">in progress</span></div>
+            <h3 data-i18n="learning.bg.title">Background Processing</h3>
+            <p class="with" dir="ltr">Celery · Redis</p>
           </div>
           <div class="learn">
-            <div class="state"><i class="status-dot"></i>in progress</div>
-            <h3>Infrastructure</h3>
-            <p class="with">Linux · deployment · networking</p>
+            <div class="state"><i class="status-dot"></i><span data-i18n="learning.state">in progress</span></div>
+            <h3 data-i18n="learning.infra.title">Infrastructure</h3>
+            <p class="with" data-i18n="learning.infra.with" dir="ltr">Linux · deployment · networking</p>
           </div>
         </div>
       </div>
@@ -293,11 +900,11 @@
   <!-- ENGINEERING PHILOSOPHY -->
   <section class="section" id="philosophy" aria-label="Engineering philosophy" style="padding-top:0">
     <div class="wrap phil-grid">
-      <h2 class="reveal">I care about</h2>
+      <h2 class="reveal" data-i18n="philosophy.headline">I care about</h2>
       <ol class="phil-list">
-        <li class="reveal"><span class="n">01</span><p>Understanding how things work under the abstraction.</p></li>
-        <li class="reveal"><span class="n">02</span><p>Writing code that is easy to understand and maintain.</p></li>
-        <li class="reveal"><span class="n">03</span><p>Learning systems by building real projects.</p></li>
+        <li class="reveal"><span class="n">01</span><p data-i18n="philosophy.1">Understanding how things work under the abstraction.</p></li>
+        <li class="reveal"><span class="n">02</span><p data-i18n="philosophy.2">Writing code that is easy to understand and maintain.</p></li>
+        <li class="reveal"><span class="n">03</span><p data-i18n="philosophy.3">Learning systems by building real projects.</p></li>
       </ol>
     </div>
   </section>
@@ -305,12 +912,12 @@
   <!-- CONTACT -->
   <section class="section contact" id="contact">
     <div class="wrap reveal">
-      <h2>Let's build<br>something.</h2>
-      <p>Have a project, opportunity,<br>or just want to talk about backend engineering?</p>
+      <h2 data-i18n-html="contact.headline">Let's build<br>something.</h2>
+      <p data-i18n-html="contact.sub">Have a project, opportunity,<br>or just want to talk about backend engineering?</p>
       <div class="cta-row">
-        <a class="btn" href="#" data-link="linkedin">LinkedIn</a>
-        <a class="btn" href="#" data-link="github">GitHub</a>
-        <a class="btn btn-primary" href="#" data-link="email">Email</a>
+        <a class="btn" href="#" data-link="linkedin" data-i18n="contact.linkedin">LinkedIn</a>
+        <a class="btn" href="#" data-link="github" data-i18n="contact.github">GitHub</a>
+        <a class="btn btn-primary" href="#" data-link="email" data-i18n="contact.email">Email</a>
       </div>
     </div>
   </section>
@@ -319,22 +926,135 @@
 
 <footer>
   <div class="wrap foot">
-    <span>© 2026 Maziar Heydari</span>
-    <span class="mono">Built with Django.</span>
+    <span data-i18n="footer.copy">© 2026 Maziar Heydari</span>
+    <span class="mono" data-i18n="footer.built">Built with Django.</span>
   </div>
 </footer>
 
 <script>
   // Set these three values to activate every GitHub, LinkedIn and Email link on the page.
-  // github: your profile URL, e.g. "https://github.com/your-username"
-  // Repository buttons are built from it as <github>/Market-Django and <github>/Django-Chat.
   var CONFIG = {
-    github: "https://github.com/MH87811",
+    github: "",
     linkedin: "",
-    email: "maziyarheydari87811@gmail.com"
+    email: ""
+  };
+
+  var I18N = {
+    en: {
+      "meta.title": "Maziar Heydari · Backend Developer",
+      "meta.desc": "Maziar Heydari is a backend developer building APIs, backend systems and real-time applications with Python/Django and PHP/Laravel.",
+      "nav.menu": "Menu", "nav.about": "About", "nav.projects": "Projects", "nav.skills": "Skills",
+      "nav.contact": "Contact", "nav.github": "GitHub", "nav.linkedin": "LinkedIn",
+      "hero.name": "<span>Maziar</span><span>Heydari</span>",
+      "hero.role": "Backend Developer",
+      "hero.lede": "building APIs, backend systems<br>and real-time applications.",
+      "hero.cta1": "View Projects", "hero.cta2": "GitHub",
+      "about.headline": "About",
+      "about.p1": "I'm a backend developer focused on building reliable web applications, APIs and real-time systems.",
+      "about.p2": "My main stack is Python/Django and PHP/Laravel, with a growing focus on system architecture, performance and infrastructure.",
+      "about.cat.backend": "Backend", "about.cat.data": "Data", "about.cat.realtime": "Real-time", "about.cat.infra": "Infrastructure",
+      "projects.headline": "Featured projects", "projects.meta": "2 repositories on GitHub",
+      "project1.title": "Django E-Commerce Platform",
+      "project1.desc": "A multi-vendor e-commerce application built with Django.",
+      "project1.detail.type": "Multi-vendor e-commerce application",
+      "project2.title": "Real-Time Chat Platform",
+      "project2.desc": "A real-time messaging system built with Django, WebSocket and Redis.",
+      "project2.detail.type": "Real-time messaging system",
+      "project.github": "GitHub", "project.details": "Details", "project.hide": "Hide details",
+      "details.repository": "repository", "details.type": "type", "details.stack": "stack", "details.transport": "transport",
+      "skills.headline": "Skills", "skills.core": "core backend", "skills.database": "database & infrastructure",
+      "skills.realtime": "real-time & background", "skills.tools": "tools",
+      "learning.headline": "Currently learning",
+      "learning.sub": "Areas I'm actively working through. These are in progress, not finished skills.",
+      "learning.state": "in progress",
+      "learning.testing.title": "Testing", "learning.bg.title": "Background Processing", "learning.infra.title": "Infrastructure",
+      "philosophy.headline": "I care about",
+      "philosophy.1": "Understanding how things work under the abstraction.",
+      "philosophy.2": "Writing code that is easy to understand and maintain.",
+      "philosophy.3": "Learning systems by building real projects.",
+      "contact.headline": "Let's build<br>something.",
+      "contact.sub": "Have a project, opportunity,<br>or just want to talk about backend engineering?",
+      "contact.linkedin": "LinkedIn", "contact.github": "GitHub", "contact.email": "Email",
+      "footer.copy": "© 2026 Maziar Heydari", "footer.built": "Built with Django."
+    },
+    fa: {
+      "meta.title": "مازیار حیدری · توسعه‌دهنده بک‌اند",
+      "meta.desc": "مازیار حیدری توسعه‌دهنده بک‌اندی است که API، سیستم‌های بک‌اند و اپلیکیشن‌های real-time را با Python/Django و PHP/Laravel می‌سازد.",
+      "nav.menu": "منو", "nav.about": "درباره من", "nav.projects": "پروژه‌ها", "nav.skills": "مهارت‌ها",
+      "nav.contact": "تماس", "nav.github": "گیت‌هاب", "nav.linkedin": "لینکدین",
+      "hero.name": "مازیار حیدری",
+      "hero.role": "توسعه‌دهنده بک‌اند",
+      "hero.lede": "ساخت API، سیستم‌های بک‌اند<br>و اپلیکیشن‌های real-time.",
+      "hero.cta1": "مشاهده پروژه‌ها", "hero.cta2": "گیت‌هاب",
+      "about.headline": "درباره من",
+      "about.p1": "من یک توسعه‌دهنده بک‌اند هستم که روی ساخت اپلیکیشن‌های وب قابل‌اعتماد، API و سیستم‌های real-time تمرکز دارم.",
+      "about.p2": "استک اصلی‌ام Python/Django و PHP/Laravel است، با تمرکزی رو به رشد روی معماری سیستم، کارایی و زیرساخت.",
+      "about.cat.backend": "بک‌اند", "about.cat.data": "داده", "about.cat.realtime": "Real-time", "about.cat.infra": "زیرساخت",
+      "projects.headline": "پروژه‌های منتخب", "projects.meta": "۲ مخزن در گیت‌هاب",
+      "project1.title": "پلتفرم فروشگاهی جنگو",
+      "project1.desc": "یک اپلیکیشن تجارت الکترونیک چندفروشنده که با Django ساخته شده است.",
+      "project1.detail.type": "اپلیکیشن تجارت الکترونیک چندفروشنده",
+      "project2.title": "پلتفرم چت بلادرنگ",
+      "project2.desc": "یک سیستم پیام‌رسانی بلادرنگ ساخته‌شده با Django، WebSocket و Redis.",
+      "project2.detail.type": "سیستم پیام‌رسانی بلادرنگ",
+      "project.github": "گیت‌هاب", "project.details": "جزئیات", "project.hide": "بستن جزئیات",
+      "details.repository": "مخزن", "details.type": "نوع", "details.stack": "استک", "details.transport": "انتقال",
+      "skills.headline": "مهارت‌ها", "skills.core": "بک‌اند اصلی", "skills.database": "پایگاه‌داده و زیرساخت",
+      "skills.realtime": "بلادرنگ و پردازش پس‌زمینه", "skills.tools": "ابزارها",
+      "learning.headline": "در حال یادگیری",
+      "learning.sub": "حوزه‌هایی که فعالانه روی آن‌ها کار می‌کنم. این‌ها مهارت‌های تکمیل‌شده نیستند، هنوز در مسیر یادگیری‌اند.",
+      "learning.state": "در حال یادگیری",
+      "learning.testing.title": "تست‌نویسی", "learning.bg.title": "پردازش پس‌زمینه", "learning.infra.title": "زیرساخت",
+      "philosophy.headline": "برایم مهم است",
+      "philosophy.1": "فهمیدن این‌که چیزها زیر لایه انتزاع چطور کار می‌کنند.",
+      "philosophy.2": "نوشتن کدی که فهمیدن و نگهداری‌اش آسان باشد.",
+      "philosophy.3": "یادگیری سیستم‌ها از طریق ساختن پروژه‌های واقعی.",
+      "contact.headline": "بیایید چیزی<br>بسازیم.",
+      "contact.sub": "پروژه یا فرصتی دارید،<br>یا فقط می‌خواهید درباره مهندسی بک‌اند صحبت کنید؟",
+      "contact.linkedin": "لینکدین", "contact.github": "گیت‌هاب", "contact.email": "ایمیل",
+      "footer.copy": "© ۲۰۲۶ مازیار حیدری", "footer.built": "ساخته‌شده با Django."
+    }
   };
 
   (function () {
+    var STORAGE_KEY = "maziar-lang";
+    var titleEl = document.querySelector("title");
+    var descEl = document.querySelector('meta[name="description"]');
+    var toggleLabel = document.getElementById("lang-toggle-label");
+
+    function applyLang(lang) {
+      var dict = I18N[lang];
+      document.documentElement.setAttribute("lang", lang);
+      document.documentElement.setAttribute("dir", lang === "fa" ? "rtl" : "ltr");
+
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        var key = el.getAttribute("data-i18n");
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+        var key = el.getAttribute("data-i18n-html");
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+
+      if (dict["meta.title"] && titleEl) titleEl.textContent = dict["meta.title"];
+      if (dict["meta.desc"] && descEl) descEl.setAttribute("content", dict["meta.desc"]);
+
+      toggleLabel.textContent = lang === "fa" ? "EN" : "FA";
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    }
+
+    var initial = "en";
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "en" || saved === "fa") initial = saved;
+    } catch (e) {}
+    applyLang(initial);
+
+    document.getElementById("lang-toggle").addEventListener("click", function () {
+      var current = document.documentElement.getAttribute("lang");
+      applyLang(current === "fa" ? "en" : "fa");
+    });
+
     // Links
     document.querySelectorAll('[data-link]').forEach(function (a) {
       var key = a.getAttribute('data-link');
@@ -354,7 +1074,6 @@
     function setMenu(open) {
       links.classList.toggle('open', open);
       btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'Close' : 'Menu';
     }
     btn.addEventListener('click', function () { setMenu(!links.classList.contains('open')); });
     links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
@@ -367,7 +1086,8 @@
         var open = !panel.classList.contains('open');
         panel.classList.toggle('open', open);
         b.setAttribute('aria-expanded', String(open));
-        b.textContent = open ? 'Hide details' : 'Details';
+        var lang = document.documentElement.getAttribute('lang');
+        b.textContent = I18N[lang][open ? 'project.hide' : 'project.details'];
       });
     });
 
