@@ -1,4 +1,5 @@
-:root {
+/* <style> */
+  :root {
     --bg: #0B0D10;
     --surface: #111419;
     --surface-2: #171A20;
@@ -10,7 +11,6 @@
     --line-strong: #2C333D;
 
     --sans: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --sans-fa: "Vazirmatn", "Geist", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
     --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
     --wrap: 1180px;
@@ -49,37 +49,12 @@
     text-rendering: optimizeLegibility;
     overflow-x: clip;
   }
-  html[lang="fa"] body { font-family: var(--sans-fa); }
-  html[lang="fa"] h1, html[lang="fa"] .role, html[lang="fa"] h2,
-  html[lang="fa"] .project h3, html[lang="fa"] .phil-list p,
-  html[lang="fa"] .contact h2, html[lang="fa"] .error-code + h2 {
-    letter-spacing: 0;
-  }
-  html[lang="fa"] h1 { text-transform: none; }
-
-  a,
-  button,
-  .tag,
-  .learn,
-  .project,
-  .social,
-  .lang-btn {
-    transition: all .3s ease-in-out;
-  }
-
-  a,
-  button {
-    cursor: default;
-  }
-
   h1, h2, h3, p, ol, ul, dl, dd { margin: 0; padding: 0; }
   ul, ol { list-style: none; }
   a { color: inherit; text-decoration: none; }
+  a, button { cursor: pointer; }
   .mono { font-family: var(--mono); }
-  /*::selection { background: var(--accent); color: #06110c; }*/
   ::selection { background: transparent; color: inherit; }
-  /* Technical/code content always stays left-to-right, in both languages */
-  [dir="ltr"] { unicode-bidi: isolate; }
 
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -111,16 +86,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
   }
   .brand {
-    font-family: var(--sans);
     font-weight: 600;
     letter-spacing: 0.16em;
     font-size: 0.95rem;
-    flex: 0 0 auto;
   }
-  .nav-right { display: flex; align-items: center; gap: 0.6rem; flex: 0 0 auto; }
   .links { display: flex; align-items: center; gap: 0.25rem; }
   .links a {
     display: inline-flex;
@@ -130,14 +101,13 @@
     font-size: 0.95rem;
     color: var(--muted);
     border-radius: 6px;
-    transition: color .18s ease, background-color .18s ease;
-    white-space: nowrap;
+    transition: color .3s ease-in-out, background-color .3s ease-in-out;
   }
   .links a:hover { color: var(--text); background: var(--surface); }
   .links .sep {
     width: 1px; height: 16px; background: var(--line-strong); margin-inline: 0.5rem;
   }
-  .menu-btn, .lang-btn {
+  .menu-btn {
     display: none;
     min-height: 44px;
     padding: 0 0.9rem;
@@ -148,22 +118,6 @@
     font: 500 0.85rem var(--mono);
     cursor: pointer;
   }
-  .lang-btn {
-    align-items: center;
-    gap: 0.4rem;
-    direction: ltr;
-    /* display is intentionally NOT set here — .lang-btn--desktop /
-       .lang-btn--mobile below decide it, and they must stay AFTER
-       this rule in the file so they win the cascade. */
-  }
-  .lang-btn:hover { border-color: var(--accent); background: var(--surface-2); }
-  .lang-btn .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
-
-  /* Desktop (>860px): toggle lives at the end of the navbar, next to LinkedIn.
-     Mobile (<=860px): toggle lives next to the Menu button (flipped in the
-     @media (max-width: 860px) block further down). */
-  .lang-btn--desktop { display: inline-flex; margin-inline-start: 0.6rem; }
-  .lang-btn--mobile { display: none; }
 
   /* ---------- Buttons & tags ---------- */
   .btn {
@@ -178,9 +132,8 @@
     color: var(--text);
     font: 500 0.95rem var(--sans);
     cursor: pointer;
-    transition: border-color .18s ease, background-color .18s ease, color .18s ease, filter .18s ease;
+    transition: border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out, filter .3s ease-in-out;
   }
-  html[lang="fa"] .btn { font-family: var(--sans-fa); }
   .btn:hover { border-color: var(--accent); background: var(--surface-2); }
   .btn-primary { background: var(--accent); border-color: var(--accent); color: #06110c; }
   .btn-primary:hover { background: var(--accent); filter: brightness(1.08); }
@@ -194,16 +147,12 @@
     border-radius: 4px;
     font: 400 0.78rem/1.5 var(--mono);
     color: var(--muted);
-    transition:
-      color .3s ease-in-out,
-      border-color .3s ease-in-out,
-      background-color .3s ease-in-out;
+    transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
   }
-
   .tag:hover {
     color: var(--accent);
-    border-color: rgba(110, 231, 183, .45);
-    background: rgba(110, 231, 183, .06);
+    border-color: rgba(110, 231, 183, 0.45);
+    background: var(--accent-soft);
   }
 
   /* ---------- Reveal ---------- */
@@ -220,9 +169,6 @@
     isolation: isolate;
     padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(4rem, 8vw, 6.5rem);
     overflow: hidden;
-  }
-  .hero h1 {
-    font-size: clamp(2.9rem, 8.6vw, 7rem);
   }
   .hero::before {
     content: "";
@@ -241,9 +187,9 @@
     align-items: center;
   }
   h1 {
-    font-size: clamp(2.6rem, 8vw, 6.4rem);
+    font-size: clamp(2.9rem, 8.6vw, 7rem);
     font-weight: 600;
-    line-height: 1;
+    line-height: 0.94;
     letter-spacing: -0.04em;
     text-transform: uppercase;
   }
@@ -265,11 +211,10 @@
     margin-top: 1.75rem;
     font-size: 0.9rem;
     color: var(--muted);
-    text-align: left;
   }
   .cta-row { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
-  /* Terminal card — always LTR, both languages */
+  /* Terminal card */
   .term {
     background: var(--surface);
     border: 1px solid var(--line-strong);
@@ -277,8 +222,6 @@
     overflow: hidden;
     box-shadow: 0 40px 90px -50px rgba(110, 231, 183, 0.22);
     font-family: var(--mono);
-    direction: ltr;
-    text-align: left;
   }
   .term-bar {
     display: flex;
@@ -343,10 +286,10 @@
   h2 {
     font-size: clamp(2rem, 4.4vw, 3.25rem);
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1.05;
     letter-spacing: -0.03em;
   }
-  .meta { font: 400 0.85rem var(--mono); color: var(--muted); direction: ltr; }
+  .meta { font: 400 0.85rem var(--mono); color: var(--muted); }
 
   /* ---------- About ---------- */
   .about-grid {
@@ -359,16 +302,8 @@
     margin-top: 1.5rem;
     max-width: 46ch;
     font-size: clamp(1.1rem, 1.7vw, 1.3rem);
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--muted);
-  }
-  .about-copy p:first-of-type { color: var(--text); }
-  .about-copy:hover p {
-    opacity: .5;
-  }
-
-  .about-copy p:hover {
-    opacity: 1;
   }
   .cat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
   .cat {
@@ -383,10 +318,8 @@
     font: 500 0.82rem var(--mono);
     color: var(--muted);
     margin-bottom: 0.9rem;
-    direction: ltr;
-    text-align: left;
   }
-  .cat .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; direction: ltr; text-align: left; }
+  .cat .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
   /* ---------- Projects ---------- */
   .projects { display: grid; gap: clamp(1.25rem, 2.5vw, 2rem); }
@@ -410,13 +343,13 @@
   .viz { order: 2; }
   .project.reverse .viz { order: 0; border-left: 0; border-right: 1px solid var(--line); }
   .project.reverse .project-body { order: 1; }
-  .repo { font: 400 0.82rem var(--mono); color: var(--accent); direction: ltr; display: inline-block; }
+  .repo { font: 400 0.82rem var(--mono); color: var(--accent); }
   .project h3 {
     margin-top: 1rem;
     font-size: clamp(1.65rem, 3.2vw, 2.4rem);
     font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
   }
   .project .desc {
     margin-top: 1rem;
@@ -424,7 +357,7 @@
     color: var(--muted);
     font-size: 1.05rem;
   }
-  .project .tags { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; direction: ltr; }
+  .project .tags { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .project .actions { margin-top: auto; padding-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
 
   .viz {
@@ -438,11 +371,17 @@
     background-size: 20px 20px;
     border-left: 1px solid var(--line);
     min-height: 280px;
-    direction: ltr;
   }
   .viz svg { width: 100%; max-width: 440px; height: auto; display: block; overflow: visible; }
+  .viz .cap {
+    position: absolute;
+    left: 1rem; bottom: 0.8rem;
+    font: 400 0.72rem var(--mono);
+    color: #5b6470;
+  }
   svg .svg-mono { font-family: var(--mono); }
 
+  /* Chat flow packet: animates only while the card is hovered or focused */
   .packet { opacity: 0; }
   @media (prefers-reduced-motion: no-preference) {
     .project:hover .packet,
@@ -477,9 +416,8 @@
     padding: 1.5rem clamp(1.5rem, 3.2vw, 2.75rem) 1.75rem;
     font-size: 0.95rem;
   }
-  .details dt { font: 400 0.85rem var(--mono); color: var(--muted); padding-top: 0.05rem; direction: ltr; text-align: left; }
+  .details dt { font: 400 0.85rem var(--mono); color: var(--muted); padding-top: 0.05rem; }
   .details dd { color: var(--text); }
-  .details dd[dir="ltr"] { text-align: left; }
 
   /* ---------- Skills ---------- */
   .skill-rows { border-top: 1px solid var(--line); }
@@ -496,14 +434,12 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem 2rem;
-    font-size: clamp(1.15rem, 2.1vw, 1.55rem);
+    font-size: clamp(1.25rem, 2.3vw, 1.7rem);
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     line-height: 1.35;
-    direction: ltr;
-    justify-content: flex-start;
   }
-  .skill-row li { transition: color .2s ease; font-family: var(--sans); }
+  .skill-row li { transition: color .2s ease; }
   .skill-row li:hover { color: var(--accent); }
 
   /* ---------- Currently learning ---------- */
@@ -526,30 +462,12 @@
     border: 1px dashed #3a424e;
     border-radius: 8px;
     background: var(--bg);
+    transition: border-color .22s ease, background-color .22s ease, transform .22s ease, box-shadow .22s ease, opacity .22s ease;
   }
   .learn .state { font: 400 0.78rem var(--mono); color: var(--accent); display: flex; align-items: center; }
   .learn .state .status-dot { width: 7px; height: 7px; margin-right: 0.5rem; animation: none; }
-  .learn h3 { margin-top: 1.1rem; font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; }
-  .learn .with { margin-top: 0.5rem; font: 400 0.88rem var(--mono); color: var(--muted); direction: ltr; text-align: left; }
-
-  .learn-grid:hover .learn {
-    opacity: .5;
-  }
-
-  .learn:hover {
-    opacity: 1;
-    border-style: solid;
-    border-color: rgba(110, 231, 183, .28);
-    background:
-      linear-gradient(
-        135deg,
-        rgba(110, 231, 183, .06),
-        rgba(110, 231, 183, 0)
-      );
-    box-shadow:
-      0 12px 35px rgba(0, 0, 0, .18);
-    transform: translateY(-4px);
-  }
+  .learn h3 { margin-top: 1.1rem; font-size: 1.35rem; font-weight: 500; letter-spacing: -0.015em; transition: color .22s ease; }
+  .learn .with { margin-top: 0.5rem; font: 400 0.88rem var(--mono); color: var(--muted); transition: color .22s ease; }
   @media (hover: hover) {
     .learn-grid:hover .learn { opacity: 0.5; }
     .learn:hover {
@@ -562,6 +480,9 @@
     .learn:hover h3 { color: var(--accent); }
     .learn:hover .with { color: var(--text); }
     .learn:hover .status-dot { animation: soft-pulse 2s ease-out infinite; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .learn:hover { transform: translateY(-4px); }
   }
 
   /* ---------- Philosophy ---------- */
@@ -576,7 +497,7 @@
     top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 2rem);
     color: var(--muted);
     font-weight: 500;
-    font-size: clamp(2rem, 4.6vw, 3.4rem);
+    font-size: clamp(2.2rem, 5vw, 4rem);
   }
   .phil-list { border-bottom: 1px solid var(--line); }
   .phil-list li {
@@ -591,30 +512,22 @@
     font: 300 clamp(1.8rem, 4vw, 3rem)/1 var(--mono);
     color: #465060;
     transition: color .25s ease;
-    direction: ltr;
   }
   .phil-list li:hover .n { color: var(--accent); }
   .phil-list p {
-    max-width: 30ch;
-    font-size: clamp(1.35rem, 2.6vw, 2rem);
-    line-height: 1.35;
+    max-width: 24ch;
+    font-size: clamp(1.55rem, 3vw, 2.4rem);
+    line-height: 1.22;
     font-weight: 500;
-    letter-spacing: -0.015em;
-  }
-  .phil h3 {
-    font-size: clamp(1.65rem, 3vw, 2.4rem);
-  }
-
-  .phil p {
-    font-size: 1.05rem;
+    letter-spacing: -0.025em;
   }
 
   /* ---------- Contact ---------- */
   .contact { border-top: 1px solid var(--line); }
   .contact h2 {
-    font-size: clamp(2.8rem, 7vw, 6rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+    font-size: clamp(2.75rem, 8.4vw, 6.75rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
   }
   .contact p {
     margin-top: 1.75rem;
@@ -624,6 +537,24 @@
     line-height: 1.5;
   }
   .contact .cta-row { margin-top: 2.5rem; }
+
+  .about-copy.reveal p,
+  .project.reveal p,
+  .learning-wrap.reveal p,
+  .phil-list .reveal p,
+  .wrap.reveal p {
+    color: rgba(88, 94, 104, 0.82);
+    transition: color .3s ease-in-out;
+  }
+  @media (hover: hover) {
+    .about-copy.reveal:hover p,
+    .project.reveal:hover p,
+    .learning-wrap.reveal:hover p,
+    .phil-list .reveal:hover p,
+    .wrap.reveal:hover p {
+      color: var(--text);
+    }
+  }
 
   /* ---------- Footer ---------- */
   footer { border-top: 1px solid var(--line); padding-block: 1.75rem 2rem; }
@@ -635,7 +566,7 @@
     font-size: 0.9rem;
     color: var(--muted);
   }
-  .foot .mono { font-size: 0.82rem; direction: ltr; }
+  .foot .mono { font-size: 0.82rem; }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 960px) {
@@ -657,8 +588,6 @@
     .skill-row { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
   }
   @media (max-width: 860px) {
-    .lang-btn--desktop { display: none; }
-    .lang-btn--mobile { display: inline-flex; }
     .menu-btn { display: inline-flex; align-items: center; }
     .links {
       display: none;
@@ -697,3 +626,4 @@
     html.js .term .tl { opacity: 1; animation: none; }
     .cursor { animation: none; }
   }
+/* </style> */
