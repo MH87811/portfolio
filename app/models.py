@@ -29,10 +29,12 @@ class Skill(models.Model):
 
 class Project(models.Model):
     title = models.CharField(max_length=128)
+    title_fa = models.CharField(max_length=128, blank=True)
     repo_name = models.CharField(max_length=128, blank=True)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    # detail = models.TextField(blank=True)
+    description_fa = models.TextField(blank=True)
+    detail = models.JSONField(blank=True, null=True)
     github_url = models.URLField(blank=True)
     live_url = models.URLField(blank=True)
     skills = models.ManyToManyField(Skill, related_name='projects', blank=True)
@@ -41,6 +43,7 @@ class Project(models.Model):
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # visual = models.FileField(upload_to='prj-visual/', blank=True)
 
     class Meta:
         ordering = ['order']
@@ -50,6 +53,7 @@ class Project(models.Model):
 
 class LearningItem(models.Model):
     title = models.CharField(max_length=150)
+    title_fa = models.CharField(max_length=150, blank=True)
     description = models.TextField(blank=True)
     technologies = models.CharField(max_length=255, blank=True)
     order = models.PositiveIntegerField(default=0)

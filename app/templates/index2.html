@@ -1,0 +1,573 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="meta.title">Maziar Heydari · Backend Developer</title>
+<meta name="description" data-i18n-attr="content" data-i18n="meta.desc" content="Maziar Heydari is a backend developer focused on Python/Django and PHP/Laravel, building APIs, web applications, and real-time backend systems.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B0D10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+    <link rel="stylesheet" href="{% static 'styles1.css' %}" type="text/css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Maziar, back to top">MAZIAR</a>
+    <div class="nav-right">
+      <button class="lang-btn lang-btn--mobile mono" type="button" aria-label="Switch language">
+        <span class="dot" aria-hidden="true"></span><span class="lang-toggle-label">FA</span>
+      </button>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" data-i18n="nav.menu">Menu</button>
+    </div>
+    <nav id="nav-links" class="links" aria-label="Primary">
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#projects" data-i18n="nav.projects">Projects</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="#" data-link="github" data-i18n="nav.github">GitHub</a>
+      <a href="#" data-link="linkedin" data-i18n="nav.linkedin">LinkedIn</a>
+      <button class="lang-btn lang-btn--desktop mono" type="button" aria-label="Switch language">
+        <span class="dot" aria-hidden="true"></span><span class="lang-toggle-label">FA</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1 data-i18n-html="hero.name"><span>Maziar</span><span>Heydari</span></h1>
+        <p class="role" data-i18n="hero.role">Backend Developer</p>
+        <p class="lede" data-i18n-html="hero.lede">
+            I build backend systems, APIs, and real-time applications with Python/Django and PHP/Laravel.
+            I care about understanding what happens beneath the abstractions, not just making the code work.
+        </p>
+        <p class="stack-line mono" dir="ltr">Python · Django · DRF · PHP · Laravel</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#projects" data-i18n="hero.cta1">View Projects</a>
+          <a class="btn" href="#" data-link="github" data-i18n="hero.cta2">GitHub</a>
+        </div>
+      </div>
+
+      <div class="term" aria-hidden="true">
+        <div class="term-bar"><span>~/maziar</span><span>zsh</span></div>
+        <div class="term-body">
+          <p class="tl" style="--d:.35s"><span class="p">$</span>whoami</p>
+          <p class="tl" style="--d:.7s"><span class="out">maziyar_heydari</span></p>
+          <p class="tl gap" style="--d:1.15s"><span class="p">$</span>stack</p>
+          <p class="tl" style="--d:1.5s">
+            <span class="out">Django<span class="gap-x"></span><span class="gap-x"></span>Laravel</span></p>
+          <p class="tl gap" style="--d:1.95s"><span class="p">$</span>focus</p>
+          <p class="tl" style="--d:2.3s">
+            <span class="out">Backend <span class="gap-x">·</span><span class="gap-x"></span>real-time <span class="gap-x">·</span><span class="gap-x"></span>system</span></p>
+          <p class="tl gap" style="--d:2.75s"><span class="p">$</span>status</p>
+          <p class="tl" style="--d:3.1s"><span class="out"><i class="status-dot"></i>building</span></p>
+          <p class="tl gap" style="--d:3.55s"><span class="p">$</span><span class="cursor"></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="wrap about-grid">
+      <div class="about-copy reveal">
+        <h2 data-i18n="about.headline">About</h2>
+        <p data-i18n="about.p1">I'm a backend developer focused on building web applications, APIs, and real-time systems.</p>
+        <p data-i18n="about.p2">
+            My main stack is Python/Django and PHP/Laravel. I'm particularly interested in backend architecture, system behavior, performance, and understanding how different parts of a system work together.
+            I learn by building real projects and going deeper into the technologies I use.
+        </p>
+      </div>
+      <div class="cat-grid reveal">
+        <div class="cat">
+          <h3 data-i18n="about.cat.backend">Backend</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Django</span><span class="tag">Django REST Framework</span><span class="tag">PHP</span><span class="tag">Laravel</span></div>
+        </div>
+        <div class="cat">
+          <h3 data-i18n="about.cat.data">Data</h3>
+          <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">SQLite</span><span class="tag">Redis</span></div>
+        </div>
+        <div class="cat">
+          <h3 data-i18n="about.cat.realtime">Real-time</h3>
+          <div class="tags"><span class="tag">WebSocket</span><span class="tag">ASGI</span><span class="tag">Celery</span></div>
+        </div>
+        <div class="cat">
+          <h3 data-i18n="about.cat.infra">Infrastructure</h3>
+          <div class="tags"><span class="tag">Linux</span><span class="tag">Git</span><span class="tag">GitHub</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section" id="projects" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 data-i18n="projects.headline">Featured projects</h2>
+        <span class="meta" data-i18n="projects.meta">{{ projects.count|default:0|add:2 }} repositories on GitHub</span>
+      </div>
+
+      <div class="projects">
+
+        <!-- Project 1 -->
+        <article class="project reveal">
+          <div class="project-body">
+            <span class="repo">Market-Django</span>
+            <h3 data-i18n="project1.title">Django E-Commerce Platform</h3>
+            <p class="desc" data-i18n="project1.desc">A multi-vendor e-commerce application built with Django.</p>
+            <div class="tags">
+              <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">Authentication</span><span class="tag">Django Templates</span>
+            </div>
+            <div class="actions">
+              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Market-Django" data-i18n="project.github">GitHub</a>
+              <button class="btn btn-sm" type="button" data-toggle="details-market" aria-expanded="false" aria-controls="details-market" data-i18n="project.details">Details</button>
+            </div>
+          </div>
+
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="presentation">
+              <rect x="0.5" y="0.5" width="399" height="219" rx="8" fill="#0B0D10" stroke="#2C333D"/>
+              <line x1="0" y1="30.5" x2="400" y2="30.5" stroke="#20252D"/>
+              <rect x="14" y="9" width="150" height="12" rx="6" fill="#171A20"/>
+              <rect x="346" y="9" width="40" height="12" rx="6" fill="#171A20"/>
+
+              <rect x="14.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
+              <rect x="22" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+              <rect x="22" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+              <rect x="22" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+              <rect x="22" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
+              <text class="svg-mono" x="30" y="180.5" font-size="9" fill="#9AA1AC">vendor_a</text>
+
+              <rect x="146.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#6EE7B7" stroke-opacity="0.55"/>
+              <rect x="154" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+              <rect x="154" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+              <rect x="154" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+              <rect x="154" y="168" width="64" height="18" rx="3" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.6"/>
+              <text class="svg-mono" x="162" y="180.5" font-size="9" fill="#6EE7B7">vendor_b</text>
+
+              <rect x="278.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
+              <rect x="286" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+              <rect x="286" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+              <rect x="286" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+              <rect x="286" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
+              <text class="svg-mono" x="294" y="180.5" font-size="9" fill="#9AA1AC">vendor_c</text>
+            </svg>
+          </div>
+
+          <div class="details" id="details-market">
+            <div class="details-inner">
+              <dl>
+                <dt data-i18n="details.repository">repository</dt><dd dir="ltr">Market-Django</dd>
+                <dt data-i18n="details.type">type</dt><dd data-i18n="project1.detail.type">Multi-vendor e-commerce application</dd>
+                <dt data-i18n="details.stack">stack</dt><dd dir="ltr">Django, PostgreSQL, Authentication, Django Templates</dd>
+              </dl>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project reverse reveal">
+          <div class="project-body">
+            <span class="repo">Django-Chat</span>
+            <h3 data-i18n="project2.title">Real-Time Chat Platform</h3>
+            <p class="desc" data-i18n="project2.desc">A real-time messaging system built with Django, WebSocket and Redis.</p>
+            <div class="tags">
+              <span class="tag">Django</span><span class="tag">WebSocket</span><span class="tag">Redis</span><span class="tag">ASGI</span>
+            </div>
+            <div class="actions">
+              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Django-Chat" data-i18n="project.github">GitHub</a>
+              <button class="btn btn-sm" type="button" data-toggle="details-chat" aria-expanded="false" aria-controls="details-chat" data-i18n="project.details">Details</button>
+            </div>
+          </div>
+
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="presentation">
+              <rect x="0" y="14" width="124" height="16" rx="8" fill="#171A20"/>
+              <rect x="52" y="38" width="96" height="16" rx="8" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.45"/>
+
+              <g stroke="#2C333D" stroke-width="1.5" stroke-dasharray="3 4">
+                <line x1="72" y1="114" x2="110" y2="114"/>
+                <line x1="182" y1="114" x2="218" y2="114"/>
+                <line x1="290" y1="114" x2="328" y2="114"/>
+              </g>
+
+              <g class="svg-mono" font-size="12" text-anchor="middle">
+                <rect x="0.75" y="88.75" width="70.5" height="50.5" rx="6" fill="#171A20" stroke="#2C333D" stroke-width="1.5"/>
+                <text x="36" y="118" fill="#F1F3F5">Client</text>
+
+                <rect x="110.75" y="88.75" width="70.5" height="50.5" rx="6" fill="#171A20" stroke="#2C333D" stroke-width="1.5"/>
+                <text x="146" y="118" fill="#F1F3F5" font-size="11">WebSocket</text>
+
+                <rect x="218.75" y="88.75" width="70.5" height="50.5" rx="6" fill="#171A20" stroke="#6EE7B7" stroke-opacity="0.7" stroke-width="1.5"/>
+                <text x="254" y="118" fill="#F1F3F5">Django</text>
+                <circle cx="280" cy="98" r="2.5" fill="#6EE7B7"/>
+
+                <rect x="328.75" y="88.75" width="70.5" height="50.5" rx="6" fill="#171A20" stroke="#2C333D" stroke-width="1.5"/>
+                <text x="364" y="118" fill="#F1F3F5">Redis</text>
+              </g>
+
+              <g class="svg-mono" font-size="10" text-anchor="middle" fill="#6b7480">
+                <text x="36" y="160">browser</text>
+                <text x="146" y="160">persistent</text>
+                <text x="254" y="160">ASGI</text>
+                <text x="364" y="160">in-memory</text>
+              </g>
+
+              <circle class="packet" cx="72" cy="114" r="3.5" fill="#6EE7B7"/>
+            </svg>
+          </div>
+
+          <div class="details" id="details-chat">
+            <div class="details-inner">
+              <dl>
+                <dt data-i18n="details.repository">repository</dt><dd dir="ltr">Django-Chat</dd>
+                <dt data-i18n="details.type">type</dt><dd data-i18n="project2.detail.type">Real-time messaging system</dd>
+                <dt data-i18n="details.transport">transport</dt><dd dir="ltr">WebSocket</dd>
+                <dt data-i18n="details.stack">stack</dt><dd dir="ltr">Django, ASGI, Redis</dd>
+              </dl>
+            </div>
+          </div>
+        </article>
+
+        {% for project in projects %}
+            <article class="project reveal">
+              <div class="project-body">
+                <span class="repo">{{ project.repo_name }}</span>
+                <h3 data-i18n="project{{ project.slug }}.title">{{ project.title }}</h3>
+                <p class="desc" data-i18n="project{{ project.slug }}.desc">
+                    {{ project.description }}
+                </p>
+                <div class="tags">
+                    {% for project_skill in project.skills.all %}
+                        <span class="tag">{{ project_skill.name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="actions">
+                  <a class="btn btn-sm btn-primary" href="{{ project.github_url }}" data-link="github" data-repo="Market-Django" data-i18n="project.github">GitHub</a>
+                  <button class="btn btn-sm" type="button" data-toggle="details-{{ project.slug }}" aria-expanded="false" aria-controls="details-market" data-i18n="project.details">Details</button>
+                </div>
+              </div>
+
+              <div class="viz" aria-hidden="true">
+                <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                  <rect x="0.5" y="0.5" width="399" height="219" rx="8" fill="#0B0D10" stroke="#2C333D"/>
+                  <line x1="0" y1="30.5" x2="400" y2="30.5" stroke="#20252D"/>
+                  <rect x="14" y="9" width="150" height="12" rx="6" fill="#171A20"/>
+                  <rect x="346" y="9" width="40" height="12" rx="6" fill="#171A20"/>
+
+                  <rect x="14.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
+                  <rect x="22" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+                  <rect x="22" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+                  <rect x="22" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+                  <rect x="22" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
+                  <text class="svg-mono" x="30" y="180.5" font-size="9" fill="#9AA1AC">vendor_a</text>
+
+                  <rect x="146.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#6EE7B7" stroke-opacity="0.55"/>
+                  <rect x="154" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+                  <rect x="154" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+                  <rect x="154" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+                  <rect x="154" y="168" width="64" height="18" rx="3" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.6"/>
+                  <text class="svg-mono" x="162" y="180.5" font-size="9" fill="#6EE7B7">vendor_b</text>
+
+                  <rect x="278.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
+                  <rect x="286" y="52" width="92" height="66" rx="3" fill="#171A20"/>
+                  <rect x="286" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
+                  <rect x="286" y="140" width="48" height="6" rx="3" fill="#20252D"/>
+                  <rect x="286" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
+                  <text class="svg-mono" x="294" y="180.5" font-size="9" fill="#9AA1AC">vendor_c</text>
+                </svg>
+              </div>
+
+              <div class="details" id="details-{{ project.slug }}">
+                <div class="details-inner">
+                  <dl>
+                      {% for key, value in project.detail.items %}
+                        <dt data-i18n="project{{ project.slug }}.details.{{ key }}">{{ key }}</dt><dd data-i18n="project2.detail.{{ key }}.value">{{ value }}</dd>
+                      {% endfor %}
+                  </dl>
+                </div>
+              </div>
+            </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section" id="skills" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 data-i18n="skills.headline">Skills</h2>
+      </div>
+      <div class="skill-rows reveal">
+        {% for category in categories %}
+          <div class="skill-row">
+            <h3>{{ category.name }}</h3>
+            <ul>
+                {% for skill in category.skills.all %}
+                    <li>{{ skill.name }}</li>{% if not forloop.last %}|{% endif %}
+                {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- CURRENTLY LEARNING -->
+  <section class="section" id="learning" style="padding-top:0">
+    <div class="wrap">
+      <div class="learning-wrap reveal">
+        <div class="learning-head">
+          <h2 data-i18n="learning.headline">Currently learning</h2>
+          <p data-i18n="learning.sub">Areas I'm actively working through. These are in progress, not finished skills.</p>
+        </div>
+        <div class="learn-grid">
+            {% for learning_item in learning_items %}
+              <div class="learn">
+                <div class="state"><i class="status-dot"></i ><span data-i18n="learning.state">in progress</span></div>
+                <h3 data-i18n="learning.{{ learning_item.id }}.title">{{ learning_item.title }}</h3>
+                <p class="with">{{ learning_item.technologies }}</p>
+              </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENGINEERING PHILOSOPHY -->
+  <section class="section" id="philosophy" aria-label="Engineering philosophy" style="padding-top:0">
+    <div class="wrap phil-grid">
+      <h2 class="reveal" data-i18n="philosophy.headline">I care about</h2>
+      <ol class="phil-list">
+        <li class="reveal"><span class="n">01</span><p data-i18n="philosophy.1">Understanding how things work under the abstraction.</p></li>
+        <li class="reveal"><span class="n">02</span><p data-i18n="philosophy.2">Writing code that is easy to understand and maintain.</p></li>
+        <li class="reveal"><span class="n">03</span><p data-i18n="philosophy.3">Learning systems by building real projects.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact" id="contact">
+    <div class="wrap reveal">
+      <h2 data-i18n-html="contact.headline">Let's build<br>something.</h2>
+      <p data-i18n-html="contact.sub">Have a project, opportunity,<br>or just want to talk about backend engineering?</p>
+      <div class="cta-row">
+        <a class="btn" href="#" data-link="linkedin" data-i18n="contact.linkedin">LinkedIn</a>
+        <a class="btn" href="#" data-link="github" data-i18n="contact.github">GitHub</a>
+        <a class="btn" href="#" data-link="telegram" data-i18n="contact.telegram">Telegram</a>
+        <a class="btn btn-primary" href="#" data-link="email" data-i18n="contact.email">Email</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span data-i18n="footer.copy">© 2026 Maziar Heydari</span>
+    <span class="mono" data-i18n="footer.built">Built with Django.</span>
+  </div>
+</footer>
+
+<script>
+  // Set these three values to activate every GitHub, LinkedIn and Email link on the page.
+  var CONFIG = {
+    github: "https://github.com/MH87811",
+    linkedin: "https://www.linkedin.com/in/maziyar-heydary-84b436397",
+    email: "maziyarheydari87811@gmail.com",
+    telegram: "https://t.me/Mr87811"
+  };
+
+  var I18N = {
+    en: {
+      "meta.title": "Maziar Heydari · Backend Developer",
+      "meta.desc": "Maziar Heydari is a backend developer building APIs, backend systems and real-time applications with Python/Django and PHP/Laravel.",
+      "nav.menu": "Menu", "nav.about": "About", "nav.projects": "Projects", "nav.skills": "Skills",
+      "nav.contact": "Contact", "nav.github": "GitHub", "nav.linkedin": "LinkedIn",
+      "hero.name": "<span>Maziar</span><span>Heydari</span>",
+      "hero.role": "Backend Developer",
+      "hero.lede": "I build backend systems, APIs, and real-time applications with Python/Django and PHP/Laravel. <br>I care about understanding what happens beneath the abstractions, not just making the code work.",
+      "hero.cta1": "View Projects", "hero.cta2": "GitHub",
+      "about.headline": "About",
+      "about.p1": "I'm a backend developer focused on building web applications, APIs, and real-time systems.",
+      "about.p2": "My main stack is Python/Django and PHP/Laravel. I'm particularly interested in backend architecture, system behavior, performance, and understanding how different parts of a system work together. I learn by building real projects and going deeper into the technologies I use.",
+      "about.cat.backend": "Backend", "about.cat.data": "Database", "about.cat.realtime": "Real-time", "about.cat.infra": "Infrastructure",
+      "projects.headline": "Featured projects", "projects.meta": "2 repositories on GitHub",
+      "project1.title": "Django E-Commerce Platform",
+      "project1.desc": "A multi-vendor e-commerce application built with Django.",
+      "project1.detail.type": "Multi-vendor e-commerce application",
+      "project2.title": "Real-Time Chat Platform",
+      "project2.desc": "A real-time messaging system built with Django, WebSocket and Redis.",
+      "project2.detail.type": "Real-time messaging system",
+      {% for project in projects %}
+        "project{{ project.slug }}.title": "{{ project.title_fa }}",
+        "project{{ project.slug }}.desc": "{{ project.description_fa }}",
+      {% endfor %}
+      "project.github": "GitHub", "project.details": "Details", "project.hide": "Hide details",
+      "details.repository": "repository", "details.type": "type", "details.stack": "stack", "details.transport": "transport",
+      "skills.headline": "Skills", "skills.core": "core backend", "skills.database": "database & infrastructure",
+      "skills.realtime": "real-time & background", "skills.tools": "tools",
+      "learning.headline": "Currently learning",
+      "learning.sub": "Technologies and areas I'm actively working through. These are ongoing areas of study.",
+      "learning.state": "in progress",
+      {% for learning_item in learning_items %}
+      	"learning.{{ learning_item.id }}.title": "{{ learning_item.title_fa }}",
+      {% endfor %}
+      "philosophy.headline": "I care about",
+      "philosophy.1": "Understanding what happens beneath the abstractions.",
+      "philosophy.2": "Writing code that is easy to understand and maintain.",
+      "philosophy.3": "Learning systems by building and investigating real projects.",
+      "contact.headline": "Let's talk backend.",
+      "contact.sub": "Have a project, an opportunity, or an interesting backend problem to discuss?",
+      "contact.linkedin": "LinkedIn", "contact.github": "GitHub", "contact.telegram": "Telegram", "contact.email": "Email",
+      "footer.copy": "© 2026 Maziar Heydari", "footer.built": "Built with Django."
+    },
+    fa: {
+      "meta.title": "مازیار حیدری · توسعه‌دهنده بک‌اند",
+      "meta.desc": "مازیار حیدری توسعه‌دهنده بک‌اند با تمرکز بر Python/Django و PHP/Laravel است و روی ساخت API، اپلیکیشن‌های وب و سیستم‌های بک‌اند real-time کار می‌کند.",
+      "nav.menu": "منو", "nav.about": "درباره من", "nav.projects": "پروژه‌ها", "nav.skills": "مهارت‌ها",
+      "nav.contact": "تماس", "nav.github": "گیت‌هاب", "nav.linkedin": "لینکدین",
+      "hero.name": "مازیار حیدری",
+      "hero.role": "توسعه‌دهنده بک‌اند",
+      "hero.lede": "ساختبا Python/Django و PHP/Laravel، سیستم‌های بک‌اند، APIها و اپلیکیشن‌های real-time می‌سازم. <br>برایم مهم است فقط ندانم کد چگونه کار می‌کند، بلکه بفهمم پشت این abstractionها چه اتفاقی می‌افتد.",
+      "hero.cta1": "مشاهده پروژه‌ها", "hero.cta2": "گیت‌هاب",
+      "about.headline": "درباره من",
+      "about.p1": "من یک توسعه‌دهنده بک‌اند هستم و روی ساخت اپلیکیشن‌های وب، APIها و سیستم‌های real-time تمرکز دارم.",
+      "about.p2": "استک اصلی من Python/Django و PHP/Laravel است. به معماری بک‌اند، رفتار سیستم، کارایی و درک نحوه تعامل بخش‌های مختلف یک سیستم با یکدیگر علاقه‌مندم. یادگیری من بیشتر از طریق ساخت پروژه‌های واقعی و عمیق شدن در تکنولوژی‌هایی است که استفاده می‌کنم.",
+      "about.cat.backend": "بک‌اند", "about.cat.data": "پایگاه داده", "about.cat.realtime": "Real-time", "about.cat.infra": "زیرساخت",
+      "projects.headline": "پروژه‌های منتخب", "projects.meta": "۲ مخزن در گیت‌هاب",
+      "project1.title": "پلتفرم فروشگاهی جنگو",
+      "project1.desc": "یک اپلیکیشن تجارت الکترونیک چندفروشنده که با Django ساخته شده است.",
+      "project1.detail.type": "اپلیکیشن تجارت الکترونیک چندفروشنده",
+      "project2.title": "پلتفرم چت real-time",
+      "project2.desc": "یک سیستم پیام‌رسانی real-time ساخته‌شده با Django، WebSocket و Redis.",
+      "project2.detail.type": "سیستم پیام‌رسانی real-time",
+      {% for project in projects %}
+        "project{{ project.slug }}.title": "{{ project.title_fa }}",
+        "project{{ project.slug }}.desc": "{{ project.description_fa }}",
+      {% endfor %}
+      "project.github": "گیت‌هاب", "project.details": "جزئیات", "project.hide": "بستن جزئیات",
+      "details.repository": "مخزن", "details.type": "نوع", "details.stack": "استک", "details.transport": "انتقال",
+      "skills.headline": "مهارت‌ها",
+      "learning.headline": "در حال یادگیری",
+      "learning.sub": "تکنولوژی‌ها و حوزه‌هایی که در حال حاضر به‌صورت جدی روی آن‌ها کار می‌کنم. این‌ها حوزه‌های در حال یادگیری هستند.",
+      "learning.state": "در حال یادگیری",
+      {% for learning_item in learning_items %}
+      	"learning.{{ learning_item.id }}.title": "{{ learning_item.title_fa }}",
+      {% endfor %}
+      "philosophy.headline": "برایم مهم است",
+      "philosophy.1": "فهمیدن اینکه پشت abstractionها چه اتفاقی می‌افتد.",
+      "philosophy.2": "نوشتن کدی که فهمیدن و نگهداری آن آسان باشد.",
+      "philosophy.3": "یادگیری سیستم‌ها از طریق ساختن و بررسی پروژه‌های واقعی.",
+      "contact.headline": "بیایید درباره بک‌اند صحبت کنیم.",
+      "contact.sub": "پروژه، فرصت همکاری یا یک مسئله جالب در حوزه بک‌اند دارید؟",
+      "contact.linkedin": "لینکدین", "contact.github": "گیت‌هاب", "contact.telegram": "تلگرام", "contact.email": "ایمیل",
+      "footer.copy": "© ۲۰۲۶ مازیار حیدری", "footer.built": "ساخته‌شده با Django."
+    }
+  };
+
+  (function () {
+    var STORAGE_KEY = "maziar-lang";
+    var titleEl = document.querySelector("title");
+    var descEl = document.querySelector('meta[name="description"]');
+    var toggleLabels = document.querySelectorAll(".lang-toggle-label");
+
+    function applyLang(lang) {
+      var dict = I18N[lang];
+      document.documentElement.setAttribute("lang", lang);
+      document.documentElement.setAttribute("dir", lang === "fa" ? "rtl" : "ltr");
+
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        var key = el.getAttribute("data-i18n");
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+        var key = el.getAttribute("data-i18n-html");
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+
+      if (dict["meta.title"] && titleEl) titleEl.textContent = dict["meta.title"];
+      if (dict["meta.desc"] && descEl) descEl.setAttribute("content", dict["meta.desc"]);
+
+      toggleLabels.forEach(function (el) { el.textContent = lang === "fa" ? "EN" : "FA"; });
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    }
+
+    var initial = "en";
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "en" || saved === "fa") initial = saved;
+    } catch (e) {}
+    applyLang(initial);
+
+    document.querySelectorAll(".lang-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("lang");
+        applyLang(current === "fa" ? "en" : "fa");
+      });
+    });
+
+    // Links
+    document.querySelectorAll('[data-link]').forEach(function (a) {
+      var key = a.getAttribute('data-link');
+      var repo = a.getAttribute('data-repo');
+      var href = '#';
+      if (key === 'email' && CONFIG.email) href = 'mailto:' + CONFIG.email;
+      else if (key !== 'email' && CONFIG[key]) href = CONFIG[key];
+      if (repo && CONFIG.github) href = CONFIG.github.replace(/\/$/, '') + '/' + repo;
+      a.setAttribute('href', href);
+      if (/^https?:/.test(href)) { a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener noreferrer'); }
+      else a.addEventListener('click', function (e) { e.preventDefault(); });
+    });
+
+    // Mobile menu
+    var btn = document.querySelector('.menu-btn');
+    var links = document.getElementById('nav-links');
+    function setMenu(open) {
+      links.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn.addEventListener('click', function () { setMenu(!links.classList.contains('open')); });
+    links.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+    // Project details
+    document.querySelectorAll('[data-toggle]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var panel = document.getElementById(b.getAttribute('data-toggle'));
+        var open = !panel.classList.contains('open');
+        panel.classList.toggle('open', open);
+        b.setAttribute('aria-expanded', String(open));
+        var lang = document.documentElement.getAttribute('lang');
+        b.textContent = I18N[lang][open ? 'project.hide' : 'project.details'];
+      });
+    });
+
+    // Reveal on scroll
+    var items = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+      items.forEach(function (el) { io.observe(el); });
+    } else {
+      items.forEach(function (el) { el.classList.add('in'); });
+    }
+  })();
+</script>
+</body>
+</html>

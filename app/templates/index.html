@@ -59,13 +59,13 @@
         <div class="term-bar"><span>~/maziar</span><span>zsh</span></div>
         <div class="term-body">
           <p class="tl" style="--d:.35s"><span class="p">$</span>whoami</p>
-          <p class="tl" style="--d:.7s"><span class="out">backend_developer</span></p>
+          <p class="tl" style="--d:.7s"><span class="out">maziyar_heydari</span></p>
           <p class="tl gap" style="--d:1.15s"><span class="p">$</span>stack</p>
           <p class="tl" style="--d:1.5s">
             <span class="out">Django<span class="gap-x"></span><span class="gap-x"></span>Laravel</span></p>
           <p class="tl gap" style="--d:1.95s"><span class="p">$</span>focus</p>
           <p class="tl" style="--d:2.3s">
-            <span class="out">Backend · <span class="gap-x"></span><span class="gap-x"></span>real-time ·<span class="gap-x"></span><span class="gap-x"></span>system</span></p>
+            <span class="out">Backend <span class="gap-x">·</span><span class="gap-x"></span>real-time <span class="gap-x">·</span><span class="gap-x"></span>system</span></p>
           <p class="tl gap" style="--d:2.75s"><span class="p">$</span>status</p>
           <p class="tl" style="--d:3.1s"><span class="out"><i class="status-dot"></i>building</span></p>
           <p class="tl gap" style="--d:3.55s"><span class="p">$</span><span class="cursor"></span></p>
@@ -113,7 +113,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Featured projects</h2>
-        <span class="meta">{{ projects.count }} repositories on GitHub</span>
+        <span class="meta">{{ projects.count|default:0|add:2 }} repositories on GitHub</span>
       </div>
 
       <div class="projects">
@@ -129,11 +129,28 @@
                 images, carts and order lifecycle.
             </p>
             <div class="tags">
-              <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">Authentication</span><span class="tag">Django Templates</span>
+              <span class="tag">Django</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">Authentication</span>
+              <span class="tag">Django Templates</span>
             </div>
             <div class="actions">
-              <a class="btn btn-sm btn-primary" href="#" data-link="github" data-repo="Market-Django">GitHub</a>
-              <button class="btn btn-sm" type="button" data-toggle="details-market" aria-expanded="false" aria-controls="details-market">Details</button>
+              <a
+                  class="btn btn-sm btn-primary"
+                  href="#" data-link="github"
+                  data-repo="Market-Django"
+              >
+                  GitHub
+              </a>
+              <button
+                  class="btn btn-sm"
+                  type="button"
+                  data-toggle="details-market"
+                  aria-expanded="false"
+                  aria-controls="details-market"
+              >
+                  Details
+              </button>
             </div>
           </div>
 
@@ -263,15 +280,13 @@
                 </p>
                 <div class="tags">
                     {% for project_skill in project.skills.all %}
-
-                  <span class="tag">{{ project_skill.name }}</span>
-
+                        <span class="tag">{{ project_skill.name }}</span>
                     {% endfor %}
 {#                  <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">Authentication</span><span class="tag">Django Templates</span>#}
                 </div>
                 <div class="actions">
                   <a class="btn btn-sm btn-primary" href="{{ project.github_url }}" data-link="github" data-repo="Market-Django">GitHub</a>
-                  <button class="btn btn-sm" type="button" data-toggle="details-market" aria-expanded="false" aria-controls="details-market">Details</button>
+                  <button class="btn btn-sm" type="button" data-toggle="details-{{ project.slug }}" aria-expanded="false" aria-controls="details-market">Details</button>
                 </div>
               </div>
 
@@ -308,12 +323,12 @@
                 </svg>
               </div>
 
-              <div class="details" id="details-market">
+              <div class="details" id="details-{{ project.slug }}">
                 <div class="details-inner">
                   <dl>
-                    <dt>repository</dt><dd>Market-Django</dd>
-                    <dt>type</dt><dd>Multi-vendor e-commerce application</dd>
-                    <dt>stack</dt><dd>Django, PostgreSQL, Authentication, Django Templates</dd>
+                      {% for key, value in project.detail.items %}
+                        <dt>{{ key }}</dt><dd>{{ value }}</dd>
+                      {% endfor %}
                   </dl>
                 </div>
               </div>
