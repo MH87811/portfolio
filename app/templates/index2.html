@@ -412,8 +412,8 @@
       "project2.desc": "A real-time messaging system built with Django, WebSocket and Redis.",
       "project2.detail.type": "Real-time messaging system",
       {% for project in projects %}
-        "project{{ project.slug }}.title": "{{ project.title_fa }}",
-        "project{{ project.slug }}.desc": "{{ project.description_fa }}",
+        "project{{ project.slug }}.title": "{{ project.title }}",
+        "project{{ project.slug }}.desc": "{{ project.description }}",
       {% endfor %}
       "project.github": "GitHub", "project.details": "Details", "project.hide": "Hide details",
       "details.repository": "repository", "details.type": "type", "details.stack": "stack", "details.transport": "transport",
@@ -423,7 +423,7 @@
       "learning.sub": "Technologies and areas I'm actively working through. These are ongoing areas of study.",
       "learning.state": "in progress",
       {% for learning_item in learning_items %}
-      	"learning.{{ learning_item.id }}.title": "{{ learning_item.title_fa }}",
+      	"learning.{{ learning_item.id }}.title": "{{ learning_item.title }}",
       {% endfor %}
       "philosophy.headline": "I care about",
       "philosophy.1": "Understanding what happens beneath the abstractions.",
