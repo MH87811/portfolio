@@ -1,0 +1,737 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Maziar Heydari</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: a file manager's three regions. A sticky tree rail is the navigation,
+   a location bar shows the current path, and the main column sits on one key | value grid
+   so every section reads like a directory listing or a config file.
+   On phones the rail becomes a bottom dock that opens a tree sheet.
+   Colour follows ls: blue = directories, cyan = symlinks, green = running, amber = in progress. */
+:root{
+  --bg:#0c0f12;
+  --bg-2:#10151a;
+  --bg-hover:#12181d;
+  --line:#1d252c;
+  --line-2:#2b353e;
+  --fg:#dde3e8;
+  --fg-2:#9aa6b0;
+  --fg-3:#74818c;
+  --dir:#86b3e3;
+  --link:#7cc7c1;
+  --run:#8fc79b;
+  --warn:#dcb872;
+  --sel:rgba(134,179,227,.09);
+  --sans:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'Geist Mono',ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+  --rail:272px;
+  --bar:48px;
+  --gut:clamp(16px,4vw,56px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--dir);outline-offset:2px;border-radius:2px}
+ul,ol{list-style:none;margin:0;padding:0}
+p{margin:0}
+.ph{border-bottom:1px dashed var(--line-2)}
+
+/* shell */
+.app{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);min-height:100vh}
+.main{min-width:0}
+.wrap{max-width:980px;padding-inline:var(--gut)}
+
+/* rail */
+.rail{position:sticky;top:0;align-self:start;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+.who{height:var(--bar);display:flex;align-items:center;padding-inline:28px 20px;border-bottom:1px solid var(--line);font:500 14px/1 var(--sans);letter-spacing:-.01em;white-space:nowrap}
+.nav{padding:24px 16px 0 20px;flex:1}
+.root{display:flex;align-items:center;height:32px;padding-left:8px;font:500 14px/1 var(--mono);color:var(--fg-2)}
+.root[aria-current]{color:var(--dir)}
+.root:hover{color:var(--fg)}
+.treewrap{position:relative}
+.tree{font:400 14px/32px var(--mono)}
+.tree li{height:32px}
+.tree a{position:relative;z-index:1;display:flex;gap:10px;height:100%;padding:0 12px 0 8px;color:var(--fg-2);transition:color .15s}
+.tree a:hover{color:var(--fg)}
+.tree a[aria-current]{color:var(--dir)}
+.br{color:var(--fg-3);white-space:pre;font-family:var(--mono)}
+.cur{position:absolute;left:0;top:0;width:100%;height:32px;background:var(--sel);border-left:2px solid var(--dir);opacity:0;pointer-events:none;transition:transform .26s cubic-bezier(.2,.7,.2,1),height .2s,opacity .2s}
+.mon{padding:16px 20px 20px 28px;border-top:1px solid var(--line);font:12px/1.9 var(--mono);color:var(--fg-3)}
+.mon div{display:flex;justify-content:space-between;gap:12px}
+.mon b{font-weight:400;color:var(--fg-2)}
+.meter{height:2px;background:var(--line-2);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;width:100%;background:var(--fg-3);transform:scaleX(0);transform-origin:left;transition:transform .15s linear}
+
+/* location bar */
+.loc{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;height:var(--bar);display:flex;align-items:center;justify-content:space-between;gap:16px;padding-inline:var(--gut);background:rgba(12,15,18,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font:13px/1 var(--mono)}
+.crumb{display:flex;align-items:center;min-width:0;white-space:nowrap}
+.crumb a{color:var(--fg-2)}
+.crumb a:hover{color:var(--fg)}
+.crumb-sec{color:var(--dir)}
+.crumb-sec.sw{animation:swap .28s ease both}
+@keyframes swap{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
+.st{display:flex;align-items:center;color:var(--fg-2);white-space:nowrap}
+.st .k{color:var(--fg-3);margin-right:.7ch}
+
+/* status dots */
+.dot{display:inline-block;flex:none;width:7px;height:7px;border-radius:50%;background:var(--run);margin-right:9px}
+.dot.run{animation:pulse 2.8s ease-in-out infinite}
+.dot.warn{background:transparent;box-shadow:inset 0 0 0 1.5px var(--warn)}
+.dot.idle{background:transparent;box-shadow:inset 0 0 0 1.5px var(--fg-3)}
+.dot.act{background:var(--warn)}
+.dot.proto{background:var(--link)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.38}}
+
+/* sections */
+.sec{padding-block:104px 0;scroll-margin-top:var(--bar)}
+.sh{display:grid;gap:14px;margin-bottom:44px}
+.path{display:flex;flex-wrap:wrap;gap:0 .7ch;font:12px/1.5 var(--mono);color:var(--fg-3);letter-spacing:.02em}
+.path b{font-weight:500;color:var(--dir)}
+.path .sym{color:var(--link)}
+h2{margin:0;font:500 clamp(34px,5vw,52px)/1.04 var(--sans);letter-spacing:-.03em;text-wrap:balance}
+.lede{max-width:56ch;color:var(--fg-2);font-size:18px;line-height:1.55}
+
+/* key | value grid */
+.kv{margin:0;display:grid;grid-template-columns:var(--k,148px) minmax(0,1fr);border-top:1px solid var(--line)}
+.kv dt,.kv dd{margin:0;padding:12px 0;border-bottom:1px solid var(--line)}
+.kv dt{padding-right:24px;padding-top:14px;font:13px/1.6 var(--mono);color:var(--fg-3)}
+.kv dd{display:flex;align-items:center;flex-wrap:wrap}
+
+/* hero */
+.hero{padding-block:60px 0}
+.hero .path{margin-bottom:22px;font-size:13px}
+h1{margin:0 0 14px;font:500 clamp(40px,10.5vw,92px)/.98 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.role{margin:0 0 40px;font:400 clamp(18px,2.4vw,24px)/1.3 var(--sans);color:var(--fg-2)}
+.hero .kv{--k:128px}
+[data-in]{animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*55ms)}
+@keyframes rise{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
+.cap{display:flex;justify-content:space-between;gap:16px;margin:48px 0 10px;font:12px/1.4 var(--mono);color:var(--fg-3)}
+
+/* directory listing */
+.ls{border-top:1px solid var(--line)}
+.ls li{border-bottom:1px solid var(--line)}
+.ls a{position:relative;display:grid;grid-template-columns:44px minmax(110px,190px) minmax(0,1fr) 96px;align-items:baseline;padding:11px 0 11px 12px;transition:background .15s}
+.ls a::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--dir);opacity:0;transition:opacity .15s}
+.ls a:hover,.ls a:focus-visible{background:var(--bg-hover)}
+.ls a:hover::before,.ls a:focus-visible::before{opacity:1}
+.ls .nm{font:500 15px/1.5 var(--mono);color:var(--dir)}
+.ls .ds{color:var(--fg-2);font-size:15px}
+.ls .ct{text-align:right;padding-right:12px;font:12px/1.5 var(--mono);color:var(--fg-3)}
+
+/* about */
+.big{max-width:34em;margin-bottom:40px;font:400 clamp(21px,2.8vw,28px)/1.38 var(--sans);letter-spacing:-.015em;text-wrap:pretty}
+
+/* projects */
+.pl{border-top:1px solid var(--line)}
+.pl-h,.proj-row{display:grid;grid-template-columns:24px minmax(0,200px) minmax(0,1fr) 92px 28px;align-items:center;column-gap:12px;grid-template-areas:"tw nm sm dt ar"}
+.pl-h{padding:10px 0;font:12px/1.4 var(--mono);color:var(--fg-3);border-bottom:1px solid var(--line)}
+.pl-h span:nth-child(1){grid-area:nm}
+.pl-h span:nth-child(2){grid-area:sm}
+.pl-h span:nth-child(3){grid-area:dt}
+.proj{border-bottom:1px solid var(--line)}
+.proj-row{width:100%;padding:15px 0;background:none;border:0;text-align:left;cursor:pointer;transition:background .15s}
+.proj-row:hover{background:var(--bg-hover)}
+.tw{grid-area:tw;justify-self:center;width:7px;height:7px;border-right:1.5px solid var(--fg-3);border-bottom:1.5px solid var(--fg-3);transform:rotate(-45deg);transition:transform .22s cubic-bezier(.2,.7,.2,1),border-color .15s}
+.proj-row[aria-expanded="true"] .tw{transform:rotate(45deg);border-color:var(--dir)}
+.proj-row .nm{grid-area:nm;font:500 15px/1.4 var(--mono);color:var(--dir)}
+.proj-row .sm{grid-area:sm;font:13px/1.4 var(--mono);color:var(--fg-2)}
+.proj-row .dt{grid-area:dt;font:12px/1.4 var(--mono);color:var(--fg-3)}
+.proj-row .ar{grid-area:ar;justify-self:end;font:14px/1 var(--mono);color:var(--fg-3);transition:transform .2s,color .15s}
+.proj-row:hover .ar{color:var(--dir);transform:translateX(2px)}
+.panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1)}
+.panel[data-open]{grid-template-rows:1fr}
+.panel>.in{min-height:0;overflow:hidden;visibility:hidden;transition:visibility 0s .3s}
+.panel[data-open]>.in{visibility:visible;transition-delay:0s}
+.detail{display:grid;gap:14px;padding:2px 0 24px 36px}
+.detail p{max-width:58ch;color:var(--fg-2);font-size:15px}
+.mt{font:13px/1.9 var(--mono);color:var(--fg)}
+.mt li{display:flex;gap:10px}
+.mt a{color:var(--dir);border-bottom:1px solid transparent;transition:border-color .15s}
+.mt a:hover{border-color:var(--dir)}
+
+/* stack */
+.grp{margin-bottom:28px}
+.gh{padding-bottom:6px;font:500 13px/1.6 var(--mono);color:var(--dir)}
+.grp li{display:grid;grid-template-columns:44px minmax(0,236px) minmax(0,1fr);align-items:baseline;padding:7px 0;border-top:1px solid var(--line)}
+.grp li:last-child{border-bottom:1px solid var(--line)}
+.pk{font:400 15px/1.5 var(--mono)}
+.what{color:var(--fg-2);font-size:15px}
+.conf{margin-top:56px}
+.conf-h{display:flex;justify-content:space-between;gap:16px;padding-bottom:10px;font:12px/1.4 var(--mono);color:var(--fg-3)}
+.conf-b{border-top:1px solid var(--line);padding-top:6px}
+.conf-b div{display:grid;grid-template-columns:148px 24px minmax(0,1fr);align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line)}
+.conf-b .c{grid-template-columns:1fr;font:13px/1.6 var(--mono);color:var(--fg-3);border-bottom:0}
+.conf-b .key{font:400 14px/1.6 var(--mono)}
+.conf-b .eq{font:14px/1.6 var(--mono);color:var(--fg-3)}
+.conf-b .val{color:var(--fg-2);font-size:15px}
+
+/* learning */
+.tbl{border-top:1px solid var(--line)}
+.tbl-h,.tbl-r{display:grid;grid-template-columns:132px 200px minmax(0,1fr);align-items:baseline;grid-template-areas:"s t n";column-gap:12px}
+.tbl-h{padding:10px 0;font:12px/1.4 var(--mono);color:var(--fg-3);border-bottom:1px solid var(--line)}
+.tbl-r{padding:13px 0;border-bottom:1px solid var(--line)}
+.tbl-r .s{grid-area:s;display:flex;align-items:center;font:13px/1.4 var(--mono);color:var(--fg-2)}
+.tbl-r .t{grid-area:t;font-weight:500}
+.tbl-r .n{grid-area:n;color:var(--fg-2);font-size:15px}
+
+/* lab */
+.lab{border-top:1px solid var(--line)}
+.lab li{display:grid;grid-template-columns:24px 220px minmax(0,1fr) 124px;align-items:baseline;column-gap:12px;padding:14px 0;border-bottom:1px solid var(--line);grid-template-areas:". nm ds sx"}
+.lab .nm{grid-area:nm;font:400 15px/1.5 var(--mono)}
+.lab .nm.d{color:var(--dir);font-weight:500}
+.lab .nm i{font-style:normal;color:var(--fg-3)}
+.lab .ds{grid-area:ds;color:var(--fg-2);font-size:15px}
+.lab .sx{grid-area:sx;display:flex;align-items:center;font:12px/1.5 var(--mono);color:var(--fg-2)}
+
+/* contact */
+.cl{border-top:1px solid var(--line)}
+.cl li{display:grid;grid-template-columns:148px minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cl .k{font:13px/1.6 var(--mono);color:var(--fg-3)}
+.cl .v{font:400 16px/1.5 var(--mono);overflow-wrap:anywhere;user-select:all}
+.act{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;background:none;border:1px solid var(--line-2);border-radius:3px;font:12px/1 var(--mono);color:var(--fg-2);cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.btn:hover{border-color:var(--fg-3);color:var(--fg);background:var(--bg-hover)}
+.btn[data-state="ok"]{border-color:var(--run);color:var(--run)}
+
+.foot{display:flex;flex-wrap:wrap;gap:6px 28px;margin-top:104px;padding-block:20px 48px;border-top:1px solid var(--line);font:12px/1.5 var(--mono);color:var(--fg-3)}
+
+/* mobile chrome (hidden on desktop) */
+.dock,.sheet,.scrim{display:none}
+
+@media (max-width:1079px){
+  :root{--rail:224px}
+  .ls a{grid-template-columns:44px minmax(110px,150px) minmax(0,1fr) 88px}
+  .lab li{grid-template-columns:24px 180px minmax(0,1fr) 112px}
+}
+
+/* ---- phones and narrow windows: dock + sheet replace the rail ---- */
+@media (max-width:859px){
+  .app{display:block}
+  .rail,.crumb-sec,.crumb .sl{display:none}
+  .loc .crumb a{color:var(--fg);font-weight:500}
+  .sec{padding-block:72px 0}
+  .hero{padding-block:40px 0}
+  .foot{padding-bottom:104px}
+
+  .dock{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(16,21,26,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line-2)}
+  .dock-path{min-width:0;font:14px/1 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg-3)}
+  .dock-path b{font-weight:500;color:var(--dir)}
+  .dock-path b.sw{animation:swap .28s ease both}
+  .dock-btn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;background:var(--sel);border:1px solid var(--line-2);border-radius:4px;font:13px/1 var(--mono);color:var(--fg);cursor:pointer}
+  .dock-btn .chev{width:7px;height:7px;border-left:1.5px solid var(--dir);border-top:1.5px solid var(--dir);transform:translateY(2px) rotate(45deg);transition:transform .25s}
+  .dock-btn[aria-expanded="true"] .chev{transform:translateY(-2px) rotate(225deg)}
+
+  .scrim{display:block;position:fixed;inset:0;z-index:50;background:rgba(5,7,9,.62);opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s}
+  .scrim.open{opacity:1;visibility:visible;transition-delay:0s}
+  .sheet{display:block;position:fixed;left:0;right:0;bottom:0;z-index:60;max-height:82vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg-2);border-top:1px solid var(--line-2);border-radius:10px 10px 0 0;padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(102%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.7,.2,1),visibility 0s .3s}
+  .sheet.open{transform:none;visibility:visible;transition-delay:0s}
+  .grab{width:36px;height:4px;margin:10px auto 6px;border-radius:2px;background:var(--line-2)}
+  .sheet-h{display:flex;justify-content:space-between;padding:10px 0 12px;font:13px/1.4 var(--mono);color:var(--fg-3)}
+  .sheet-h b{font-weight:500;color:var(--dir)}
+  .sheet .ls a{padding-block:14px;min-height:60px}
+  .sheet .ls a[aria-current]{background:var(--sel)}
+  .sheet .ls a[aria-current]::before{opacity:1}
+  .sheet .ls .nm.up{color:var(--fg-2)}
+}
+
+@media (max-width:700px){
+  .ls a{grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"br nm ct" ". ds ds";row-gap:2px}
+  .ls .br{grid-area:br}.ls .nm{grid-area:nm}.ls .ct{grid-area:ct}.ls .ds{grid-area:ds;font-size:14px}
+
+  .pl-h{display:none}
+  .proj-row{grid-template-columns:24px minmax(0,1fr) 20px;grid-template-areas:"tw nm ar" ". sm sm" ". dt dt";row-gap:3px;padding:16px 0}
+  .detail{padding-left:36px}
+
+  .grp li{grid-template-columns:44px minmax(0,1fr);row-gap:0}
+  .grp .what{grid-column:2}
+
+  .conf-b div{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .conf-b .eq{display:none}
+  .conf-b .key{color:var(--fg)}
+
+  .tbl-h{display:none}
+  .tbl-r{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t s" "n n";row-gap:2px;padding:14px 0}
+  .tbl-r .s{justify-self:end}
+
+  .lab li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nm sx" "ds ds";row-gap:3px}
+  .lab .nm{overflow-wrap:anywhere}
+
+  .cl li{grid-template-columns:minmax(0,1fr);padding:16px 0}
+  .cl .act .btn{min-height:44px;padding-inline:16px}
+  .kv{--k:96px}
+  .hero .kv{--k:96px}
+  .conf-b .c{padding-top:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="app">
+
+  <!-- desktop rail: the filesystem as navigation -->
+  <aside class="rail">
+    <div class="who">Maziar Heydari</div>
+    <nav class="nav" aria-label="Sections">
+      <a class="root" href="#home" aria-current="location">/maziar</a>
+      <div class="treewrap">
+      <span class="cur" aria-hidden="true"></span>
+      <ul class="tree" id="tree">
+        <li><a href="#about"><span class="br" aria-hidden="true">├──</span>about</a></li>
+        <li><a href="#projects"><span class="br" aria-hidden="true">├──</span>projects</a></li>
+        <li><a href="#stack"><span class="br" aria-hidden="true">├──</span>stack</a></li>
+        <li><a href="#learning"><span class="br" aria-hidden="true">├──</span>learning</a></li>
+        <li><a href="#lab"><span class="br" aria-hidden="true">├──</span>lab</a></li>
+        <li><a href="#contact"><span class="br" aria-hidden="true">└──</span>contact</a></li>
+      </ul>
+      </div>
+    </nav>
+    <div class="mon" aria-hidden="true">
+      <div><span>status</span><b><span class="dot run"></span>available</b></div>
+      <div><span>read</span><b id="pct">0%</b></div>
+      <div class="meter"><i id="meter"></i></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="loc">
+      <nav class="crumb" aria-label="Current location">
+        <a href="#home">/maziar</a><span class="crumb-sec" id="crumb-sec"></span>
+      </nav>
+      <div class="st"><span class="k">status</span><span class="dot run" style="margin-right:8px"></span>available</div>
+    </header>
+
+    <main class="wrap">
+
+      <!-- / -->
+      <section id="home" class="hero">
+        <p class="path" data-in style="--i:0"><span>/</span><b>maziar</b></p>
+        <h1 data-in style="--i:1">Maziar Heydari</h1>
+        <p class="role" data-in style="--i:2">Backend Developer</p>
+        <dl class="kv" data-in style="--i:3">
+          <dt>status</dt><dd><span class="dot run"></span>available</dd>
+          <dt>focus</dt><dd>backend systems</dd>
+          <dt>location</dt><dd><span class="ph">[city, country]</span></dd>
+          <dt>stack</dt><dd>Django / Laravel / Go</dd>
+        </dl>
+
+        <div data-in style="--i:4">
+          <p class="cap"><span>/maziar</span><span>6 entries</span></p>
+          <ul class="ls">
+            <li><a href="#about"><span class="br" aria-hidden="true">├──</span><span class="nm">about/</span><span class="ds">Who I am and what I work on</span><span class="ct">1 note</span></a></li>
+            <li><a href="#projects"><span class="br" aria-hidden="true">├──</span><span class="nm">projects/</span><span class="ds">Selected backend work</span><span class="ct">2 projects</span></a></li>
+            <li><a href="#stack"><span class="br" aria-hidden="true">├──</span><span class="nm">stack/</span><span class="ds">Tools and technologies I use</span><span class="ct">8 tools</span></a></li>
+            <li><a href="#learning"><span class="br" aria-hidden="true">├──</span><span class="nm">learning/</span><span class="ds">What I'm studying right now</span><span class="ct">5 topics</span></a></li>
+            <li><a href="#lab"><span class="br" aria-hidden="true">├──</span><span class="nm">lab/</span><span class="ds">Experiments and unfinished ideas</span><span class="ct">4 entries</span></a></li>
+            <li><a href="#contact"><span class="br" aria-hidden="true">└──</span><span class="nm">contact/</span><span class="ds">How to reach me</span><span class="ct">3 channels</span></a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- /maziar/about -->
+      <section id="about" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>about</b></p>
+          <h2>About</h2>
+        </header>
+        <p class="big">I'm a backend developer. I build APIs and the systems behind them, mostly with Django and Laravel, and I'm currently adding Go.</p>
+        <dl class="kv">
+          <dt>role</dt><dd>Backend Developer</dd>
+          <dt>works with</dt><dd>Django, Django REST Framework, Laravel, PHP, Go</dd>
+          <dt>interested in</dt><dd>APIs, WebSockets, databases, networking, backend architecture</dd>
+          <dt>environment</dt><dd>Linux</dd>
+        </dl>
+      </section>
+
+      <!-- /maziar/projects -->
+      <section id="projects" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>projects</b></p>
+          <h2>Projects</h2>
+          <p class="lede">Each project is a directory. Open one to see what's inside.</p>
+        </header>
+        <div class="pl">
+          <div class="pl-h" aria-hidden="true"><span>name</span><span>stack</span><span>modified</span></div>
+
+          <!-- Replace the dates and the GitHub links with your own. -->
+          <article class="proj">
+            <button class="proj-row" type="button" aria-expanded="true" aria-controls="p-gin">
+              <span class="tw" aria-hidden="true"></span>
+              <span class="nm">gin-auth/</span>
+              <span class="sm">Go · Gin</span>
+              <span class="dt"><span class="ph">2026-06</span></span>
+              <span class="ar" aria-hidden="true">→</span>
+            </button>
+            <div class="panel" id="p-gin" data-open>
+              <div class="in"><div class="detail">
+                <p>An authentication service written in Go with the Gin framework.</p>
+                <ul class="mt">
+                  <li><span class="br" aria-hidden="true">├──</span>Go</li>
+                  <li><span class="br" aria-hidden="true">├──</span>Gin</li>
+                  <li><span class="br" aria-hidden="true">├──</span>Authentication</li>
+                  <li><span class="br" aria-hidden="true">└──</span><a href="https://github.com/your-handle/gin-auth" target="_blank" rel="noopener">→ View project</a></li>
+                </ul>
+              </div></div>
+            </div>
+          </article>
+
+          <article class="proj">
+            <button class="proj-row" type="button" aria-expanded="false" aria-controls="p-port">
+              <span class="tw" aria-hidden="true"></span>
+              <span class="nm">portfolio/</span>
+              <span class="sm">Django · JavaScript</span>
+              <span class="dt">2026-10</span>
+              <span class="ar" aria-hidden="true">→</span>
+            </button>
+            <div class="panel" id="p-port">
+              <div class="in"><div class="detail">
+                <p>A personal portfolio built with Django and JavaScript, with internationalisation (i18n) for multiple languages.</p>
+                <ul class="mt">
+                  <li><span class="br" aria-hidden="true">├──</span>Django</li>
+                  <li><span class="br" aria-hidden="true">├──</span>JavaScript</li>
+                  <li><span class="br" aria-hidden="true">├──</span>i18n</li>
+                  <li><span class="br" aria-hidden="true">└──</span><a href="https://github.com/your-handle/portfolio" target="_blank" rel="noopener">→ View project</a></li>
+                </ul>
+              </div></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- /maziar/stack -> /usr/local/stack -->
+      <section id="stack" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>stack</b><span class="sym">→ /usr/local/stack</span></p>
+          <h2>Stack</h2>
+          <p class="lede">The tools I build with, grouped by what they do.</p>
+        </header>
+
+        <div class="grp">
+          <p class="gh">frameworks/</p>
+          <ul>
+            <li><span class="br" aria-hidden="true">├──</span><span class="pk">django</span><span class="what">Web framework for Python</span></li>
+            <li><span class="br" aria-hidden="true">├──</span><span class="pk">django-rest-framework</span><span class="what">Toolkit for building REST APIs on Django</span></li>
+            <li><span class="br" aria-hidden="true">└──</span><span class="pk">laravel</span><span class="what">Web framework for PHP</span></li>
+          </ul>
+        </div>
+        <div class="grp">
+          <p class="gh">languages/</p>
+          <ul>
+            <li><span class="br" aria-hidden="true">├──</span><span class="pk">php</span><span class="what">Server-side scripting language</span></li>
+            <li><span class="br" aria-hidden="true">└──</span><span class="pk">go</span><span class="what">Compiled language for services and tools</span></li>
+          </ul>
+        </div>
+        <div class="grp">
+          <p class="gh">platform/</p>
+          <ul>
+            <li><span class="br" aria-hidden="true">└──</span><span class="pk">linux</span><span class="what">Operating system and server environment</span></li>
+          </ul>
+        </div>
+        <div class="grp">
+          <p class="gh">data/</p>
+          <ul>
+            <li><span class="br" aria-hidden="true">├──</span><span class="pk">postgresql</span><span class="what">Relational database</span></li>
+            <li><span class="br" aria-hidden="true">└──</span><span class="pk">redis</span><span class="what">In-memory store for caching and queues</span></li>
+          </ul>
+        </div>
+
+        <div class="conf">
+          <p class="conf-h"><span>focus.conf</span><span>areas I spend time on</span></p>
+          <div class="conf-b">
+            <div class="c"># backend focus</div>
+            <div><span class="key">apis</span><span class="eq">=</span><span class="val">REST design, authentication, versioning</span></div>
+            <div><span class="key">websockets</span><span class="eq">=</span><span class="val">real-time features, async consumers</span></div>
+            <div><span class="key">databases</span><span class="eq">=</span><span class="val">schema design, indexing, queries</span></div>
+            <div><span class="key">networking</span><span class="eq">=</span><span class="val">HTTP, DNS, TCP fundamentals</span></div>
+            <div><span class="key">architecture</span><span class="eq">=</span><span class="val">service boundaries, caching, queues</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- /maziar/learning -> /proc/learning -->
+      <section id="learning" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>learning</b><span class="sym">→ /proc/learning</span></p>
+          <h2>Learning</h2>
+          <p class="lede">What I'm working on understanding right now.</p>
+        </header>
+        <div class="tbl">
+          <div class="tbl-h" aria-hidden="true"><span>state</span><span>topic</span><span>notes</span></div>
+          <div class="tbl-r"><span class="s"><span class="dot run"></span>running</span><span class="t">Django Channels</span><span class="n">Real-time features and WebSocket consumers</span></div>
+          <div class="tbl-r"><span class="s"><span class="dot run"></span>running</span><span class="t">Networking</span><span class="n">HTTP, DNS and TCP, and how requests travel</span></div>
+          <div class="tbl-r"><span class="s"><span class="dot run"></span>running</span><span class="t">Linux</span><span class="n">Shell, processes, services and permissions</span></div>
+          <div class="tbl-r"><span class="s"><span class="dot run"></span>running</span><span class="t">Testing</span><span class="n">Reliable tests for APIs and business logic</span></div>
+          <div class="tbl-r"><span class="s"><span class="dot warn"></span>exploring</span><span class="t">Go</span><span class="n">Concurrency and building small services</span></div>
+        </div>
+      </section>
+
+      <!-- /maziar/lab : sample entries, replace with your own experiments -->
+      <section id="lab" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>lab</b></p>
+          <h2>Lab</h2>
+          <p class="lede">Experiments, prototypes and ideas that aren't finished. Things here may be rough.</p>
+        </header>
+        <ul class="lab">
+          <li><span class="nm d">ws-presence/</span><span class="ds">Online presence over WebSockets with Django Channels and Redis</span><span class="sx"><span class="dot act"></span>in progress</span></li>
+          <li><span class="nm">latency-probe<i>.go</i></span><span class="ds">A small Go tool that measures response times across endpoints</span><span class="sx"><span class="dot proto"></span>prototype</span></li>
+          <li><span class="nm">pg-index-notes<i>.md</i></span><span class="ds">Notes on reading query plans and choosing PostgreSQL indexes</span><span class="sx"><span class="dot idle"></span>draft</span></li>
+          <li><span class="nm d">rate-limiter/</span><span class="ds">Token-bucket rate limiting as reusable API middleware</span><span class="sx"><span class="dot idle"></span>idea</span></li>
+        </ul>
+      </section>
+
+      <!-- /maziar/contact : replace the placeholder values -->
+      <section id="contact" class="sec">
+        <header class="sh">
+          <p class="path"><span>/maziar/</span><b>contact</b></p>
+          <h2>Contact</h2>
+          <p class="lede">Currently available for new work. Use whichever channel suits you.</p>
+        </header>
+        <ul class="cl">
+          <li>
+            <span class="k">email</span>
+            <span class="v ph" id="c-email">name@example.com</span>
+            <span class="act">
+              <button class="btn" type="button" data-copy="#c-email">copy</button>
+              <a class="btn" href="mailto:name@example.com">open</a>
+            </span>
+          </li>
+          <li>
+            <span class="k">github</span>
+            <span class="v ph">github.com/your-handle</span>
+            <span class="act"><a class="btn" href="https://github.com/your-handle" target="_blank" rel="noopener">open</a></span>
+          </li>
+          <li>
+            <span class="k">linkedin</span>
+            <span class="v ph">linkedin.com/in/your-handle</span>
+            <span class="act"><a class="btn" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener">open</a></span>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="foot">
+        <span>/maziar</span>
+        <span>© 2026 Maziar Heydari</span>
+        <span>modified 2026-10-09</span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- phone navigation: location dock + directory sheet -->
+<div class="dock">
+  <div class="dock-path" aria-hidden="true"><span>/maziar</span><b id="dock-sec"></b></div>
+  <button class="dock-btn" id="dock-btn" type="button" aria-expanded="false" aria-controls="sheet"><span>browse</span><i class="chev" aria-hidden="true"></i></button>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Browse directories" inert>
+  <div class="grab" aria-hidden="true"></div>
+  <p class="sheet-h"><b>/maziar</b><span>6 entries</span></p>
+  <ul class="ls">
+    <li><a href="#home"><span class="br" aria-hidden="true">..</span><span class="nm up">top</span><span class="ds">Back to the start</span><span class="ct"></span></a></li>
+    <li><a href="#about" data-id="about"><span class="br" aria-hidden="true">├──</span><span class="nm">about/</span><span class="ds">Who I am and what I work on</span><span class="ct">1 note</span></a></li>
+    <li><a href="#projects" data-id="projects"><span class="br" aria-hidden="true">├──</span><span class="nm">projects/</span><span class="ds">Selected backend work</span><span class="ct">2 projects</span></a></li>
+    <li><a href="#stack" data-id="stack"><span class="br" aria-hidden="true">├──</span><span class="nm">stack/</span><span class="ds">Tools and technologies I use</span><span class="ct">8 tools</span></a></li>
+    <li><a href="#learning" data-id="learning"><span class="br" aria-hidden="true">├──</span><span class="nm">learning/</span><span class="ds">What I'm studying right now</span><span class="ct">5 topics</span></a></li>
+    <li><a href="#lab" data-id="lab"><span class="br" aria-hidden="true">├──</span><span class="nm">lab/</span><span class="ds">Experiments and unfinished ideas</span><span class="ct">4 entries</span></a></li>
+    <li><a href="#contact" data-id="contact"><span class="br" aria-hidden="true">└──</span><span class="nm">contact/</span><span class="ds">How to reach me</span><span class="ct">3 channels</span></a></li>
+  </ul>
+</div>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var cursor = $('.cur');
+  var rootLink = $('.root');
+  var treeLinks = $$('#tree a');
+  var sheetLinks = $$('#sheet a[data-id]');
+  var crumb = $('#crumb-sec');
+  var dockSec = $('#dock-sec');
+  var current = null;
+
+  function flash(el) {
+    el.classList.remove('sw');
+    void el.offsetWidth;
+    el.classList.add('sw');
+  }
+
+  function setActive(id) {
+    if (id === current) return;
+    current = id;
+    var isHome = id === 'home';
+
+    treeLinks.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    });
+    if (isHome) rootLink.setAttribute('aria-current', 'location');
+    else rootLink.removeAttribute('aria-current');
+
+    var active = $('#tree a[href="#' + id + '"]');
+    if (active && cursor) {
+      var li = active.parentNode;
+      cursor.style.opacity = '1';
+      cursor.style.height = li.offsetHeight + 'px';
+      cursor.style.transform = 'translateY(' + li.offsetTop + 'px)';
+    } else if (cursor) {
+      cursor.style.opacity = '0';
+    }
+
+    sheetLinks.forEach(function (a) {
+      if (a.getAttribute('data-id') === id) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    });
+
+    crumb.textContent = isHome ? '' : '/' + id;
+    dockSec.textContent = isHome ? '' : '/' + id;
+    if (!isHome) { flash(crumb); flash(dockSec); }
+  }
+
+  // which section is under the reading line
+  var sections = $$('main section[id]');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  // read progress + edges
+  var pct = $('#pct');
+  var meter = $('#meter');
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var doc = document.documentElement;
+      var max = Math.max(1, doc.scrollHeight - window.innerHeight);
+      var p = Math.min(1, Math.max(0, window.pageYOffset / max));
+      if (pct) pct.textContent = Math.round(p * 100) + '%';
+      if (meter) meter.style.transform = 'scaleX(' + p.toFixed(3) + ')';
+      if (window.pageYOffset < 60) setActive('home');
+      else if (window.innerHeight + window.pageYOffset >= doc.scrollHeight - 4) setActive('contact');
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { var c = current; current = null; setActive(c || 'home'); });
+
+  // in-page links scroll smoothly and move the cursor immediately
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    var target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    closeSheet(false);
+    if (id === 'home') window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    else target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    setActive(id);
+  });
+
+  // directory expansion
+  $$('.proj-row').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!panel) return;
+      if (open) panel.removeAttribute('data-open');
+      else panel.setAttribute('data-open', '');
+    });
+  });
+
+  // arrow keys move through the tree and the sheet
+  function rove(container) {
+    if (!container) return;
+    container.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      var links = $$('a', container);
+      var i = links.indexOf(document.activeElement);
+      if (i < 0) return;
+      e.preventDefault();
+      var n = e.key === 'ArrowDown' ? Math.min(links.length - 1, i + 1) : Math.max(0, i - 1);
+      links[n].focus();
+    });
+  }
+  rove($('#tree'));
+  rove($('#sheet'));
+
+  // phone sheet
+  var sheet = $('#sheet');
+  var scrim = $('#scrim');
+  var dockBtn = $('#dock-btn');
+  function openSheet() {
+    sheet.removeAttribute('inert');
+    sheet.classList.add('open');
+    scrim.classList.add('open');
+    dockBtn.setAttribute('aria-expanded', 'true');
+    document.documentElement.style.overflow = 'hidden';
+    var first = $('a[aria-current]', sheet) || $('a', sheet);
+    if (first) setTimeout(function () { try { first.focus({ preventScroll: true }); } catch (err) {} }, 60);
+  }
+  function closeSheet(restore) {
+    if (!sheet.classList.contains('open')) return;
+    sheet.classList.remove('open');
+    scrim.classList.remove('open');
+    sheet.setAttribute('inert', '');
+    dockBtn.setAttribute('aria-expanded', 'false');
+    document.documentElement.style.overflow = '';
+    if (restore) dockBtn.focus();
+  }
+  dockBtn.addEventListener('click', function () {
+    if (sheet.classList.contains('open')) closeSheet(true); else openSheet();
+  });
+  scrim.addEventListener('click', function () { closeSheet(true); });
+  document.addEventListener('keydown', function (e) {
+    if (!sheet.classList.contains('open')) return;
+    if (e.key === 'Escape') { closeSheet(true); return; }
+    if (e.key === 'Tab') {
+      var f = $$('a', sheet);
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  var wide = window.matchMedia('(min-width: 860px)');
+  if (wide.addEventListener) wide.addEventListener('change', function (m) { if (m.matches) closeSheet(false); });
+
+  // copy with feedback
+  function select(el) {
+    var r = document.createRange();
+    r.selectNodeContents(el);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }
+  $$('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = $(btn.getAttribute('data-copy'));
+      if (!el) return;
+      var text = el.textContent.trim();
+      function done(label) {
+        btn.textContent = label;
+        btn.setAttribute('data-state', 'ok');
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () { btn.textContent = 'copy'; btn.removeAttribute('data-state'); }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done('copied'); }, function () { select(el); done('selected'); });
+      } else { select(el); done('selected'); }
+    });
+  });
+
+  setActive('home');
+  onScroll();
+})();
+</script>
+
+</body></html>

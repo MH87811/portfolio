@@ -1,0 +1,1039 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Personal Developer System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  /* Layout: a workspace frame (top bar, rail, stage, status bar). Home is a left-to-right dependency map that grows out of the identity; on phones the same data becomes an expandable tree. */
+  --bg:#0a0b0d;
+  --panel:#0f1013;
+  --raise:#15161a;
+  --line:#1f2126;
+  --line2:#2d3037;
+  --fg:#e9e7e1;
+  --dim:#a3a5ab;
+  --faint:#7b7d84;
+  --accent:#8aa4ff;
+  --accent-dim:rgba(138,164,255,.12);
+  --accent-line:rgba(138,164,255,.5);
+  --sans:'Schibsted Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html{box-sizing:border-box;height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
+ul{list-style:none;margin:0;padding:0}
+dl,dd{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+/* ---------- frame ---------- */
+.shell{height:100%;display:grid;grid-template-columns:212px minmax(0,1fr);grid-template-rows:48px minmax(0,1fr) 30px;grid-template-areas:"top top" "rail stage" "status status"}
+.top{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--bg);min-width:0}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;flex:none}
+.brand svg{width:24px;height:24px;color:var(--fg)}
+.crumbs{display:flex;align-items:center;gap:0;font-family:var(--mono);font-size:12px;color:var(--faint);min-width:0;overflow:hidden;white-space:nowrap}
+.crumbs a:hover{color:var(--fg)}
+.crumbs .cur-seg{color:var(--fg)}
+.crumbs i{font-style:normal;padding:0 1px}
+.live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--dim);flex:none;letter-spacing:.04em}
+.dot{width:6px;height:6px;background:var(--accent);border-radius:50%;position:relative;flex:none}
+.dot::after{content:"";position:absolute;inset:-4px;border:1px solid var(--accent);border-radius:50%;opacity:0;animation:ping 3.4s ease-out infinite}
+@keyframes ping{0%{transform:scale(.4);opacity:.7}70%,100%{transform:scale(1.3);opacity:0}}
+
+.rail{grid-area:rail;border-right:1px solid var(--line);padding:22px 0 16px;display:flex;flex-direction:column;gap:26px;overflow:auto;background:var(--bg)}
+.rail .lbl{padding:0 18px 8px;display:block}
+.rlist a{position:relative;display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:6px;padding:7px 18px;font-family:var(--mono);font-size:13px;color:var(--dim);transition:color .15s,background .15s}
+.rlist a .k{font-size:10.5px;color:var(--faint)}
+.rlist a .rm{font-size:11px;color:var(--faint)}
+.rlist a:hover{color:var(--fg);background:var(--panel)}
+.rlist a.on{color:var(--fg);background:var(--panel)}
+.rlist a::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transition:transform .22s cubic-bezier(.2,.7,.2,1)}
+.rlist a.on::before{transform:scaleY(1)}
+.proc a{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:center;padding:5px 18px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.proc a:hover{color:var(--fg)}
+.proc small{display:block;font-size:10.5px;color:var(--faint);line-height:1.2}
+.rev{margin-top:auto;padding:0 18px;font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.7}
+
+.stage{grid-area:stage;overflow:auto;min-width:0;background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 56px,
+  var(--bg);background-blend-mode:normal;position:relative}
+.stage::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.965;pointer-events:none}
+.stage>*{position:relative}
+.status{grid-area:status;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap;overflow:hidden}
+.status b{font-weight:400;color:var(--dim)}
+.status span{display:flex;gap:18px}
+
+.view{padding:34px clamp(20px,3.4vw,56px) 64px;animation:enter .32s cubic-bezier(.2,.7,.2,1) both}
+@keyframes enter{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.back{display:none}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.04em}
+.vhead{display:grid;gap:12px;margin-bottom:38px;max-width:68ch}
+.vhead h1{font-size:clamp(2rem,3.6vw,3rem);letter-spacing:-.03em;line-height:1.05}
+.vhead .lede{color:var(--dim);font-size:17px}
+
+/* ---------- home map ---------- */
+.home{padding-top:26px}
+.map{position:relative;display:grid;grid-template-columns:minmax(250px,1.25fr) minmax(112px,.5fr) minmax(138px,.62fr) minmax(176px,.8fr);column-gap:clamp(28px,4.4vw,84px);row-gap:6px;align-items:stretch;padding:8px 0 18px}
+.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.edge{fill:none;stroke-width:1;transition:opacity .22s,stroke .22s}
+.edge.h{stroke:var(--line2)}
+.edge.d{stroke:var(--faint);stroke-width:1;stroke-dasharray:2 4;opacity:.38}
+.edge.h.on{stroke:var(--accent)}
+.edge.d.on{stroke:var(--accent);opacity:1;stroke-dasharray:5 5;animation:flow 1.1s linear infinite}
+.edge.off{opacity:.12}
+@keyframes flow{to{stroke-dashoffset:-20}}
+.edge.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,.1,.2,1) forwards;animation-delay:var(--dl,0s)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.edge.d.fade{opacity:0;animation:fadein .8s ease forwards;animation-delay:1.5s}
+@keyframes fadein{to{opacity:.38}}
+
+.rootcol{grid-column:1;align-self:center;position:relative;padding-right:22px;display:grid;gap:18px;justify-items:start}
+.name{display:grid;font-size:clamp(2.7rem,5.4vw,4.6rem);line-height:.9;letter-spacing:-.04em;font-weight:700}
+.role{font-family:var(--mono);font-size:13px;letter-spacing:.24em;color:var(--accent)}
+.sum{color:var(--dim);max-width:34ch;font-size:15.5px}
+.sys{display:grid;gap:0;width:100%;max-width:300px;border-top:1px solid var(--line2)}
+.sys>div{display:grid;grid-template-columns:96px 1fr;padding:7px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.sys dt{color:var(--faint);letter-spacing:.1em}
+.sys dd{color:var(--fg)}
+.cur{display:inline-block;transition:opacity .35s,transform .35s}
+.cur.swap{opacity:0;transform:translateY(4px)}
+.rootlinks{display:flex;gap:18px;font-family:var(--mono);font-size:12.5px}
+.rootlinks a{color:var(--fg);border-bottom:1px solid var(--line2);padding-bottom:2px;transition:border-color .15s,color .15s}
+.rootlinks a:hover{border-color:var(--accent);color:var(--accent)}
+.port{position:absolute;right:0;top:50%;width:7px;height:7px;margin-top:-3.5px;background:var(--bg);border:1px solid var(--accent)}
+
+.node{display:flex;align-items:center;gap:9px;min-width:0;padding:0 11px;background:var(--bg);border:1px solid var(--line2);border-radius:2px;cursor:pointer;text-align:left;transition:border-color .18s,background .18s,opacity .22s,color .18s}
+.node:hover{border-color:var(--faint)}
+.node .sq{flex:none;width:6px;height:6px;border:1px solid var(--faint);transition:background .18s,border-color .18s}
+.node.is-active{border-color:var(--accent);background:var(--accent-dim);color:#fff}
+.node.is-active .sq{background:var(--accent);border-color:var(--accent)}
+.node.dim{opacity:.26}
+.node.tech{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.node.tech span{overflow:hidden;text-overflow:ellipsis}
+.node.dom{flex-direction:column;align-items:flex-start;gap:3px;padding:11px 12px;font-family:var(--mono)}
+.node.dom b{font-weight:500;font-size:11.5px;letter-spacing:.16em}
+.node.dom small{font-size:11px;color:var(--faint)}
+.mods{grid-column:4;display:flex;flex-direction:column;justify-content:space-around;gap:10px}
+.node.mod{flex-direction:row;justify-content:space-between;padding:11px 12px;gap:10px}
+.node.mod .mt{display:grid;gap:2px;min-width:0}
+.node.mod b{font-weight:600;font-size:14px;letter-spacing:.01em}
+.node.mod small{font-family:var(--mono);font-size:11px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.node.mod .sg{flex:none;color:var(--dim)}
+.node.mod.is-active .sg{color:var(--accent)}
+
+.inspect{margin-top:14px;border-top:1px solid var(--line2);display:grid;grid-template-columns:minmax(150px,.7fr) minmax(0,1.5fr) minmax(0,1.2fr);gap:26px;padding:16px 0 0;min-height:132px;align-content:start}
+.inspect h3{font-size:22px;letter-spacing:-.02em;line-height:1.15;margin-top:8px}
+.inspect p{color:var(--dim);font-size:14.5px;max-width:52ch}
+.inspect .rel{display:grid;gap:10px;align-content:start}
+.inspect .rel div{display:grid;gap:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:11.5px;padding:3px 8px;border:1px solid var(--line2);border-radius:2px;background:transparent;color:var(--dim);cursor:pointer;transition:border-color .15s,color .15s}
+.chip:hover{border-color:var(--accent);color:var(--fg)}
+span.chip{cursor:default}
+span.chip:hover{border-color:var(--line2);color:var(--dim)}
+.open{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:12.5px;color:var(--accent);border-bottom:1px solid var(--accent-line);padding-bottom:1px}
+.legend{display:flex;gap:20px;margin-top:10px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.legend li{display:flex;align-items:center;gap:8px}
+.lg{display:inline-block;width:26px;height:0;border-top:1px solid var(--line2)}
+.lg.h{border-top-color:var(--faint)}
+.lg.d{border-top:1px dashed var(--faint)}
+
+.mtree{display:none}
+
+/* reveal on first boot only */
+.boot .reveal{animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*110ms + 100ms)}
+.boot .bnode{animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--c,1)*320ms + var(--r,0)*28ms + 400ms)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- status glyphs ---------- */
+.sg.active circle:first-child{fill:currentColor}
+.glyph{flex:none;color:var(--accent)}
+.glyph.queued{color:var(--faint)}
+.g-spin{transform-origin:10px 10px;animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.g-ring{transform-origin:10px 10px;animation:ring 3.4s ease-out infinite}
+@keyframes ring{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.3);opacity:0}}
+
+/* ---------- about ---------- */
+.glance{display:grid;border-top:1px solid var(--line2);margin-bottom:46px;max-width:880px}
+.glance>div{display:grid;grid-template-columns:120px 1fr auto;gap:18px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line)}
+.glance dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--faint)}
+.glance dd{font-size:16.5px}
+.glance a{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.twocol{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:clamp(28px,5vw,80px);max-width:1080px}
+.prose{display:grid;gap:16px;max-width:60ch;color:var(--dim);font-size:16.5px}
+.principles{display:grid;margin-top:34px;border-top:1px solid var(--line2);max-width:60ch}
+.principles>div{padding:14px 0;border-bottom:1px solid var(--line);display:grid;gap:3px}
+.principles b{font-weight:600;font-size:16px}
+.principles span{color:var(--dim);font-size:14.5px}
+.kv{border-top:1px solid var(--line2);align-self:start}
+.kv>div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12.5px}
+.kv dt{color:var(--faint);letter-spacing:.08em}
+.kv dd{color:var(--fg);overflow-wrap:anywhere}
+
+/* ---------- projects ---------- */
+.plist{display:grid;max-width:1040px;border-top:1px solid var(--line2)}
+.pmod{display:grid;grid-template-columns:minmax(140px,.55fr) minmax(0,2fr);gap:clamp(18px,4vw,56px);padding:26px 0 28px;border-bottom:1px solid var(--line2)}
+.pmeta{display:grid;gap:10px;align-content:start;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.pmeta .path{color:var(--accent);font-size:12.5px}
+.pstatus{display:flex;align-items:center;gap:8px;color:var(--dim)}
+.pbody{display:grid;gap:12px;min-width:0}
+.pbody h2{font-size:clamp(1.6rem,2.6vw,2.2rem);letter-spacing:-.03em;line-height:1.05}
+.pbody .sub{font-family:var(--mono);font-size:12.5px;color:var(--dim);display:flex;gap:12px;flex-wrap:wrap}
+.pbody .sub i{font-style:normal;color:var(--faint)}
+.pbody p{color:var(--dim);max-width:60ch}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;padding:7px 11px;border:1px solid var(--line2);border-radius:2px;color:var(--fg);background:transparent;cursor:pointer;transition:border-color .15s,background .15s,color .15s;display:inline-block}
+.btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.btn.ext::after{content:" ↗";color:var(--faint)}
+
+/* ---------- case study ---------- */
+.chead{display:grid;gap:10px;margin-bottom:34px}
+.chead h1{font-size:clamp(2.4rem,5.5vw,4.4rem);letter-spacing:-.04em;line-height:.95;font-weight:700}
+.cmeta{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.cbody{display:grid;grid-template-columns:168px minmax(0,1fr);gap:clamp(24px,4vw,64px);max-width:1040px;align-items:start}
+.cidx{position:sticky;top:20px;display:grid;gap:0;border-left:1px solid var(--line2);font-family:var(--mono);font-size:12px}
+.cidx button{background:none;border:0;text-align:left;padding:6px 14px;color:var(--faint);cursor:pointer;position:relative;transition:color .15s}
+.cidx button:hover{color:var(--fg)}
+.cidx button.on{color:var(--fg)}
+.cidx button.on::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:2px;background:var(--accent)}
+.csec{padding-bottom:44px;display:grid;gap:16px;scroll-margin-top:20px;min-width:0}
+.csec>.lbl{display:flex;gap:10px;align-items:center}
+.csec>.lbl::after{content:"";flex:1;border-top:1px solid var(--line)}
+.csec p{color:var(--dim);font-size:16.5px;max-width:62ch}
+.arch{display:grid;margin-top:4px}
+.tier{display:grid;grid-template-columns:116px minmax(0,1fr);gap:16px}
+.tier+.tier{margin-top:24px}
+.tlabel{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--faint);padding-top:11px}
+.tnodes{display:flex;flex-wrap:wrap;gap:8px;position:relative}
+.tier+.tier .tnodes::before{content:"";position:absolute;left:26px;top:-24px;height:24px;border-left:1px solid var(--accent-line)}
+.tier+.tier .tnodes::after{content:"";position:absolute;left:22.5px;top:-6px;border:4px solid transparent;border-top:5px solid var(--accent-line);border-bottom:0}
+.anode{display:grid;gap:2px;padding:10px 13px;border:1px solid var(--line2);border-radius:2px;min-width:0;background:var(--bg)}
+.anode b{font-weight:500;font-size:14px}
+.anode span{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.anode.side{border-style:dashed}
+.techlist li,.adr,.chal{display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
+.techlist{border-top:1px solid var(--line)}
+.techlist a,.techlist b{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--fg)}
+.techlist a:hover{color:var(--accent)}
+.techlist span{color:var(--dim);font-size:14.5px}
+.adrs,.chals{display:grid;border-top:1px solid var(--line)}
+.adr,.chal{padding:16px 0}
+.adr .id,.chal .id{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.adr h3,.chal h3{font-size:16.5px;margin-bottom:6px}
+.adr p,.chal p{font-size:15px}
+.adr .tr{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px;max-width:62ch}
+.repo{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;padding:14px;border:1px solid var(--line2);border-radius:2px;max-width:520px}
+.repo span{overflow-wrap:anywhere;flex:1;min-width:0}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1040px;margin-top:8px;border-top:1px solid var(--line2);padding-top:18px}
+.pn a{display:grid;gap:3px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.pn a b{font-family:var(--sans);font-size:17px;color:var(--fg);font-weight:600;letter-spacing:-.01em}
+.pn a:hover b{color:var(--accent)}
+.pn a:last-child{text-align:right}
+
+/* ---------- stack ---------- */
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px clamp(28px,5vw,72px);max-width:1120px}
+.sdom h2{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.16em;padding-bottom:10px;border-bottom:1px solid var(--line2)}
+.sdom h2 small{font-size:11px;color:var(--faint);letter-spacing:.04em}
+.sdom .sdesc{font-size:13.5px;color:var(--faint);padding:10px 0 4px}
+.srow{display:grid;gap:3px;padding:11px 10px 11px 12px;margin:0 -12px;border-bottom:1px solid var(--line);position:relative;transition:background .15s,opacity .2s}
+.srow .hd{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.srow b{font-family:var(--mono);font-weight:500;font-size:14px}
+.srow .role{color:var(--dim);font-size:14px}
+.srow .dep{font-family:var(--mono);font-size:11.5px;color:var(--faint);display:flex;flex-wrap:wrap;gap:4px 16px}
+.srow .dep a{color:var(--dim);border-bottom:1px solid var(--line2)}
+.srow .dep a:hover{color:var(--accent);border-color:var(--accent)}
+.srow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity .15s}
+.sgrid.focus .srow{opacity:.35}
+.sgrid.focus .srow.rel,.sgrid.focus .srow.self{opacity:1}
+.srow.self{background:var(--panel)}
+.srow.self::before,.srow.rel::before{opacity:1}
+.srow.rel::before{opacity:.45}
+
+/* ---------- learning ---------- */
+.states{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--line2);margin-bottom:34px;max-width:1040px}
+.states>div{display:grid;grid-template-columns:20px 1fr;column-gap:10px;padding:12px 14px 12px 0;font-family:var(--mono);font-size:12px}
+.states b{font-weight:500;letter-spacing:.1em}
+.states small{grid-column:2;color:var(--faint);font-size:11.5px;line-height:1.4;margin-top:2px}
+.lgroup{max-width:1040px;margin-bottom:34px}
+.lgroup>.lbl{display:block;padding-bottom:10px;border-bottom:1px solid var(--line2)}
+.lrow{display:grid;grid-template-columns:20px minmax(150px,.7fr) 110px minmax(0,1.6fr);gap:18px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.lrow .ln{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.lrow .ls{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--accent)}
+.lrow.queued .ls,.lrow.queued .ln{color:var(--faint)}
+.lrow p{color:var(--dim);font-size:14.5px}
+.lrow .chips{margin-top:8px}
+
+/* ---------- lab ---------- */
+.labnote{display:flex;flex-wrap:wrap;gap:8px 28px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:26px}
+.labnote b{color:var(--fg);font-weight:500}
+.lablist{max-width:1040px;border-top:1px solid var(--line2)}
+.entry{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(0,2fr) 130px;gap:clamp(16px,3vw,40px);padding:20px 0;border-bottom:1px solid var(--line);align-items:start}
+.entry .fn{font-family:var(--mono);font-size:13px;color:var(--fg);overflow-wrap:anywhere}
+.entry .kind{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--faint);margin-top:4px}
+.entry h3{font-size:18px;letter-spacing:-.015em;margin-bottom:6px}
+.entry p{color:var(--dim);font-size:14.5px;max-width:60ch}
+.entry .chips{margin-top:10px}
+.entry .est{font-family:var(--mono);font-size:11.5px;display:flex;gap:8px;align-items:center;color:var(--dim);justify-content:flex-end}
+.entry.queued .est{color:var(--faint)}
+.entry.reserved{opacity:.7;border-style:dashed}
+.entry.reserved .fn{color:var(--faint)}
+.entry.reserved h3{color:var(--faint);font-weight:500}
+
+/* ---------- contact ---------- */
+.eps{max-width:860px;border-top:1px solid var(--line2)}
+.ep{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:18px;align-items:center;padding:22px 0;border-bottom:1px solid var(--line2)}
+.ep h2{font-size:22px;letter-spacing:-.02em}
+.ep .chan{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--faint);margin-top:2px}
+.ep .addr{font-family:var(--mono);font-size:15px;overflow-wrap:anywhere;user-select:all}
+.ep .acts{margin:0;justify-content:flex-end}
+.reach{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:26px}
+
+/* ---------- mobile tree ---------- */
+.tree{margin-top:26px}
+.tree>li{position:relative;padding-left:30px}
+.tree>li::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:1px solid var(--line2)}
+.tree>li:last-child::before{bottom:auto;height:26px}
+.tree>li::after{content:"";position:absolute;left:0;top:26px;width:20px;border-top:1px solid var(--line2)}
+.tbtn{width:100%;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;padding:12px 0;background:none;border:0;text-align:left;cursor:pointer;min-height:52px}
+.tbtn .tn{font-family:var(--mono);font-size:14px;letter-spacing:.14em;font-weight:500}
+.tbtn .tm{grid-column:1;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.chev{grid-column:2;grid-row:1/3;width:9px;height:9px;border-right:1.5px solid var(--dim);border-bottom:1.5px solid var(--dim);transform:rotate(45deg);transition:transform .25s;margin-right:4px}
+.tree>li.open .chev{transform:rotate(225deg)}
+.tree>li.open>.tbtn .tn{color:var(--accent)}
+.tbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.2,.7,.2,1)}
+.tree>li.open>.tbody{grid-template-rows:1fr}
+.tin{overflow:hidden;min-height:0}
+.tin>div{padding:2px 0 20px;display:grid;gap:10px}
+.tin p{color:var(--dim);font-size:15px}
+.tin .row{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.tin .row small{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.tin .row.p2{grid-template-columns:1fr auto}
+.tin dl{display:grid;gap:8px;font-family:var(--mono);font-size:12px}
+.tin dt{color:var(--faint);letter-spacing:.1em}
+.tin dd{color:var(--fg);line-height:1.6}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  .inspect{grid-template-columns:1fr 1fr}
+  .inspect>:first-child{grid-column:1/-1}
+  .states{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 0}
+}
+@media (max-width:900px){
+  html,body{height:auto}
+  .shell{display:block;height:auto;min-height:100%}
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;height:48px;padding:0 16px}
+  .live{display:none}
+  .crumbs{flex:1;justify-content:flex-end}
+  .rail{position:sticky;top:calc(48px + env(safe-area-inset-top,0px));z-index:4;flex-direction:row;padding:0;gap:0;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;overflow-y:hidden}
+  .rail .lbl,.proc,.rev{display:none}
+  .rlist{display:flex}
+  .rlist a{display:flex;gap:0;padding:12px 16px;white-space:nowrap;flex:none}
+  .rlist a .k,.rlist a .rm{display:none}
+  .rlist a::before{left:0;right:0;top:auto;bottom:0;width:auto;height:2px;transform:scaleX(0)}
+  .rlist a.on::before{transform:scaleX(1)}
+  .shell[data-view="home"] .rail{display:none}
+  .stage{overflow:visible;background:var(--bg)}
+  .stage::before{display:none}
+  .status{display:none}
+  .view{padding:24px 16px 56px}
+  .back{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:22px}
+  .mapwrap{display:none}
+  .mtree{display:block}
+  .home{padding-top:28px}
+  .name{font-size:clamp(2.6rem,15vw,4rem)}
+  .glance>div{grid-template-columns:1fr;gap:2px}
+  .twocol{grid-template-columns:1fr}
+  .pmod{grid-template-columns:1fr;gap:14px}
+  .cbody{grid-template-columns:1fr}
+  .cidx{position:static;display:flex;overflow-x:auto;border-left:0;border-bottom:1px solid var(--line2);margin-bottom:26px}
+  .cidx button{padding:8px 12px;white-space:nowrap;flex:none}
+  .cidx button.on::before{left:0;right:0;top:auto;bottom:-1px;width:auto;height:2px}
+  .tier{grid-template-columns:1fr;gap:8px}
+  .tlabel{padding-top:0}
+  .tier+.tier .tnodes::before{left:14px}
+  .tier+.tier .tnodes::after{left:10.5px}
+  .techlist li,.adr,.chal{grid-template-columns:1fr;gap:4px}
+  .sgrid{grid-template-columns:1fr}
+  .lrow{grid-template-columns:20px 1fr;gap:4px 14px}
+  .lrow>:nth-child(3){grid-column:2}
+  .lrow>:nth-child(4){grid-column:2}
+  .entry{grid-template-columns:1fr;gap:10px}
+  .entry .est{justify-content:flex-start}
+  .ep{grid-template-columns:1fr;gap:8px}
+  .ep .acts{justify-content:flex-start}
+  .states{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="shell" id="shell" data-view="home">
+  <header class="top">
+    <a class="brand" href="#home" aria-label="Maziar system, home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h6M11 12V6.5h7M11 12v5.5h7" fill="none" stroke="currentColor" stroke-width="1"/><rect x="2" y="10" width="4" height="4" fill="#8aa4ff"/><rect x="18" y="5" width="3.5" height="3" fill="currentColor"/><rect x="18" y="16" width="3.5" height="3" fill="currentColor"/></svg>
+      <span>MAZIAR</span>
+    </a>
+    <nav class="crumbs" id="crumbs" aria-label="Location"></nav>
+    <div class="live"><i class="dot"></i><span id="avail"></span></div>
+  </header>
+  <nav class="rail" id="rail" aria-label="System"></nav>
+  <main class="stage" id="stage" tabindex="-1"></main>
+  <footer class="status" id="status"></footer>
+</div>
+
+<script>
+/* ============ CONFIG (replace the placeholders) ============ */
+var CONFIG = {
+  email: 'maziar@example.com',
+  github: 'https://github.com/maziarheydari',
+  linkedin: 'https://www.linkedin.com/in/maziarheydari/',
+  availability: 'open to backend roles',
+  rev: '2026.10'
+};
+
+/* ============ CONTENT AS DATA ============ */
+var DOMAINS = {
+  backend:{n:'BACKEND', r:'Frameworks for building APIs and web back ends.'},
+  languages:{n:'LANGUAGES', r:'What the code is written in.'},
+  systems:{n:'SYSTEMS', r:'The layer below the framework: operating system, network and protocols.'},
+  data:{n:'DATA', r:'Where state lives.'},
+  tools:{n:'TOOLS', r:'How code is versioned, packaged and served.'}
+};
+var STACK_ORDER = ['backend','languages','systems','data','tools'];
+var GRAPH_ORDER = ['backend','systems','data','tools'];
+
+/* d: stack group, g: group on the home map (if shown there) */
+var TECH = {
+  django:{n:'Django', d:'backend', g:'backend', r:'Full-featured Python framework: ORM, migrations, auth and admin out of the box.', needs:['python']},
+  drf:{n:'DRF', d:'backend', g:'backend', r:'Django REST Framework. Serializers, viewsets, permissions and throttling for APIs.', needs:['django']},
+  laravel:{n:'Laravel', d:'backend', g:'backend', r:'PHP framework with Eloquent, queues and a conventional structure.', needs:['php']},
+  gin:{n:'Gin', d:'backend', r:'Minimal HTTP framework for Go. Routing and middleware without much else.', needs:['go']},
+  python:{n:'Python', d:'languages', r:'Language behind Django and DRF. Services, scripts and tooling.', needs:[]},
+  php:{n:'PHP', d:'languages', r:'Language behind Laravel applications.', needs:[]},
+  go:{n:'Go', d:'languages', g:'backend', r:'Compiled language for small, fast services. Used with Gin for HTTP.', needs:[]},
+  javascript:{n:'JavaScript', d:'languages', r:'Front-end behavior and small tools.', needs:[]},
+  linux:{n:'Linux', d:'systems', g:'systems', r:'Where the code runs: processes, permissions, services, logs and the shell.', needs:[]},
+  networking:{n:'Networking', d:'systems', g:'systems', r:'TCP/IP, DNS, HTTP, TLS and proxies. The path a request takes before it reaches code.', needs:[]},
+  websockets:{n:'WebSockets', d:'systems', g:'systems', r:'Long-lived connections for live data: lifecycle, fan-out and slow clients.', needs:['networking']},
+  apis:{n:'APIs', d:'systems', g:'systems', r:'REST design, versioning, authentication, pagination and error contracts.', needs:['networking']},
+  postgresql:{n:'PostgreSQL', d:'data', g:'data', r:'Primary relational database. Constraints, indexes and query plans.', needs:[]},
+  mysql:{n:'MySQL', d:'data', g:'data', r:'Relational database common in Laravel projects.', needs:[]},
+  redis:{n:'Redis', d:'data', g:'data', r:'In-memory store for caches, token state and channel layers.', needs:[]},
+  git:{n:'Git', d:'tools', g:'tools', r:'Version control and the unit of every change.', needs:[]},
+  docker:{n:'Docker', d:'tools', g:'tools', r:'Reproducible environments for services and their dependencies.', needs:['linux']},
+  nginx:{n:'Nginx', d:'tools', g:'tools', r:'Reverse proxy and static server in front of application processes.', needs:['linux','networking']}
+};
+
+var PROJ = [
+  {
+    id:'gin-auth', name:'GIN-AUTH', lang:'Go / Gin', kind:'Authentication System', status:'completed',
+    desc:'Token-based authentication service in Go. Registration, login, refresh and logout behind a small HTTP API.',
+    uses:['go','gin','apis','postgresql','redis','docker','git'],
+    repo:'https://github.com/maziarheydari/gin-auth',
+    overview:[
+      'Gin-Auth is an authentication service written in Go. It handles registration, login, token refresh and logout behind a small HTTP API, so other services can depend on one place for identity.',
+      'The goal was a codebase that reads end to end: one route, one handler, one service function, one query.'
+    ],
+    arch:[
+      {l:'CLIENT', n:[{t:'Web or mobile client', s:'HTTPS + JSON'}]},
+      {l:'EDGE', n:[{t:'Gin router', s:'versioned routes'}]},
+      {l:'MIDDLEWARE', n:[{t:'Request ID', s:'trace every call'},{t:'Rate limit', s:'before auth'},{t:'Token check', s:'verify access token'}]},
+      {l:'HANDLERS', n:[{t:'register', s:'POST'},{t:'login', s:'POST'},{t:'refresh', s:'POST'},{t:'logout', s:'POST'}]},
+      {l:'SERVICES', n:[{t:'Auth service', s:'credentials and rules'},{t:'Token service', s:'issue, rotate, revoke'}]},
+      {l:'STORAGE', n:[{t:'PostgreSQL', s:'users'},{t:'Redis', s:'refresh tokens, revocation', side:true}]}
+    ],
+    extras:[['JWT','signed, short-lived access tokens'],['bcrypt','adaptive password hashing']],
+    decisions:[
+      {t:'Short-lived access tokens with rotating refresh tokens', w:'A leaked access token expires quickly, and sessions can still be revoked on the server.', x:'One extra round trip when an access token expires.'},
+      {t:'Passwords hashed with bcrypt', w:'An adaptive cost keeps brute force expensive as hardware improves.', x:'Hashing is deliberately slow, so login latency is dominated by it.'},
+      {t:'Thin handlers, rules in services', w:'Business logic can be tested without starting an HTTP server.', x:'More files for a small codebase.'},
+      {t:'Revocation state in Redis', w:'The check runs on every request, and entries can expire together with the token.', x:'A second datastore to run and monitor.'}
+    ],
+    challenges:[
+      {p:'Detecting refresh token reuse', r:'Refresh tokens rotate on every use. Presenting one that was already used invalidates the whole token family.'},
+      {p:'Middleware order', r:'Rate limiting runs before token verification so unauthenticated floods are cheap to reject. Tests pin the order.'},
+      {p:'A consistent error contract', r:'Every failure returns the same JSON shape and a stable error code, so clients never parse messages.'}
+    ]
+  },
+  {
+    id:'channels-pulse', name:'CHANNELS-PULSE', lang:'Django / Channels', kind:'Realtime Event Service', status:'prototype',
+    desc:'Prototype that pushes events to browsers over WebSockets. A DRF endpoint accepts events and Channels fans them out through Redis.',
+    uses:['python','django','drf','websockets','redis','postgresql'],
+    repo:'https://github.com/maziarheydari/channels-pulse',
+    overview:[
+      'Channels-Pulse explores how a Django back end can push events to connected browsers. A DRF endpoint accepts an event, stores it, and Django Channels delivers it to every subscribed client.',
+      'It exists to find out where a WebSocket service first becomes hard: connection count, slow clients and reconnects.'
+    ],
+    arch:[
+      {l:'CLIENT', n:[{t:'Browser', s:'WebSocket'}]},
+      {l:'SERVER', n:[{t:'ASGI server', s:'HTTP and WebSocket'}]},
+      {l:'CONSUMERS', n:[{t:'Channels consumer', s:'auth on connect'}]},
+      {l:'CHANNEL LAYER', n:[{t:'Redis', s:'groups shared across workers', side:true}]},
+      {l:'API', n:[{t:'DRF endpoint', s:'accepts events'}]},
+      {l:'STORAGE', n:[{t:'PostgreSQL', s:'event log'}]}
+    ],
+    extras:[['Django Channels','consumers and channel layers']],
+    decisions:[
+      {t:'Authenticate during the handshake', w:'An unauthenticated socket is rejected before it holds a connection open.', x:'The token has to travel with the connection request.'},
+      {t:'Redis as the channel layer', w:'Several ASGI workers can share the same groups.', x:'Messages in the layer are not durable, so the event log is the source of truth.'}
+    ],
+    challenges:[
+      {p:'Reconnects', r:'Clients send the last event id they saw, and the server replays the gap from the event log.'},
+      {p:'Slow consumers', r:'Each connection has a bounded send queue. Clients that fall behind are disconnected instead of stalling the group.'}
+    ]
+  },
+  {
+    id:'maziar-system', name:'MAZIAR-SYSTEM', lang:'HTML / CSS / JavaScript', kind:'Personal Developer System', status:'active',
+    desc:'This site. A portfolio built as a small software system, with technologies and projects drawn as a dependency graph.',
+    uses:['javascript','git'],
+    repo:'https://github.com/maziarheydari/maziar-system',
+    overview:[
+      'A portfolio designed as a system instead of a page. Every section is a module, and the relationships between technologies and projects are drawn as a graph instead of listed.',
+      'It ships as a single page with no framework and no build step. Content lives as data, so a new project or lab entry is one object.'
+    ],
+    arch:[
+      {l:'DATA', n:[{t:'Content objects', s:'projects, stack, learning, lab'}]},
+      {l:'ROUTER', n:[{t:'Hash routes', s:'one URL per module'}]},
+      {l:'VIEWS', n:[{t:'Map',s:'home'},{t:'Projects',s:'case studies'},{t:'Stack',s:'index'},{t:'Learning',s:'states'},{t:'Lab',s:'entries'}]},
+      {l:'RENDER', n:[{t:'HTML nodes', s:'text stays crisp'},{t:'SVG edges', s:'measured from the DOM', side:true}]}
+    ],
+    extras:[],
+    decisions:[
+      {t:'Content as data', w:'Adding a project does not touch layout code.', x:'No editing interface. Changes go through the source.'},
+      {t:'Edges measured from the DOM', w:'Text stays real HTML and layout stays in CSS. Lines follow wherever the nodes land.', x:'Edges are recomputed on resize.'},
+      {t:'A separate layout for phones', w:'A graph does not fit a narrow screen, so the same data renders as an expandable tree.', x:'Two presentations of one data set to maintain.'}
+    ],
+    challenges:[
+      {p:'Keeping the graph legible', r:'Hierarchy uses solid elbows, dependencies use thin dashed curves, and everything unrelated to the focused node dims.'},
+      {p:'Working without a mouse', r:'Nodes are buttons, and keyboard focus traces connections the same way hover does.'}
+    ]
+  }
+];
+
+var LEARN = [
+  {id:'networking', n:'Networking', s:'exploring', note:'Following a request through DNS, TCP, TLS and the proxy in front of the app.', t:['networking','linux']},
+  {id:'testing', n:'Testing', s:'learning', note:'Test structure for Django and DRF: fixtures, factories and what to leave to integration tests.', t:['django','drf']},
+  {id:'go', n:'Go', s:'developing', note:'Building services with Gin. Concurrency, error handling and project layout.', t:['go','gin']},
+  {id:'system-design', n:'System design', s:'studying', note:'Caching, queues, consistency and how services fail under load.', t:['apis','redis','postgresql']},
+  {id:'observability', n:'Observability', s:'queued', note:'Structured logs, metrics and tracing for the services above.', t:[]},
+  {id:'queues', n:'Message queues', s:'queued', note:'Background work beyond what a Redis list can reasonably carry.', t:['redis']}
+];
+var STATE_DEF = {
+  exploring:'first look, broad and curious',
+  learning:'structured, working through material',
+  studying:'deep reading, theory and trade-offs',
+  developing:'building real things with it'
+};
+var LEARN_LINKS = ['networking','go','django','apis'];
+
+var LAB = [
+  {id:'rate-limiting-in-go', kind:'EXPERIMENT', s:'in progress', t:'Rate limiting in Go', d:'Token bucket against sliding window as a Gin middleware, measured under bursty traffic.', tags:['go','apis','redis']},
+  {id:'websocket-fanout', kind:'PROTOTYPE', s:'in progress', t:'WebSocket fan-out', d:'Broadcasting events to many Channels consumers through a Redis channel layer. Where does it saturate first?', tags:['django','websockets','redis']},
+  {id:'anatomy-of-a-request', kind:'NOTE', s:'queued', t:'Anatomy of a request', d:'Following one HTTP request from DNS lookup to the database row, using curl, tcpdump and nginx logs.', tags:['networking','linux','nginx']},
+  {id:'safe-migrations', kind:'NOTE', s:'queued', t:'Safe migrations', d:'Running Django migrations against a live PostgreSQL table without blocking writes.', tags:['django','postgresql']}
+];
+var LAB_LINKS = ['linux','networking','websockets','redis','go'];
+
+var ABOUT = {
+  lede:'Backend developer. I build the part of an application that has to be right: data models, APIs, authentication, and the services that keep them running.',
+  body:[
+    'My main tools are Django and Django REST Framework, Laravel, and Go. I work on Linux and spend as much time on the layer below the framework (processes, networks, databases) as on the framework itself, because that is where most production problems start.',
+    'I prefer small interfaces, explicit data models, and failures that are visible instead of silent. Right now I am studying networking and system design, building in Go, and writing up experiments in the lab.'
+  ],
+  principles:[
+    ['Make failure visible','Errors should be loud, specific and traceable to a cause.'],
+    ['Keep the data model boring','Clear tables and constraints outlast clever abstractions.'],
+    ['Understand the layer below','Frameworks change. Sockets, processes and SQL change much less.']
+  ]
+};
+
+/* ============ HELPERS ============ */
+var $ = function(s, r){ return (r||document).querySelector(s); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+var projById = function(id){ return PROJ.filter(function(p){return p.id===id;})[0]; };
+var host = function(u){ return u.replace(/^https?:\/\//,'').replace(/\/$/,''); };
+
+function glyph(s){
+  var c = {
+    exploring:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 3.2" class="g-spin"/>',
+    learning:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/>',
+    studying:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+    developing:'<circle cx="10" cy="10" r="7" class="g-ring" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="10" cy="10" r="3.6" fill="currentColor"/>',
+    queued:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-opacity=".6"/>'
+  };
+  return '<svg class="glyph '+s+'" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">'+c[s]+'</svg>';
+}
+function stat(s){
+  var c = {
+    completed:'<rect x="2" y="2" width="8" height="8" fill="currentColor"/>',
+    active:'<circle cx="6" cy="6" r="2.6" fill="currentColor"/><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1"/>',
+    prototype:'<rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.6"/>'
+  };
+  return '<svg class="sg '+s+'" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">'+c[s]+'</svg>';
+}
+function chips(ids, pin){
+  return '<span class="chips">'+ids.map(function(id){
+    var t = TECH[id]; if(!t) return '';
+    if(pin && t.g) return '<button class="chip" data-pin="'+id+'">'+t.n+'</button>';
+    return '<span class="chip">'+t.n+'</span>';
+  }).join('')+'</span>';
+}
+function activeLearn(){ return LEARN.filter(function(l){return l.s!=='queued';}); }
+function usedIn(id){ return PROJ.filter(function(p){return p.uses.indexOf(id)>-1;}); }
+
+/* ============ SHELL: rail, crumbs, status ============ */
+var NAV = [
+  ['home','/'],['about','about/'],['projects','projects/',PROJ.length],['stack','stack/',Object.keys(TECH).length],
+  ['learning','learning/',LEARN.length],['lab','lab/',LAB.length],['contact','contact/',3]
+];
+function buildRail(){
+  var h = '<div><span class="lbl">/maziar</span><div class="rlist">';
+  NAV.forEach(function(n,i){
+    h += '<a href="#'+n[0]+'" data-v="'+n[0]+'"><span class="k">'+i+'</span><span class="rn">'+n[1]+'</span><span class="rm">'+(n[2]?pad(n[2]):'')+'</span></a>';
+  });
+  h += '</div></div><div class="proc"><span class="lbl">active processes</span>';
+  activeLearn().forEach(function(l){
+    h += '<a href="#learning">'+glyph(l.s)+'<span>'+l.n.toLowerCase()+'<small>'+l.s+'</small></span></a>';
+  });
+  h += '</div><div class="rev">rev '+CONFIG.rev+'<br>keys 0 to 6</div>';
+  $('#rail').innerHTML = h;
+}
+
+function setChrome(r){
+  var view = r.v === 'project' ? 'projects' : r.v;
+  $('#shell').setAttribute('data-view', r.v === 'home' ? 'home' : view);
+  $$('.rlist a').forEach(function(a){ a.classList.toggle('on', a.dataset.v === (r.v==='project'?'projects':r.v)); });
+  var segs = [['maziar','#home']];
+  if(r.v !== 'home') segs.push([view, '#'+view]);
+  if(r.v === 'project') segs.push([r.p.id, '#'+r.p.id]);
+  $('#crumbs').innerHTML = segs.map(function(s,i){
+    var last = i === segs.length-1;
+    return '<i>/</i>' + (last ? '<span class="cur-seg">'+s[0]+'</span>' : '<a href="'+s[1]+'">'+s[0]+'</a>');
+  }).join('');
+  var path = '/' + segs.map(function(s){return s[0];}).join('/');
+  $('#status').innerHTML = '<span><b>'+path+'</b></span><span><span>FOCUS <b>reliable systems</b></span><span>CURRENTLY <b class="cur">learning</b></span></span>';
+  document.title = 'Personal Developer System';
+}
+
+/* ============ ROUTER ============ */
+var VIEWS = ['about','projects','stack','learning','lab','contact'];
+function route(){
+  var h = (location.hash||'').slice(1);
+  if(VIEWS.indexOf(h) > -1) return {v:h};
+  var p = projById(h); if(p) return {v:'project', p:p};
+  return {v:'home'};
+}
+var booted = false;
+function render(){
+  var r = route();
+  var stage = $('#stage');
+  var html = ({home:viewHome, about:viewAbout, projects:viewProjects, stack:viewStack, learning:viewLearning, lab:viewLab, contact:viewContact, project:function(){return viewProject(r.p);}})[r.v]();
+  stage.innerHTML = html;
+  setChrome(r);
+  stage.scrollTop = 0; window.scrollTo(0,0);
+  if(r.v === 'home') initMap();
+  if(r.v === 'project') initCase();
+  if(r.v === 'stack') initStack();
+  booted = true;
+}
+window.addEventListener('hashchange', render);
+
+/* ============ VIEWS ============ */
+function head(path, title, lede){
+  return '<a class="back" href="#home">‹ /maziar</a><header class="vhead"><p class="eyebrow">'+path+'</p><h1>'+title+'</h1>'+(lede?'<p class="lede">'+lede+'</p>':'')+'</header>';
+}
+
+/* ----- home ----- */
+var MAP = {rows:'', total:0};
+function viewHome(){
+  var boot = !booted;
+  var rows = [], row = 1, nodes = '';
+  GRAPH_ORDER.forEach(function(g, gi){
+    var ids = Object.keys(TECH).filter(function(k){return TECH[k].g===g;});
+    var start = row;
+    ids.forEach(function(id){
+      nodes += '<button class="node tech'+(boot?' bnode':'')+'" style="grid-column:3;grid-row:'+row+';--c:3;--r:'+row+'" data-id="'+id+'"><i class="sq"></i><span>'+TECH[id].n+'</span></button>';
+      rows.push('32px'); row++;
+    });
+    nodes += '<button class="node dom'+(boot?' bnode':'')+'" style="grid-column:2;grid-row:'+start+'/'+row+';align-self:center;--c:2;--r:'+start+'" data-id="dom:'+g+'"><b>'+DOMAINS[g].n+'</b><small>'+pad(ids.length)+' components</small></button>';
+    if(gi < GRAPH_ORDER.length-1){ rows.push('10px'); row++; }
+  });
+  var mods = PROJ.map(function(p, i){
+    return '<button class="node mod'+(boot?' bnode':'')+'" style="--c:4;--r:'+(i*4)+'" data-id="m:'+p.id+'"><span class="mt"><b>'+p.name+'</b><small>'+p.lang+'</small></span>'+stat(p.status)+'</button>';
+  }).join('') +
+  '<button class="node mod'+(boot?' bnode':'')+'" style="--c:4;--r:14" data-id="m:learning"><span class="mt"><b>LEARNING</b><small>'+activeLearn().length+' active</small></span>'+glyph('developing').replace('width="20" height="20"','width="14" height="14"')+'</button>' +
+  '<button class="node mod'+(boot?' bnode':'')+'" style="--c:4;--r:16" data-id="m:lab"><span class="mt"><b>LAB</b><small>'+LAB.length+' entries</small></span><svg class="sg" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4.5 1.5h3M5 1.5v3.2L2 10h8L7 4.7V1.5" fill="none" stroke="currentColor" stroke-width="1.1"/></svg></button>';
+  MAP.rows = rows.join(' '); MAP.total = row;
+
+  return '<section class="view home'+(boot?' boot':'')+'">' +
+  '<div class="mapwrap"><div class="map" id="map" style="grid-template-rows:'+MAP.rows+'">' +
+    '<svg class="edges" id="edges" aria-hidden="true"></svg>' +
+    '<div class="rootcol" style="grid-row:1/'+MAP.total+'">' + rootBlock(boot) + '<i class="port" id="port"></i></div>' +
+    nodes + '<div class="mods" style="grid-row:1/'+MAP.total+'">'+mods+'</div>' +
+  '</div><aside class="inspect" id="inspect" aria-live="polite"></aside></div>' +
+  mobileTree() + '</section>';
+}
+function rootBlock(boot){
+  var r = function(i){ return boot ? ' reveal" style="--i:'+i : ''; };
+  return '<p class="eyebrow'+r(0)+'">/maziar</p>' +
+    '<h1 class="name'+r(1)+'"><span>MAZIAR</span><span>HEYDARI</span></h1>' +
+    '<p class="role'+r(2)+'">BACKEND DEVELOPER</p>' +
+    '<p class="sum'+r(3)+'">I build APIs and services with Django, Laravel and Go, and I care about the parts that keep them running.</p>' +
+    '<dl class="sys'+r(4)+'"><div><dt>SYSTEM</dt><dd>backend engineer</dd></div><div><dt>FOCUS</dt><dd>reliable systems</dd></div><div><dt>CURRENTLY</dt><dd><span class="cur">learning</span></dd></div></dl>' +
+    '<div class="rootlinks'+r(5)+'"><a href="#projects">projects →</a><a href="#contact">contact →</a></div>';
+}
+
+/* ----- map behavior ----- */
+var edges = [], hover = null, pin = null, drewOnce = false;
+function initMap(){
+  hover = null; pin = null; edges = [];
+  var map = $('#map'); if(!map) return;
+  var ro = new ResizeObserver(function(){ drawEdges(); });
+  ro.observe(map);
+  map.addEventListener('mouseover', function(e){ var n = e.target.closest('[data-id]'); if(n){ hover = n.dataset.id; paint(); } });
+  map.addEventListener('mouseleave', function(){ hover = null; paint(); });
+  map.addEventListener('focusin', function(e){ var n = e.target.closest('[data-id]'); if(n){ hover = n.dataset.id; paint(); } });
+  map.addEventListener('focusout', function(){ hover = null; paint(); });
+  map.addEventListener('click', function(e){
+    var n = e.target.closest('[data-id]');
+    if(n){ pin = (pin === n.dataset.id) ? null : n.dataset.id; }
+    else if(!e.target.closest('a')){ pin = null; }
+    paint();
+  });
+  $('#inspect').addEventListener('click', function(e){
+    var b = e.target.closest('[data-pin]'); if(b){ pin = b.dataset.pin; hover = null; paint(); }
+  });
+  drawEdges(); paint();
+}
+function elbow(x1,y1,x2,y2){
+  var dy = y2-y1;
+  if(Math.abs(dy) < 1) return 'M'+x1+' '+y1+'H'+x2;
+  var xm = x1 + (x2-x1)/2, d = dy>0?1:-1, r = Math.min(8, Math.abs(dy)/2, (x2-x1)/2);
+  return 'M'+x1+' '+y1+'H'+(xm-r)+'Q'+xm+' '+y1+' '+xm+' '+(y1+d*r)+'V'+(y2-d*r)+'Q'+xm+' '+y2+' '+(xm+r)+' '+y2+'H'+x2;
+}
+function drawEdges(){
+  var map = $('#map'), svg = $('#edges'); if(!map || !svg) return;
+  var mr = map.getBoundingClientRect(); if(!mr.width) return;
+  var pt = function(el, side){ var r = el.getBoundingClientRect(); return {x:(side==='r'?r.right:r.left)-mr.left, y:r.top+r.height/2-mr.top}; };
+  var port = $('#port'), p0 = pt(port,'r');
+  p0.x = port.getBoundingClientRect().left + 3.5 - mr.left;
+  var first = !drewOnce && $('.home').classList.contains('boot');
+  var out = '', list = [];
+  var add = function(a,b,cls,d,i){
+    list.push({a:a,b:b});
+    out += '<path class="edge '+cls+(first?(cls==='h'?' draw':' fade'):'')+'" data-a="'+a+'" data-b="'+b+'" d="'+d+'"'+(first&&cls==='h'?' pathLength="1" style="--dl:'+(0.35+i*0.05)+'s"':'')+'/>';
+  };
+  var k = 0;
+  GRAPH_ORDER.forEach(function(g){
+    var dn = $('[data-id="dom:'+g+'"]'); if(!dn) return;
+    var a = pt(dn,'l'), ar = pt(dn,'r');
+    add('root','dom:'+g,'h',elbow(p0.x,p0.y,a.x,a.y),k++);
+    Object.keys(TECH).filter(function(t){return TECH[t].g===g;}).forEach(function(t){
+      var tn = $('[data-id="'+t+'"]'); var b = pt(tn,'l');
+      add('dom:'+g,t,'h',elbow(ar.x,ar.y,b.x,b.y),k++);
+    });
+  });
+  var mods = PROJ.map(function(p){return {id:'m:'+p.id, t:p.uses};}).concat([{id:'m:learning',t:LEARN_LINKS},{id:'m:lab',t:LAB_LINKS}]);
+  mods.forEach(function(m){
+    var mn = $('[data-id="'+m.id+'"]'); var b = pt(mn,'l');
+    m.t.forEach(function(t){
+      if(!TECH[t] || !TECH[t].g) return;
+      var tn = $('[data-id="'+t+'"]'); var a = pt(tn,'r');
+      var kx = (b.x-a.x)*0.55;
+      add(t,m.id,'d','M'+a.x+' '+a.y+'C'+(a.x+kx)+' '+a.y+' '+(b.x-kx)+' '+b.y+' '+b.x+' '+b.y,0);
+    });
+  });
+  svg.setAttribute('viewBox','0 0 '+mr.width+' '+mr.height);
+  svg.innerHTML = out; edges = list; drewOnce = true;
+  paint();
+}
+function domOfTech(t){ return 'dom:'+TECH[t].g; }
+function related(id){
+  var s = {}; s[id] = 1;
+  if(id.indexOf('dom:') === 0){ s.root = 1; edges.forEach(function(e){ if(e.a===id) s[e.b] = 1; }); }
+  else if(id.indexOf('m:') === 0){ s.root = 1; edges.forEach(function(e){ if(e.b===id){ s[e.a] = 1; s[domOfTech(e.a)] = 1; } }); }
+  else { s.root = 1; s[domOfTech(id)] = 1; edges.forEach(function(e){ if(e.a===id && e.b.indexOf('m:')===0) s[e.b] = 1; }); }
+  return s;
+}
+function paint(){
+  var map = $('#map'); if(!map) return;
+  var act = pin || hover, s = act ? related(act) : null;
+  $$('.node', map).forEach(function(n){
+    var id = n.dataset.id;
+    n.classList.toggle('dim', !!s && !s[id]);
+    n.classList.toggle('is-active', id === act);
+  });
+  $$('.edge', map).forEach(function(e){
+    var on = !!s && s[e.dataset.a] && s[e.dataset.b];
+    e.classList.toggle('on', !!on);
+    e.classList.toggle('off', !!s && !on);
+  });
+  $('#inspect').innerHTML = inspectHTML(act);
+}
+function inspectHTML(id){
+  if(!id){
+    return '<div><span class="lbl">inspector</span><h3>System map</h3></div>' +
+      '<div><p>Hover a node to trace what connects to it. Select one to pin it. Components sit on the left, the work that uses them on the right.</p>' +
+      '<ul class="legend"><li><i class="lg h"></i>contains</li><li><i class="lg d"></i>used in</li></ul></div>' +
+      '<div class="rel"><div><span class="lbl">at a glance</span><p>'+PROJ.length+' projects · '+Object.keys(TECH).length+' components · '+activeLearn().length+' active learning areas</p></div></div>';
+  }
+  var kind, name, text, rel = '';
+  if(id.indexOf('dom:') === 0){
+    var g = id.slice(4); kind = 'domain'; name = DOMAINS[g].n; text = DOMAINS[g].r;
+    var ids = Object.keys(TECH).filter(function(t){return TECH[t].g===g;});
+    rel = '<div><span class="lbl">components</span>'+chips(ids,true)+'</div>';
+  } else if(id.indexOf('m:') === 0){
+    var mid = id.slice(2), p = projById(mid), uses;
+    if(p){
+      kind = 'project · '+p.status; name = p.name; text = p.desc; uses = p.uses;
+      rel = '<div><span class="lbl">built with</span>'+chips(uses,true)+'</div><a class="open" href="#'+p.id+'">open case study →</a>';
+    } else if(mid === 'learning'){
+      kind = 'module'; name = '/learning'; text = 'Areas being worked on right now, with the state each one is in.';
+      rel = '<div><span class="lbl">touches</span>'+chips(LEARN_LINKS,true)+'</div><a class="open" href="#learning">open learning →</a>';
+    } else {
+      kind = 'module'; name = '/lab'; text = 'Experiments, prototypes and notes. Published as they are finished.';
+      rel = '<div><span class="lbl">touches</span>'+chips(LAB_LINKS,true)+'</div><a class="open" href="#lab">open lab →</a>';
+    }
+  } else {
+    var t = TECH[id]; kind = 'component · '+DOMAINS[t.d].n.toLowerCase(); name = t.n; text = t.r;
+    var ui = usedIn(id), req = t.needs, by = Object.keys(TECH).filter(function(k){return TECH[k].needs.indexOf(id)>-1;});
+    if(LEARN_LINKS.indexOf(id)>-1) ui = ui.concat([{learn:1}]);
+    rel = '<div><span class="lbl">used in</span><span class="chips">' +
+      (usedIn(id).map(function(p){return '<button class="chip" data-pin="m:'+p.id+'">'+p.name.toLowerCase()+'</button>';}).join('') +
+       (LEARN_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:learning">learning</button>':'') +
+       (LAB_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:lab">lab</button>':'') || '<span class="chip">nothing yet</span>') + '</span></div>';
+    if(req.length) rel += '<div><span class="lbl">requires</span>'+chips(req,true)+'</div>';
+    if(by.length) rel += '<div><span class="lbl">required by</span>'+chips(by,true)+'</div>';
+  }
+  return '<div><span class="lbl">'+kind+'</span><h3>'+name+'</h3></div><div><p>'+text+'</p></div><div class="rel">'+rel+'</div>';
+}
+
+/* ----- mobile tree ----- */
+function mobileTree(){
+  var item = function(key, name, meta, body){
+    return '<li><button class="tbtn" aria-expanded="false" aria-controls="t-'+key+'"><span class="tn">'+name+'</span><span class="tm">'+meta+'</span><i class="chev"></i></button><div class="tbody" id="t-'+key+'"><div class="tin"><div>'+body+'</div></div></div></li>';
+  };
+  var about = '<p>'+ABOUT.lede+'</p><a class="open" href="#about">open about →</a>';
+  var projects = PROJ.map(function(p){ return '<a class="row" href="#'+p.id+'">'+stat(p.status)+'<span>'+p.name+'<br><small>'+p.lang+'</small></span><small>'+p.status+'</small></a>'; }).join('') + '<a class="open" href="#projects">open projects →</a>';
+  var stack = '<dl>' + STACK_ORDER.map(function(d){ return '<div><dt>'+DOMAINS[d].n+'</dt><dd>'+Object.keys(TECH).filter(function(k){return TECH[k].d===d;}).map(function(k){return TECH[k].n;}).join(' · ')+'</dd></div>'; }).join('') + '</dl><a class="open" href="#stack">open stack →</a>';
+  var learning = LEARN.map(function(l){ return '<a class="row" href="#learning">'+glyph(l.s)+'<span>'+l.n+'</span><small>'+l.s+'</small></a>'; }).join('') + '<a class="open" href="#learning">open learning →</a>';
+  var lab = LAB.map(function(l){ return '<a class="row p2" href="#lab"><span>'+l.t+'</span><small>'+l.s+'</small></a>'; }).join('') + '<a class="open" href="#lab">open lab →</a>';
+  var contact = '<dl><div><dt>EMAIL</dt><dd>'+CONFIG.email+'</dd></div><div><dt>GITHUB</dt><dd>'+host(CONFIG.github)+'</dd></div><div><dt>LINKEDIN</dt><dd>'+host(CONFIG.linkedin)+'</dd></div></dl><a class="open" href="#contact">open contact →</a>';
+  return '<div class="mtree">' + rootBlock(false).replace('<p class="eyebrow">/maziar</p>','<p class="eyebrow">/maziar</p>').replace('<div class="rootlinks"><a href="#projects">projects →</a><a href="#contact">contact →</a></div>','') +
+    '<ul class="tree">' +
+    item('about','ABOUT','who and focus',about) +
+    item('projects','PROJECTS',pad(PROJ.length)+' modules',projects) +
+    item('stack','STACK',pad(Object.keys(TECH).length)+' components',stack) +
+    item('learning','LEARNING',activeLearn().length+' active',learning) +
+    item('lab','LAB',LAB.length+' entries',lab) +
+    item('contact','CONTACT','3 channels',contact) +
+    '</ul></div>';
+}
+
+/* ----- about ----- */
+function viewAbout(){
+  var gl = [
+    ['WHO','Maziar Heydari, backend developer','#about','about'],
+    ['BUILDS','APIs, authentication systems and realtime services','#projects','projects'],
+    ['USES','Django, DRF, Laravel and Go on Linux','#stack','stack'],
+    ['PROJECTS',PROJ.length+' modules, each with an architecture write-up','#projects','open'],
+    ['CONTACT','Email, GitHub and LinkedIn','#contact','open']
+  ];
+  return '<section class="view">' + head('/maziar/about','About',ABOUT.lede) +
+  '<dl class="glance">'+gl.map(function(g){return '<div><dt>'+g[0]+'</dt><dd>'+g[1]+'</dd><a href="'+g[2]+'">'+g[3]+' →</a></div>';}).join('')+'</dl>' +
+  '<div class="twocol"><div><div class="prose">'+ABOUT.body.map(function(t){return '<p>'+t+'</p>';}).join('')+'</div>' +
+  '<div class="principles">'+ABOUT.principles.map(function(p){return '<div><b>'+p[0]+'</b><span>'+p[1]+'</span></div>';}).join('')+'</div></div>' +
+  '<dl class="kv">' + [
+    ['ROLE','backend developer'],['FOCUS','reliable systems'],['FRAMEWORKS','Django · DRF · Laravel · Gin'],['LANGUAGES','Python · PHP · Go · JavaScript'],
+    ['PLATFORM','Linux'],['DATA','PostgreSQL · MySQL · Redis'],['STATUS',CONFIG.availability]
+  ].map(function(r){return '<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>';}).join('') + '</dl></div></section>';
+}
+
+/* ----- projects ----- */
+function viewProjects(){
+  return '<section class="view">' + head('/maziar/projects','Projects','Each project is a module with an architecture, the decisions behind it, and a repository.') +
+  '<div class="plist">' + PROJ.map(function(p){
+    return '<article class="pmod"><div class="pmeta"><span class="path">'+p.id+'/</span><span class="pstatus">'+stat(p.status)+' status: '+p.status+'</span></div>' +
+    '<div class="pbody"><h2>'+p.name+'</h2><div class="sub"><span>'+p.lang+'</span><i>/</i><span>'+p.kind+'</span></div><p>'+p.desc+'</p>' +
+    '<div class="acts"><a class="btn" href="#'+p.id+'" data-sec="architecture">ARCHITECTURE</a><a class="btn" href="#'+p.id+'">DETAILS</a><a class="btn ext" href="'+p.repo+'" target="_blank" rel="noopener">REPOSITORY</a></div></div></article>';
+  }).join('') + '</div></section>';
+}
+var wantSec = null;
+document.addEventListener('click', function(e){
+  var a = e.target.closest('[data-sec]'); if(a) wantSec = a.dataset.sec;
+});
+
+/* ----- case study ----- */
+var SECS = [['overview','Overview'],['architecture','Architecture'],['technologies','Technologies'],['decisions','Technical decisions'],['challenges','Challenges'],['repository','Repository']];
+function viewProject(p){
+  var i = PROJ.indexOf(p), prev = PROJ[(i+PROJ.length-1)%PROJ.length], next = PROJ[(i+1)%PROJ.length];
+  var tech = p.uses.map(function(id){ return '<li><a href="#stack" data-focus="'+id+'">'+TECH[id].n+'</a><span>'+TECH[id].r+'</span></li>'; }).join('') +
+    p.extras.map(function(x){ return '<li><b>'+x[0]+'</b><span>'+x[1]+'</span></li>'; }).join('');
+  var arch = '<div class="arch">' + p.arch.map(function(t){
+    return '<div class="tier"><div class="tlabel">'+t.l+'</div><div class="tnodes">'+t.n.map(function(x){return '<div class="anode'+(x.side?' side':'')+'"><b>'+x.t+'</b><span>'+x.s+'</span></div>';}).join('')+'</div></div>';
+  }).join('') + '</div>';
+  var dec = '<div class="adrs">' + p.decisions.map(function(d,k){
+    return '<div class="adr"><span class="id">ADR-'+pad(k+1)+'</span><div><h3>'+d.t+'</h3><p>'+d.w+'</p><p class="tr">trade-off: '+d.x+'</p></div></div>';
+  }).join('') + '</div>';
+  var chal = '<div class="chals">' + p.challenges.map(function(c){
+    return '<div class="chal"><span class="id">problem</span><div><h3>'+c.p+'</h3><p>'+c.r+'</p></div></div>';
+  }).join('') + '</div>';
+  return '<section class="view case"><a class="back" href="#projects">‹ /projects</a>' +
+  '<header class="chead"><p class="eyebrow">/maziar/projects/'+p.id+'</p><h1>'+p.name+'</h1><div class="cmeta"><span>'+p.lang+'</span><span>'+p.kind+'</span><span class="pstatus">'+stat(p.status)+' status: '+p.status+'</span></div></header>' +
+  '<div class="cbody"><nav class="cidx" id="cidx" aria-label="Case study sections">'+SECS.map(function(s){return '<button data-to="'+s[0]+'">'+s[0]+'</button>';}).join('')+'</nav>' +
+  '<div class="csecs">' +
+    '<section class="csec" id="overview"><span class="lbl">overview</span>'+p.overview.map(function(t){return '<p>'+t+'</p>';}).join('')+'</section>' +
+    '<section class="csec" id="architecture"><span class="lbl">architecture</span>'+arch+'</section>' +
+    '<section class="csec" id="technologies"><span class="lbl">technologies</span><ul class="techlist">'+tech+'</ul></section>' +
+    '<section class="csec" id="decisions"><span class="lbl">technical decisions</span>'+dec+'</section>' +
+    '<section class="csec" id="challenges"><span class="lbl">challenges</span>'+chal+'</section>' +
+    '<section class="csec" id="repository"><span class="lbl">repository</span><div class="repo"><span>'+host(p.repo)+'</span><button class="btn" data-copy="'+p.repo+'">COPY</button><a class="btn ext" href="'+p.repo+'" target="_blank" rel="noopener">OPEN</a></div></section>' +
+  '</div></div>' +
+  '<nav class="pn"><a href="#'+prev.id+'">‹ previous<b>'+prev.name+'</b></a><a href="#'+next.id+'">next ›<b>'+next.name+'</b></a></nav></section>';
+}
+function initCase(){
+  var stage = $('#stage'), btns = $$('#cidx button');
+  var scroller = window.matchMedia('(max-width:900px)').matches ? window : stage;
+  var go = function(id){ var el = document.getElementById(id); if(el) el.scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'}); };
+  btns.forEach(function(b){ b.addEventListener('click', function(){ go(b.dataset.to); }); });
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ btns.forEach(function(b){ b.classList.toggle('on', b.dataset.to === en.target.id); }); } });
+  }, {root: window.matchMedia('(max-width:900px)').matches ? null : stage, rootMargin:'-10% 0px -70% 0px'});
+  $$('.csec').forEach(function(s){ io.observe(s); });
+  btns[0].classList.add('on');
+  if(wantSec){ var s = wantSec; wantSec = null; setTimeout(function(){ go(s); }, 60); }
+}
+
+/* ----- stack ----- */
+function viewStack(){
+  var total = Object.keys(TECH).length;
+  return '<section class="view">' + head('/maziar/stack','Stack','Installed components, grouped by layer. Each one lists what it requires and where it is used. Hover a row to trace its dependencies.') +
+  '<div class="sgrid" id="sgrid">' + STACK_ORDER.map(function(d){
+    var ids = Object.keys(TECH).filter(function(k){return TECH[k].d===d;});
+    return '<section class="sdom"><h2>'+DOMAINS[d].n+'<small>'+pad(ids.length)+'</small></h2><p class="sdesc">'+DOMAINS[d].r+'</p>' +
+    ids.map(function(id){
+      var t = TECH[id], u = usedIn(id), by = Object.keys(TECH).filter(function(k){return TECH[k].needs.indexOf(id)>-1;});
+      var dep = '';
+      if(t.needs.length) dep += '<span>requires '+t.needs.map(function(n){return TECH[n].n.toLowerCase();}).join(', ')+'</span>';
+      if(u.length) dep += '<span>used in '+u.map(function(p){return '<a href="#'+p.id+'">'+p.id+'</a>';}).join(' ')+'</span>';
+      if(!dep) dep = '<span>no dependencies</span>';
+      return '<div class="srow" id="s-'+id+'" data-id="'+id+'"><div class="hd"><b>'+t.n+'</b></div><span class="role">'+t.r+'</span><div class="dep">'+dep+'</div></div>';
+    }).join('') + '</section>';
+  }).join('') + '</div></section>';
+}
+function initStack(){
+  var grid = $('#sgrid'); if(!grid) return;
+  var clear = function(){ grid.classList.remove('focus'); $$('.srow',grid).forEach(function(r){ r.classList.remove('self','rel'); }); };
+  grid.addEventListener('mouseover', function(e){
+    var row = e.target.closest('.srow'); if(!row) return;
+    var id = row.dataset.id, rel = {};
+    TECH[id].needs.forEach(function(n){ rel[n] = 1; });
+    Object.keys(TECH).forEach(function(k){ if(TECH[k].needs.indexOf(id)>-1) rel[k] = 1; });
+    grid.classList.add('focus');
+    $$('.srow',grid).forEach(function(r){ r.classList.toggle('self', r === row); r.classList.toggle('rel', !!rel[r.dataset.id]); });
+  });
+  grid.addEventListener('mouseleave', clear);
+}
+
+/* ----- learning ----- */
+function viewLearning(){
+  var row = function(l){
+    return '<div class="lrow '+l.s+'">'+glyph(l.s)+'<span class="ln">'+l.n+'</span><span class="ls">'+l.s.toUpperCase()+'</span><div><p>'+l.note+'</p>'+(l.t.length?chips(l.t,false):'')+'</div></div>';
+  };
+  var act = activeLearn(), q = LEARN.filter(function(l){return l.s==='queued';});
+  return '<section class="view">' + head('/maziar/learning','Learning','Processes that are running right now. State describes how I am working on something, not how much I know.') +
+  '<div class="states">'+Object.keys(STATE_DEF).map(function(s){return '<div>'+glyph(s)+'<b>'+s.toUpperCase()+'</b><small>'+STATE_DEF[s]+'</small></div>';}).join('')+'</div>' +
+  '<div class="lgroup"><span class="lbl">running · '+pad(act.length)+'</span>'+act.map(row).join('')+'</div>' +
+  '<div class="lgroup"><span class="lbl">queued · '+pad(q.length)+'</span>'+q.map(row).join('')+'</div></section>';
+}
+
+/* ----- lab ----- */
+function viewLab(){
+  var n = function(s){ return LAB.filter(function(l){return l.s===s;}).length; };
+  return '<section class="view">' + head('/maziar/lab','Lab','Experiments, prototypes and technical notes. Nothing here is finished by design. Entries move from queued to in progress to published.') +
+  '<div class="labnote"><span>in progress <b>'+pad(n('in progress'))+'</b></span><span>queued <b>'+pad(n('queued'))+'</b></span><span>published <b>00</b></span></div>' +
+  '<div class="lablist">' + LAB.map(function(l){
+    return '<article class="entry '+(l.s==='queued'?'queued':'')+'"><div><div class="fn">'+l.id+'/</div><div class="kind">'+l.kind+'</div></div>' +
+    '<div><h3>'+l.t+'</h3><p>'+l.d+'</p>'+chips(l.tags,false)+'</div>' +
+    '<div class="est">'+glyph(l.s==='queued'?'queued':'developing').replace('width="20" height="20"','width="14" height="14"')+l.s+'</div></article>';
+  }).join('') +
+  '<article class="entry reserved"><div><div class="fn">next-entry/</div><div class="kind">RESERVED</div></div><div><h3>Next experiment</h3><p>New entries are added as they are started.</p></div><div class="est"></div></article>' +
+  '</div></section>';
+}
+
+/* ----- contact ----- */
+function viewContact(){
+  var ch = [
+    ['EMAIL','direct channel',CONFIG.email,null,true],
+    ['GITHUB','source code',host(CONFIG.github),CONFIG.github,false],
+    ['LINKEDIN','professional profile',host(CONFIG.linkedin),CONFIG.linkedin,false]
+  ];
+  return '<section class="view">' + head('/maziar/contact','Contact','Three channels. Email is the fastest.') +
+  '<div class="eps">' + ch.map(function(c){
+    return '<div class="ep"><div><h2>'+c[0]+'</h2><div class="chan">'+c[1].toUpperCase()+'</div></div><div class="addr">'+c[2]+'</div><div class="acts">' +
+      (c[4] ? '<button class="btn" data-copy="'+c[2]+'">COPY</button><a class="btn" href="mailto:'+c[2]+'">COMPOSE</a>' : '<a class="btn ext" href="'+c[3]+'" target="_blank" rel="noopener">OPEN</a>') + '</div></div>';
+  }).join('') + '</div><p class="reach"><i class="dot"></i>'+CONFIG.availability+'</p></section>';
+}
+
+/* ============ GLOBAL EVENTS ============ */
+document.addEventListener('click', function(e){
+  var c = e.target.closest('[data-copy]');
+  if(c){
+    var txt = c.dataset.copy, orig = c.textContent;
+    var done = function(){ c.textContent = 'COPIED'; setTimeout(function(){ c.textContent = orig; }, 1600); };
+    var fallback = function(){
+      var ta = document.createElement('textarea'); ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(err){ c.textContent = 'SELECT TEXT'; }
+      document.body.removeChild(ta);
+    };
+    try{ navigator.clipboard.writeText(txt).then(done, fallback); }catch(err){ fallback(); }
+    return;
+  }
+  var t = e.target.closest('.tbtn');
+  if(t){ var li = t.parentNode, open = li.classList.toggle('open'); t.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  var f = e.target.closest('[data-focus]');
+  if(f){ var id = f.dataset.focus; setTimeout(function(){ var r = document.getElementById('s-'+id); if(r){ r.scrollIntoView({block:'center'}); } }, 80); }
+});
+document.addEventListener('keydown', function(e){
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  var tg = e.target && e.target.tagName; if(tg === 'INPUT' || tg === 'TEXTAREA') return;
+  if(/^[0-6]$/.test(e.key)){ location.hash = NAV[+e.key][0]; }
+  else if(e.key === 'Escape'){
+    var r = route();
+    if(r.v === 'project') location.hash = 'projects'; else if(r.v !== 'home') location.hash = 'home';
+    else if(pin){ pin = null; paint(); }
+  }
+});
+
+/* rotating CURRENTLY value */
+var words = ['learning','building','experimenting'], wi = 0;
+if(!reduce){
+  setInterval(function(){
+    wi = (wi+1) % words.length;
+    var els = $$('.cur');
+    els.forEach(function(el){ el.classList.add('swap'); });
+    setTimeout(function(){ els.forEach(function(el){ el.textContent = words[wi]; el.classList.remove('swap'); }); }, 360);
+  }, 3800);
+} else {
+  setInterval(function(){}, 1e9);
+  document.addEventListener('DOMContentLoaded', function(){});
+}
+
+/* ============ START ============ */
+$('#avail').textContent = CONFIG.availability;
+buildRail();
+render();
+if(reduce){ $$('.cur').forEach(function(el){ el.textContent = 'learning / building / experimenting'; }); window.addEventListener('hashchange', function(){ $$('.cur').forEach(function(el){ el.textContent = 'learning / building / experimenting'; }); }); }
+</script>
+
+</body></html>

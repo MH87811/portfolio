@@ -1,0 +1,1107 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Maziar Heydari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Hanken+Grotesk:wght@300..800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  /* LAYOUT CONCEPT: a twelve-column journal grid. Columns 1-2 are a mono margin rail for labels and numbers; prose and large type live in columns 3-12. Sections open with a 2px rule, everything inside them with hairlines. */
+  --bg:#F2F3F0;
+  --fg:#0B0E0F;
+  --muted:#586064;
+  --rule:#C6CAC7;
+  --surface:#E6E8E4;
+  --accent:#2037E8;
+  --on-accent:#F2F3F0;
+
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+
+  --max:92rem;
+  --gutter:clamp(1rem,3.2vw,2.5rem);
+  --cg:clamp(.75rem,2vw,1.5rem);
+  --bar-h:3.25rem;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0C0D;--fg:#ECEDE9;--muted:#9AA0A3;--rule:#2A2F32;--surface:#141819;--accent:#8C9BFF;--on-accent:#0A0C0D;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0C0D;--fg:#ECEDE9;--muted:#9AA0A3;--rule:#2A2F32;--surface:#141819;--accent:#8C9BFF;--on-accent:#0A0C0D;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--f-body);font-size:1.0625rem;line-height:1.6;font-weight:400;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+::selection{background:var(--accent);color:var(--on-accent)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--surface);padding:.08em .35em}
+
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+
+/* type roles */
+.mono{
+  font-family:var(--f-mono);font-size:.72rem;line-height:1.5;
+  letter-spacing:.07em;text-transform:uppercase;font-weight:500;
+}
+.muted{color:var(--muted)}
+.display{
+  font-family:var(--f-display);font-weight:800;
+  font-stretch:62%;font-variation-settings:"wdth" 62;
+  text-transform:uppercase;letter-spacing:-.012em;line-height:.88;
+  text-wrap:balance;
+}
+
+/* 12-col grid, single column on phones */
+.grid{display:grid;grid-template-columns:minmax(0,1fr);column-gap:var(--cg)}
+@media (min-width:56rem){
+  .grid{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .rail{grid-column:1/span 2}
+  .main{grid-column:3/-1}
+}
+.prose p{max-width:38rem;margin-bottom:1.1em;text-wrap:pretty}
+.prose p:last-child{margin-bottom:0}
+.prose a{color:var(--accent);text-underline-offset:.2em}
+
+/* ---------- top bar ---------- */
+.bar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:var(--bg);border-bottom:1px solid var(--fg);
+}
+.bar-in{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  gap:.25rem 1.25rem;min-height:var(--bar-h);padding-block:.55rem;
+}
+.brand{font-weight:700;letter-spacing:.1em;text-decoration:none}
+.nav{display:flex;flex-wrap:wrap;gap:.25rem 1.1rem}
+.nav a{text-decoration:none;white-space:nowrap;letter-spacing:.06em}
+.nav a::before{content:"[";color:var(--muted);margin-inline-end:.15em}
+.nav a::after{content:"]";color:var(--muted);margin-inline-start:.15em}
+.nav a[aria-current="true"]{color:var(--accent)}
+.nav a[aria-current="true"]::before,.nav a[aria-current="true"]::after{color:var(--accent)}
+@media (hover:hover){
+  .nav a:hover,.brand:hover{color:var(--accent)}
+}
+
+/* ---------- masthead ---------- */
+.masthead{padding-top:clamp(1.1rem,2.6vw,2rem)}
+.mast-meta{
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.2rem 1.25rem;
+  padding-bottom:.65rem;border-bottom:1px solid var(--rule);
+}
+.avail{display:inline-flex;align-items:center;gap:.55em}
+.dot{width:.55rem;height:.55rem;background:var(--accent);display:inline-block}
+.mast-name{
+  margin-top:clamp(.9rem,2.4vw,1.75rem);
+  overflow-x:clip;line-height:.8;
+}
+.fit{display:inline-block;white-space:nowrap;font-size:11vw;line-height:.82}
+.fit .l{display:inline}
+@media (max-width:40rem){
+  .fit{font-size:22vw}
+  .fit .l{display:block}
+}
+.mast-foot{
+  margin-top:clamp(1rem,2.4vw,1.75rem);padding-top:1rem;border-top:2px solid var(--fg);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem var(--cg);align-items:baseline;
+}
+.mast-role{font-family:var(--f-display);font-weight:700;font-variation-settings:"wdth" 100;font-stretch:100%;font-size:1.4rem;letter-spacing:.01em;text-transform:uppercase;line-height:1.1}
+.mast-tag{max-width:24rem;color:var(--muted)}
+@media (min-width:56rem){
+  .mast-foot{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .mast-role{grid-column:1/span 4}
+  .mast-fields{grid-column:5/span 4}
+  .mast-tag{grid-column:9/-1;justify-self:end;text-align:end}
+}
+
+/* ---------- sections ---------- */
+.sect{padding-top:clamp(4.5rem,11vw,10rem)}
+.sect-head{
+  display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.2rem 1.25rem;
+  border-top:2px solid var(--fg);padding-top:.7rem;margin-bottom:clamp(1.5rem,4vw,3rem);
+  scroll-margin-top:5.5rem;
+}
+.sect-head h2{font-weight:700}
+.sect-intro{margin-bottom:clamp(2rem,5vw,3.5rem)}
+
+/* ---------- work index ---------- */
+.entry{
+  display:grid;grid-template-columns:2.75rem minmax(0,1fr);column-gap:var(--cg);row-gap:.7rem;
+  padding-block:clamp(1.4rem,3.4vw,2.5rem);border-top:1px solid var(--rule);
+  color:inherit;text-decoration:none;
+}
+.entry:last-child{border-bottom:1px solid var(--rule)}
+.entry>*{grid-column:1/-1;min-width:0}
+.entry .num{grid-column:1;color:var(--muted)}
+.entry .tags{grid-column:2;color:var(--muted)}
+.entry .title{font-size:clamp(3rem,10vw,8.5rem);overflow-wrap:anywhere;transition:color .15s}
+.entry .stand{max-width:34rem;color:var(--muted);text-wrap:pretty}
+.entry .go{display:inline-flex;gap:.6em;align-items:center;font-weight:700}
+.entry .arr{display:inline-block;transition:transform .18s}
+.entry--lead .num{font-family:var(--f-display);font-weight:800;font-variation-settings:"wdth" 62;font-size:1.4rem;line-height:1;color:var(--accent);letter-spacing:0}
+.entry--lead .title{font-size:clamp(4.25rem,17vw,15rem)}
+.entry--lead .stand{font-size:1.25rem;line-height:1.5;color:var(--fg)}
+.facts-mini{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.25rem;align-content:start}
+.facts-mini dt{color:var(--muted)}
+.facts-mini dd{font-weight:600}
+@media (hover:hover){
+  .entry:hover .title{color:var(--accent)}
+  .entry:hover .arr{transform:translateX(.35em)}
+}
+@media (min-width:56rem){
+  .entry{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .entry .num{grid-column:1/span 2;grid-row:1}
+  .entry .tags{grid-column:3/-1;grid-row:1}
+  .entry .title{grid-column:3/-1;grid-row:2}
+  .entry .stand{grid-column:3/span 6;grid-row:3}
+  .entry .go{grid-column:10/-1;grid-row:3;justify-self:end;align-self:end}
+  .entry--lead .title{grid-column:1/-1}
+  .entry--lead .stand{grid-column:3/span 5}
+  .entry--lead .facts-mini{grid-column:9/-1;grid-row:3}
+  .entry--lead .go{grid-column:9/-1;grid-row:4;justify-self:start;align-self:start;margin-top:.5rem}
+}
+
+/* ---------- about ---------- */
+.statement{
+  font-family:var(--f-display);font-weight:500;font-stretch:100%;font-variation-settings:"wdth" 100;
+  font-size:clamp(2rem,5.6vw,5rem);line-height:1.04;letter-spacing:-.025em;text-wrap:balance;
+  margin-bottom:clamp(2.5rem,6vw,5rem);
+}
+.statement b{
+  font-weight:800;font-stretch:62%;font-variation-settings:"wdth" 62;
+  text-transform:uppercase;letter-spacing:-.005em;
+}
+.sub{border-top:1px solid var(--rule);padding-block:clamp(1.4rem,3.4vw,2.4rem)}
+.sub .rail{margin-bottom:.75rem;font-weight:700}
+.principles{margin-top:1.6rem;max-width:38rem}
+.principles li{border-top:1px solid var(--rule);padding-block:.85rem}
+.principles strong{display:block;font-weight:700}
+.principles span{color:var(--muted)}
+
+/* ---------- stack ---------- */
+.idx-row{border-top:1px solid var(--rule);padding-block:clamp(1rem,2.4vw,1.6rem);align-items:baseline}
+.idx-row .rail{margin-bottom:.4rem;color:var(--muted);font-weight:700}
+.idx{display:flex;flex-wrap:wrap;align-items:baseline;row-gap:.1rem;
+  font-family:var(--f-display);font-stretch:100%;font-variation-settings:"wdth" 100;
+  font-size:clamp(1.55rem,3.2vw,2.7rem);line-height:1.15;letter-spacing:-.02em}
+.idx li+li::before{content:"/";margin-inline:.45em;color:var(--muted);font-weight:300}
+.idx .p{font-weight:800}
+.idx .w{font-weight:500}
+.idx .x{font-weight:300;color:var(--muted)}
+.legend{margin-top:1.25rem;color:var(--muted)}
+
+/* ---------- learning ---------- */
+.learn{border-top:1px solid var(--rule);padding-block:clamp(1.6rem,4vw,3rem);row-gap:1.25rem}
+.learn:last-child{border-bottom:1px solid var(--rule)}
+.learn .rail{color:var(--accent);font-weight:700}
+.learn-title{font-size:clamp(3rem,8.6vw,7.25rem);overflow-wrap:anywhere}
+.learn h4{color:var(--muted);margin-bottom:.35rem}
+.learn-body p{max-width:34rem;margin-bottom:1.25rem}
+.learn-body ul{display:grid;gap:.3rem;color:var(--muted);font-size:.98rem}
+.learn-body li{padding-inline-start:1.1em;position:relative}
+.learn-body li::before{content:"–";position:absolute;inset-inline-start:0}
+@media (min-width:56rem){
+  .learn-title{grid-column:3/span 5}
+  .learn-body{grid-column:8/-1;padding-top:.5rem}
+}
+
+/* ---------- lab ---------- */
+.note{border-top:1px solid var(--rule)}
+.note:last-of-type{border-bottom:1px solid var(--rule)}
+.note summary{
+  list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:.2rem 1rem;padding-block:1.15rem;
+}
+.note summary::-webkit-details-marker{display:none}
+.note .n-date{grid-column:1;color:var(--muted)}
+.note .n-main{grid-column:1/-1}
+.note .n-type{display:block;color:var(--muted);margin-bottom:.15rem}
+.note .n-title{
+  font-family:var(--f-display);font-weight:600;font-stretch:100%;font-variation-settings:"wdth" 100;
+  font-size:clamp(1.3rem,2.4vw,2rem);line-height:1.15;letter-spacing:-.015em;text-wrap:balance;
+}
+.note .n-status{grid-column:1;display:inline-flex;gap:.55em;align-items:center}
+.note .n-status .dot{background:transparent;box-shadow:inset 0 0 0 1px var(--muted)}
+.note .n-status.live .dot{background:var(--accent);box-shadow:none}
+.note .tog{grid-column:2;grid-row:1;justify-self:end;font-weight:700}
+.note .tog::before{content:"+"}
+.note[open] .tog::before{content:"−"}
+.note-body{padding-bottom:1.75rem}
+.note-body p{max-width:38rem;text-wrap:pretty}
+@media (hover:hover){.note summary:hover .n-title{color:var(--accent)}}
+@media (min-width:56rem){
+  .note summary{grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--cg);align-items:start}
+  .note .n-date{grid-column:1/span 2;grid-row:1}
+  .note .n-main{grid-column:3/span 6;grid-row:1}
+  .note .n-status{grid-column:9/span 3;grid-row:1}
+  .note .tog{grid-column:12;grid-row:1}
+  .note-body{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--cg)}
+  .note-body>*{grid-column:3/span 8}
+}
+.queue{margin-top:clamp(2.5rem,6vw,4.5rem);row-gap:.5rem}
+.queue .rail{font-weight:700}
+.queue li{border-top:1px solid var(--rule);padding-block:.75rem;font-size:1.1rem}
+
+/* ---------- code + diagram figures ---------- */
+.fig{margin-block:1.6rem 0;max-width:100%}
+.fig figcaption{color:var(--muted);margin-bottom:.5rem}
+.fig pre{
+  margin:0;overflow-x:auto;max-width:100%;
+  font-family:var(--f-mono);font-size:.8rem;line-height:1.5;font-variant-ligatures:none;tab-size:4;
+  background:var(--surface);padding:1rem 1.1rem;border-top:1px solid var(--fg);
+}
+.fig.diagram pre{line-height:1.3;background:transparent;padding-inline:0;border-top:1px solid var(--fg);border-bottom:1px solid var(--rule)}
+.fig.diagram pre{padding-block:1.1rem}
+
+/* ---------- contact ---------- */
+.contact-big{overflow-x:clip;line-height:.8}
+.contact-big .fit{font-size:18vw;line-height:.84}
+.contact-big .fit .l{display:block}
+.contact-lede{margin-top:clamp(1.5rem,3vw,2.25rem);margin-bottom:clamp(2rem,5vw,3.5rem)}
+.c-row{border-top:1px solid var(--rule);padding-block:clamp(.9rem,2vw,1.35rem);align-items:baseline;row-gap:.2rem}
+.c-row:last-of-type{border-bottom:1px solid var(--rule)}
+.c-row .rail{color:var(--muted);font-weight:700}
+.c-link{
+  font-family:var(--f-display);font-weight:600;font-stretch:100%;font-variation-settings:"wdth" 100;
+  font-size:clamp(1.3rem,3.2vw,2.6rem);line-height:1.15;letter-spacing:-.02em;
+  text-decoration:none;overflow-wrap:anywhere;
+}
+.c-link .arr{display:inline-block;margin-inline-start:.25em;transition:transform .18s}
+@media (hover:hover){.c-link:hover{color:var(--accent)}.c-link:hover .arr{transform:translate(.15em,-.15em)}}
+.c-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem 1.25rem;justify-content:space-between}
+.btn{
+  font:inherit;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;
+  background:transparent;color:var(--fg);border:1px solid var(--fg);padding:.4rem .8rem;cursor:pointer;
+}
+@media (hover:hover){.btn:hover{background:var(--fg);color:var(--bg)}}
+
+/* ---------- project pages ---------- */
+.p-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-top:clamp(1.1rem,2.6vw,2rem);padding-bottom:.65rem;border-bottom:1px solid var(--rule)}
+.p-top a{text-decoration:none;font-weight:700}
+@media (hover:hover){.p-top a:hover{color:var(--accent)}}
+.p-head{padding-top:clamp(1.5rem,4vw,3rem)}
+.p-kicker{color:var(--accent);font-weight:700;margin-bottom:.9rem}
+.p-title{font-size:clamp(3.25rem,13vw,12rem);overflow-wrap:anywhere}
+.p-lede{margin-top:clamp(1.25rem,3vw,2.25rem);font-size:clamp(1.2rem,2vw,1.6rem);line-height:1.45;max-width:40rem;text-wrap:pretty}
+.facts{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:1rem 1.5rem;
+  margin-top:clamp(1.75rem,4vw,3rem);border-top:2px solid var(--fg);padding-top:1rem;
+}
+.facts dt{color:var(--muted)}
+.facts dd{font-weight:600}
+.sec{border-top:1px solid var(--rule);padding-block:clamp(1.75rem,4vw,3.25rem)}
+.sec:first-of-type{margin-top:clamp(2.5rem,6vw,5rem);border-top:2px solid var(--fg)}
+.sec .rail{margin-bottom:1rem;font-weight:700;align-self:start}
+.sec .rail .n{display:block;color:var(--accent)}
+@media (min-width:56rem){.sec .rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 4.75rem);margin-bottom:0}}
+.sec .lede{font-size:1.3rem;line-height:1.5;max-width:38rem;margin-bottom:1.1em}
+.decisions{display:grid;gap:0;max-width:44rem}
+.decisions li{display:grid;grid-template-columns:2.75rem minmax(0,1fr);gap:.25rem 0;border-top:1px solid var(--rule);padding-block:1.15rem}
+.decisions li:first-child{border-top:0;padding-top:0}
+.decisions .d{color:var(--muted);font-weight:700;padding-top:.35em}
+.decisions h3,.chal h3{
+  font-family:var(--f-display);font-weight:700;font-stretch:100%;font-variation-settings:"wdth" 100;
+  font-size:1.35rem;line-height:1.2;letter-spacing:-.015em;margin-bottom:.35rem;text-wrap:balance;
+}
+.decisions p,.chal p{max-width:38rem;text-wrap:pretty}
+.chal{display:grid;max-width:44rem}
+.chal li{border-top:1px solid var(--rule);padding-block:1.15rem}
+.chal li:first-child{border-top:0;padding-top:0}
+.chal .c{color:var(--muted);font-weight:700;display:block;margin-bottom:.35rem}
+.tech{max-width:44rem}
+.tech div{display:grid;grid-template-columns:minmax(0,1fr);gap:.1rem 1.5rem;border-top:1px solid var(--rule);padding-block:.8rem}
+.tech div:first-child{border-top:0;padding-top:0}
+.tech dt{font-weight:700}
+.tech dd{color:var(--muted)}
+@media (min-width:44rem){.tech div{grid-template-columns:13rem minmax(0,1fr)}}
+.repo{
+  display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.4rem 1.5rem;
+  text-decoration:none;max-width:44rem;border-top:1px solid var(--fg);border-bottom:1px solid var(--fg);padding-block:1.1rem;
+}
+.repo .u{font-family:var(--f-mono);font-size:clamp(.9rem,1.8vw,1.15rem);overflow-wrap:anywhere}
+.repo .o{font-weight:700}
+@media (hover:hover){.repo:hover{color:var(--accent)}}
+.pager{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:clamp(3rem,8vw,7rem);border-top:2px solid var(--fg)}
+.pager a{display:block;text-decoration:none;padding-block:1.25rem;border-bottom:1px solid var(--rule)}
+.pager .k{color:var(--muted);display:block;margin-bottom:.5rem}
+.pager .t{display:block;font-size:clamp(2.25rem,6vw,5rem);overflow-wrap:anywhere}
+@media (hover:hover){.pager a:hover .t{color:var(--accent)}}
+@media (min-width:56rem){
+  .pager{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--cg)}
+  .pager a:last-child{text-align:end}
+  .pager a{border-bottom:0;padding-block:1.5rem}
+}
+
+/* ---------- footer ---------- */
+.foot{margin-top:clamp(5rem,12vw,10rem);padding-bottom:clamp(2rem,5vw,3.5rem)}
+.foot-in{border-top:2px solid var(--fg);padding-top:1rem;row-gap:1rem}
+.foot .rail{font-weight:700}
+.foot p{color:var(--muted);font-size:.95rem;max-width:38rem}
+.foot .meta{display:flex;flex-wrap:wrap;gap:.3rem 1.5rem;justify-content:space-between;margin-top:1.5rem;color:var(--muted)}
+.foot .meta a{text-decoration:none;font-weight:700;color:var(--fg)}
+@media (hover:hover){.foot .meta a:hover{color:var(--accent)}}
+</style>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand mono" href="#masthead">Maziar Heydari</a>
+    <nav class="nav mono" aria-label="Primary">
+      <a href="#work" data-nav="work">Work</a>
+      <a href="#about" data-nav="about">About</a>
+      <a href="#lab" data-nav="lab">Lab</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div id="home">
+
+  <section class="masthead wrap" id="masthead">
+    <div class="mast-meta mono">
+      <span>Vol. 01 / No. 10</span>
+      <span>October 2026</span>
+      <span class="avail"><i class="dot" aria-hidden="true"></i>Open to backend roles</span>
+    </div>
+    <h1 class="mast-name display" data-fit data-fit-max="320"><span class="fit"><span class="l">Maziar</span> <span class="l">Heydari</span></span></h1>
+    <div class="mast-foot">
+      <p class="mast-role">Backend Developer</p>
+      <p class="mast-fields mono">Engineering / Systems / Software</p>
+      <p class="mast-tag">An engineer documenting what he builds and learns.</p>
+    </div>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="work">
+      <h2 class="mono">Work</h2>
+      <p class="mono muted">Four case studies / 2025 to 2026</p>
+    </header>
+    <div class="grid sect-intro">
+      <p class="main prose" style="max-width:36rem">Each entry is written as an engineering case study: the problem, the shape of the system, the decisions I made and the parts that went wrong.</p>
+    </div>
+    <div id="work-list"></div>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="about">
+      <h2 class="mono">About</h2>
+      <p class="mono muted">Written plainly</p>
+    </header>
+    <p class="statement">I build backend systems with a focus on <b>reliability</b>, <b>architecture</b> and understanding how software works <b>beneath the surface</b>.</p>
+
+    <div class="grid sub">
+      <h3 class="rail mono">Background</h3>
+      <div class="main prose">
+        <p>My first web applications were written in PHP with Laravel. That is where I learned the shape of a request: routes, controllers, a database behind them. I moved to Python with Django and Django REST Framework, and later to Go. Each change taught me to ask a sharper question about the tool I had left. What was the framework doing for me, and what did I not know?</p>
+        <p>I work mostly on APIs, authentication and real-time services. I write these projects up the way I would want to read them: problem first, trade-offs visible, dead ends included.</p>
+      </div>
+    </div>
+    <div class="grid sub">
+      <h3 class="rail mono">Technical interests</h3>
+      <div class="main prose">
+        <p>Authentication and session security. Concurrency in Go. How an HTTP request turns into bytes on a wire. What a database does with a query once the table is large. WebSockets and the failure modes of long-lived connections.</p>
+        <p>I am most interested in places where an abstraction leaks, because that is where understanding pays off.</p>
+      </div>
+    </div>
+    <div class="grid sub">
+      <h3 class="rail mono">Engineering philosophy</h3>
+      <div class="main prose">
+        <p>Software is a set of decisions, and most bugs are decisions nobody recorded. I prefer systems that fail in predictable ways over systems that are fast and surprising.</p>
+        <ul class="principles">
+          <li><strong>Reliability before features.</strong><span>A feature is only as good as the worst day it has to survive.</span></li>
+          <li><strong>Read the layer below.</strong><span>Use the framework, and know what it does when it is called.</span></li>
+          <li><strong>Write it down.</strong><span>A decision that is not recorded gets made again, usually worse.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid sub" style="border-bottom:1px solid var(--rule)">
+      <h3 class="rail mono">Current direction</h3>
+      <div class="main prose">
+        <p>I am deepening networking and testing, and learning to reason about whole systems instead of single services. The next projects are larger: a service split across several nodes, with observability from the first commit.</p>
+        <p>I am looking for backend roles and collaborations where code is reviewed carefully and reliability is a shared concern.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="stack">
+      <h2 class="mono">Stack</h2>
+      <p class="mono muted">Index of tools</p>
+    </header>
+    <div class="grid idx-row">
+      <h3 class="rail mono">Languages</h3>
+      <ul class="main idx"><li class="p">Go</li><li class="w">PHP</li><li class="p">Python</li><li class="w">JavaScript</li></ul>
+    </div>
+    <div class="grid idx-row">
+      <h3 class="rail mono">Frameworks</h3>
+      <ul class="main idx"><li class="p">Gin</li><li class="p">Django</li><li class="p">DRF</li><li class="w">Laravel</li></ul>
+    </div>
+    <div class="grid idx-row">
+      <h3 class="rail mono">Systems</h3>
+      <ul class="main idx"><li class="p">Linux</li><li class="x">Networking</li><li class="p">APIs</li><li class="w">WebSockets</li></ul>
+    </div>
+    <div class="grid idx-row">
+      <h3 class="rail mono">Data</h3>
+      <ul class="main idx"><li class="p">PostgreSQL</li><li class="w">Redis</li><li class="w">SQLite</li></ul>
+    </div>
+    <div class="grid idx-row" style="border-bottom:1px solid var(--rule)">
+      <h3 class="rail mono">Tooling</h3>
+      <ul class="main idx"><li class="p">Git</li><li class="w">Docker</li><li class="w">Nginx</li><li class="w">GitHub Actions</li></ul>
+    </div>
+    <div class="grid">
+      <p class="main legend mono">Heavy: used daily &nbsp;/&nbsp; Regular: working knowledge &nbsp;/&nbsp; Light: actively learning</p>
+    </div>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="learning">
+      <h2 class="mono">Currently learning</h2>
+      <p class="mono muted">Updated October 2026</p>
+    </header>
+
+    <article class="grid learn">
+      <p class="rail mono">01</p>
+      <h3 class="display learn-title">Networking</h3>
+      <div class="learn-body">
+        <h4 class="mono">Why it matters</h4>
+        <p>Every backend problem eventually becomes a network problem. Timeouts, retries, connection limits, TLS and load balancers all sit below the code I write. I want to stop treating them as weather.</p>
+        <h4 class="mono">In practice</h4>
+        <ul>
+          <li>Reading packet captures with <code>tcpdump</code></li>
+          <li>Working through <em>Computer Networking: A Top-Down Approach</em></li>
+          <li>Tracing one request from DNS to TCP to TLS to HTTP</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="grid learn">
+      <p class="rail mono">02</p>
+      <h3 class="display learn-title">Testing</h3>
+      <div class="learn-body">
+        <h4 class="mono">Why it matters</h4>
+        <p>Tests are how a service stays changeable. I want the habit of writing the failing test first, and the judgment to know which tests deserve to stay: handlers against a real database, pure logic in table-driven cases.</p>
+        <h4 class="mono">In practice</h4>
+        <ul>
+          <li>Table-driven tests and subtests in Go</li>
+          <li>pytest fixtures and factories for Django projects</li>
+          <li>Integration tests against throwaway containers</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="grid learn">
+      <p class="rail mono">03</p>
+      <h3 class="display learn-title">System design</h3>
+      <div class="learn-body">
+        <h4 class="mono">Why it matters</h4>
+        <p>A service that works on one machine says little about a system that works on three. Capacity, consistency and failure have to be reasoned about before production shows them to me.</p>
+        <h4 class="mono">In practice</h4>
+        <ul>
+          <li><em>Designing Data-Intensive Applications</em>, one chapter at a time</li>
+          <li>Short design documents written before the code</li>
+          <li>Redrawing PULSE as a multi-node system</li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="lab">
+      <h2 class="mono">Notes / Lab / Experiments</h2>
+      <p class="mono muted">Open entries to read</p>
+    </header>
+    <div class="grid sect-intro">
+      <p class="main prose" style="max-width:36rem">Unfinished work, short notes and small experiments. Entries are added as I learn, and some of them grow into projects.</p>
+    </div>
+
+    <div>
+      <details class="note" open>
+        <summary>
+          <span class="n-date mono">2026-10-04</span>
+          <span class="n-main"><span class="n-type mono">Experiment</span><span class="n-title">How many goroutines does a WebSocket connection need?</span></span>
+          <span class="n-status live mono"><i class="dot" aria-hidden="true"></i>In progress</span>
+          <span class="tog mono" aria-hidden="true"></span>
+        </summary>
+        <div class="note-body prose">
+          <p>PULSE runs a reader and a writer goroutine for every connection. This experiment compares that layout with a shared pool of writers. The question is whether the extra goroutines cost anything measurable at ten thousand idle sockets, or whether I am optimizing a number that never mattered.</p>
+          <p>Results will go here together with the load client and the raw numbers.</p>
+        </div>
+      </details>
+
+      <details class="note">
+        <summary>
+          <span class="n-date mono">2026-09-27</span>
+          <span class="n-main"><span class="n-type mono">Note</span><span class="n-title">Refresh token reuse, in plain words</span></span>
+          <span class="n-status mono"><i class="dot" aria-hidden="true"></i>Published</span>
+          <span class="tog mono" aria-hidden="true"></span>
+        </summary>
+        <div class="note-body prose">
+          <p>A refresh token is a one-time ticket. If a ticket that was already used shows up a second time, either the owner is confused or someone copied it. The server cannot tell which, so it cancels the whole family of tickets and asks for a new login.</p>
+          <p>The cost is one annoyed user. The alternative is a quiet intruder.</p>
+        </div>
+      </details>
+
+      <details class="note">
+        <summary>
+          <span class="n-date mono">2026-09-19</span>
+          <span class="n-main"><span class="n-type mono">Log</span><span class="n-title">Watching a TCP handshake</span></span>
+          <span class="n-status mono"><i class="dot" aria-hidden="true"></i>Ongoing</span>
+          <span class="tog mono" aria-hidden="true"></span>
+        </summary>
+        <div class="note-body prose">
+          <p>One command and one request to a local server are enough to see the start of a connection.</p>
+          <figure class="fig">
+            <figcaption class="mono">Terminal</figcaption>
+            <pre><code>sudo tcpdump -nn -i any 'tcp port 8080 and tcp[tcpflags] &amp; tcp-syn != 0'</code></pre>
+          </figure>
+          <p style="margin-top:1.1rem">The output shows the SYN and the SYN-ACK. Drop the flag filter to see the final ACK and the HTTP request that follows. Seeing the handshake once makes later timeout bugs easier to read.</p>
+        </div>
+      </details>
+
+      <details class="note">
+        <summary>
+          <span class="n-date mono">2026-09-08</span>
+          <span class="n-main"><span class="n-type mono">Experiment</span><span class="n-title">Table-driven tests for Gin handlers</span></span>
+          <span class="n-status mono"><i class="dot" aria-hidden="true"></i>Published</span>
+          <span class="tog mono" aria-hidden="true"></span>
+        </summary>
+        <div class="note-body prose">
+          <p>One slice of cases, each with a method, path, body and expected status, driven through <code>httptest</code>. Adding a case costs three lines. The first version reported every failure with one generic message, so each case now runs as its own subtest.</p>
+          <figure class="fig">
+            <figcaption class="mono">handler_test.go</figcaption>
+            <pre><code>for _, tc := range cases {
+    t.Run(tc.name, func(t *testing.T) {
+        w := httptest.NewRecorder()
+        req := httptest.NewRequest(tc.method, tc.path, strings.NewReader(tc.body))
+        router.ServeHTTP(w, req)
+        if w.Code != tc.want {
+            t.Fatalf("status = %d, want %d", w.Code, tc.want)
+        }
+    })
+}</code></pre>
+          </figure>
+        </div>
+      </details>
+
+      <details class="note">
+        <summary>
+          <span class="n-date mono">2026-08-30</span>
+          <span class="n-main"><span class="n-type mono">Note</span><span class="n-title">Right-to-left layout with logical properties</span></span>
+          <span class="n-status mono"><i class="dot" aria-hidden="true"></i>Published</span>
+          <span class="tog mono" aria-hidden="true"></span>
+        </summary>
+        <div class="note-body prose">
+          <p>Replacing <code>margin-left</code> with <code>margin-inline-start</code> removed most of the right-to-left overrides from the old portfolio stylesheet. The overrides that remained were icons and arrows, which have to be mirrored on purpose.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="grid queue">
+      <h3 class="rail mono">Queue</h3>
+      <ul class="main">
+        <li>Reading <code>EXPLAIN (ANALYZE, BUFFERS)</code> output without guessing</li>
+        <li>Graceful shutdown for Go HTTP services</li>
+        <li>A token-bucket rate limiter built on Redis</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sect wrap">
+    <header class="sect-head" id="contact">
+      <h2 class="mono">Contact</h2>
+      <p class="mono muted">Replies within a few days</p>
+    </header>
+    <h2 class="contact-big display" data-fit data-fit-max="260"><span class="fit"><span class="l">Write</span> <span class="l">to me.</span></span></h2>
+    <div class="grid contact-lede">
+      <p class="main prose">I am open to backend roles, collaborations and conversations about code review. If you are building something that has to keep working, I would like to hear about it.</p>
+    </div>
+
+    <div class="grid c-row">
+      <p class="rail mono">Email</p>
+      <div class="main c-line">
+        <a class="c-link" id="email-text" href="mailto:hello@maziarheydari.dev">hello@maziarheydari.dev</a>
+        <button class="btn" id="copy-email" type="button">Copy</button>
+      </div>
+    </div>
+    <div class="grid c-row">
+      <p class="rail mono">GitHub</p>
+      <div class="main"><a class="c-link" href="https://github.com/maziarheydari" target="_blank" rel="noopener">github.com/maziarheydari<span class="arr" aria-hidden="true">↗</span></a></div>
+    </div>
+    <div class="grid c-row">
+      <p class="rail mono">LinkedIn</p>
+      <div class="main"><a class="c-link" href="https://www.linkedin.com/in/maziarheydari" target="_blank" rel="noopener">linkedin.com/in/maziarheydari<span class="arr" aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+
+</div>
+
+<div id="project-view" class="wrap" hidden></div>
+</main>
+
+<footer class="foot wrap">
+  <div class="grid foot-in">
+    <h3 class="rail mono">Colophon</h3>
+    <div class="main">
+      <p>Set in Archivo, Hanken Grotesk and JetBrains Mono. Written in plain HTML, CSS and a little JavaScript, with no framework and no tracking. Last revised 9 October 2026.</p>
+      <div class="meta mono">
+        <span>© 2026 Maziar Heydari</span>
+        <a href="#masthead">Back to top ↑</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- content ---------------- */
+  var P = [
+    {
+      id:"gin-auth", n:"01", title:"GIN-AUTH",
+      tags:["Authentication","Go","Gin"],
+      lead:"Authentication system built with Go and Gin. Short-lived access tokens, rotating refresh tokens, and a clear answer to what happens after a token leaks.",
+      short:"Authentication system built with Go and Gin.",
+      facts:[["Filed under","Authentication"],["Language","Go"],["Framework","Gin"],["Data","PostgreSQL, Redis"],["Year","2026"],["Status","Maintained"]],
+      overview:[
+        "GIN-AUTH is a small authentication service written in Go on top of the Gin framework. It handles the core of identity: registering an account, verifying a password, issuing tokens, refreshing them and ending a session. It exposes a JSON API under `/v1/auth` and is meant to sit beside other backends.",
+        "It is a learning project that is also built to be used. The constraint I set was simple: nothing may hide behind a library I cannot explain."
+      ],
+      problem:[
+        "Most JWT login examples stop at the happy path. A user logs in, receives a token and the tutorial ends. The questions that matter begin after that. What happens when a token is stolen? How does a user sign out of one device without ending every session? How does a password change make old tokens stop working?",
+        "I wanted answers in working code instead of a paragraph of caveats."
+      ],
+      arch:{
+        text:[
+          "Requests pass through three layers. The router applies cross-cutting middleware: request IDs, structured logging and rate limits. Handlers parse and validate input and translate every failure into one JSON error shape. Services own the rules: credential checks, token issuing and the session lifecycle.",
+          "PostgreSQL stores users and password hashes. Redis stores refresh-token families, which turns revocation into a key delete instead of a database scan."
+        ],
+        caption:"Fig. 1. Request path for POST /v1/auth/login",
+        diagram:`CLIENT
+  │  POST /v1/auth/login
+  ▼
+┌──────────────────────────────────────────┐
+│ ROUTER   request id · logging · limits   │
+├──────────────────────────────────────────┤
+│ HANDLERS parse · validate · map errors   │
+├──────────────────────────────────────────┤
+│ SERVICES credentials · tokens · sessions │
+└───────────────┬──────────────┬───────────┘
+                │              │
+                ▼              ▼
+          PostgreSQL         Redis
+          users, hashes    refresh families`
+      },
+      decisions:[
+        ["Short access tokens, rotating refresh tokens","Access tokens live for fifteen minutes and are verified without a database call. Refresh tokens live for seven days and work once. Every refresh returns a new pair."],
+        ["Token families for reuse detection","Each refresh token belongs to a family created at login. If a token that was already used appears again, the whole family is revoked. The legitimate user is signed out and the thief loses access, which is the safer way to fail."],
+        ["Argon2id for password hashing","Chosen over bcrypt for its memory hardness. The parameters live in configuration, so they can be raised without a code change."],
+        ["Opaque refresh tokens, signed access tokens","Refresh tokens are random 256-bit values stored only as hashes in Redis. Only access tokens are JWTs. A refresh token that leaks into a log cannot be replayed from the stored value."],
+        ["One error shape","Every failure returns the same JSON structure with a stable machine-readable code. Clients never parse messages."]
+      ],
+      snippet:{
+        caption:"internal/http/middleware/auth.go",
+        code:`func Require(tokens *token.Service) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        raw, ok := bearer(c.GetHeader("Authorization"))
+        if !ok {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, problem("missing_token"))
+            return
+        }
+        claims, err := tokens.Verify(raw)
+        if err != nil {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, problem("invalid_token"))
+            return
+        }
+        c.Set("uid", claims.Subject)
+        c.Next()
+    }
+}`
+      },
+      tech:[
+        ["Go","The service and its tests"],
+        ["Gin","Routing, middleware and request binding"],
+        ["PostgreSQL","Users and credentials, through pgx"],
+        ["Redis","Refresh-token families and rate-limit counters"],
+        ["golang-jwt","Signing and verifying access tokens"],
+        ["Docker Compose","Local PostgreSQL and Redis"],
+        ["httptest","Handler and integration tests"]
+      ],
+      challenges:[
+        ["Rotation under concurrent requests","Two browser tabs can refresh at the same moment. A naive rotation reads the second request as token reuse and signs the user out. The fix was an atomic compare-and-delete in Redis plus a short grace window in which the previous token is accepted once more."],
+        ["Testing time","Expiry logic is awkward to test with a real clock. Services now take a clock interface, so tests move time forward instead of sleeping."],
+        ["Revealing which accounts exist","Login and registration responses differed in message and in timing. Both paths now do equal work, including a hash comparison against a dummy hash when the user is missing, and return identical errors."]
+      ],
+      outcome:[
+        "The service starts locally with one command and its integration tests run against real PostgreSQL and Redis containers. More useful to me, it gave me a vocabulary for session security that I now use when reading other people’s code.",
+        "Next on the list are TOTP second factors and an audit log of sign-in events."
+      ],
+      repo:["github.com/maziarheydari/gin-auth","https://github.com/maziarheydari/gin-auth"]
+    },
+
+    {
+      id:"portfolio", n:"02", title:"PORTFOLIO",
+      tags:["Django","JavaScript","i18n"],
+      short:"The previous version of this site: a bilingual Django portfolio with right-to-left layout and almost no client-side JavaScript.",
+      facts:[["Filed under","Web / Internationalization"],["Language","Python, JavaScript"],["Framework","Django"],["Data","SQLite, PostgreSQL"],["Year","2025"],["Status","Retired"]],
+      overview:[
+        "A personal portfolio built with Django. Pages are rendered on the server from translatable templates, and a small amount of vanilla JavaScript handles theme and navigation. It was the project where I learned what happens between `runserver` and a real domain.",
+        "It served English and Persian from one codebase and one stylesheet."
+      ],
+      problem:[
+        "A portfolio for a Persian-speaking developer has to work in at least two languages and two writing directions. Most templates treat translation as a late add-on, which produces mirrored layouts that are almost right and subtly broken.",
+        "I wanted internationalization to be part of the structure from the first commit."
+      ],
+      arch:{
+        text:[
+          "The language is the first segment of every URL. Django’s locale middleware reads it, activates the language and the view renders a template whose strings come from gettext catalogs. The same template sets `lang` and `dir` on the root element, and a single stylesheet written with logical properties handles both directions.",
+          "Project content lives in the database with one column per language."
+        ],
+        caption:"Fig. 1. One request in two languages",
+        diagram:`GET /fa/projects/
+  │
+  ▼
+┌──────────────────────────────────────────────┐
+│ LocaleMiddleware   reads the /fa/ prefix     │
+├──────────────────────────────────────────────┤
+│ view               loads Project rows        │
+├──────────────────────────────────────────────┤
+│ template           trans tags · dir="rtl"    │
+└──────────────────────────────────────────────┘
+  │
+  ▼
+HTML  lang="fa"  dir="rtl"  one stylesheet`
+      },
+      decisions:[
+        ["Language in the URL","Each language has its own prefix. Pages are linkable, cacheable and indexable per language, and nothing depends on a cookie."],
+        ["Logical CSS properties","`margin-inline-start` instead of `margin-left`, so one stylesheet serves both directions and the overrides stay short."],
+        ["One column per language","Fields such as `title_en` and `title_fa` instead of a translation library. Less elegant, but easy to read and debug for a site with exactly two languages."],
+        ["Vanilla JavaScript only","Theme switching and the mobile menu take about eighty lines of plain JavaScript. There is no bundler and no framework."],
+        ["Separate type stacks per script","Latin and Persian text get their own font stacks and line heights, because a Persian face needs more vertical room than a Latin one."]
+      ],
+      tech:[
+        ["Django","Views, templates, ORM and the i18n framework"],
+        ["Python","Application code and management commands"],
+        ["gettext","Message catalogs for English and Persian"],
+        ["JavaScript","Theme toggle and navigation, no dependencies"],
+        ["SQLite, PostgreSQL","SQLite in development, PostgreSQL in production"],
+        ["Gunicorn, Nginx","Application server and reverse proxy"]
+      ],
+      challenges:[
+        ["Mixed-direction text","Persian sentences that contain Latin terms such as PostgreSQL or API reorder unexpectedly. Wrapping technical terms in `bdi` or an `ltr` span fixed most cases."],
+        ["Plural rules","Plural rules differ per language, and each catalog needs the correct plural header. I learned this from a count that rendered wrongly, not from the documentation."],
+        ["Catalogs drifting out of sync","`makemessages` produced noisy diffs and untranslated strings slipped through. A make target and a CI check now fail the build when a string is missing."]
+      ],
+      outcome:[
+        "The site served both languages from one codebase. It has been replaced by this edition, but its internationalization structure is the part I keep reusing.",
+        "The main lesson was about order of work: decide the direction and the language model first, and the design follows."
+      ],
+      repo:["github.com/maziarheydari/portfolio","https://github.com/maziarheydari/portfolio"]
+    },
+
+    {
+      id:"pulse", n:"03", title:"PULSE",
+      tags:["WebSockets","Go","Redis"],
+      short:"A WebSocket service for presence and live events. Built to find out what breaks when a connection drops, a client reconnects or a second server joins.",
+      facts:[["Filed under","Real-time systems"],["Language","Go"],["Framework","Standard library"],["Data","Redis"],["Year","2026"],["Status","In development"]],
+      overview:[
+        "PULSE is a WebSocket gateway written in Go. Clients connect, authenticate with an access token, subscribe to channels and receive events. Presence, the answer to “who is online in this channel”, is a first-class feature.",
+        "It runs as one or more identical nodes behind Nginx."
+      ],
+      problem:[
+        "Real-time features look simple in a demo with one server and three users. They become harder at the first page reload. Connections drop, clients reconnect, and a second server instance means a message sent on one node must reach sockets held by another.",
+        "I wanted to understand those failure modes by building them and then breaking them."
+      ],
+      arch:{
+        text:[
+          "Each node keeps a hub that tracks its own connections. Every connection has a reader and a writer goroutine and a bounded send queue. Nodes do not talk to each other directly. They publish to Redis channels and subscribe to the same channels, so an event reaches every node and each node delivers it to its local sockets.",
+          "Presence is kept in Redis as keys with a short expiry that clients refresh with a heartbeat."
+        ],
+        caption:"Fig. 1. Two nodes sharing events through Redis",
+        diagram:`client ◀──▶ NODE 1 (hub)       NODE 2 (hub) ◀──▶ client
+                 │                   │
+         publish │                   │ subscribe
+                 ▼                   ▼
+┌─────────────────────────────────────────────────┐
+│ REDIS   pub/sub channels · presence keys (TTL)  │
+└─────────────────────────────────────────────────┘`
+      },
+      decisions:[
+        ["One reader and one writer per connection","One goroutine reads, one writes. No concurrent writes on a socket and no shared lock on the hot path."],
+        ["Bounded queues, and slow clients are dropped","Each client has a queue of 64 messages. When it fills, the connection is closed instead of letting one slow client hold memory for everyone."],
+        ["Presence through expiring keys","A presence key lives for thirty seconds and is refreshed by heartbeat. If a node crashes, its users disappear on their own instead of staying online forever."],
+        ["Sequence numbers and resume","Events carry a per-channel sequence number. A reconnecting client reports the last number it saw and receives what it missed from a capped buffer."],
+        ["JSON on the wire, for now","Messages are JSON with a `type` field. A binary format can come later, once there is a measurement that asks for it."]
+      ],
+      tech:[
+        ["Go","Hub, connection handling and the load client"],
+        ["gorilla/websocket","WebSocket protocol handling"],
+        ["Redis","Pub/sub fan-out, presence keys, replay buffer"],
+        ["Nginx","Reverse proxy and WebSocket upgrade"],
+        ["Linux tools","`ss` and `lsof` for sockets and descriptors"],
+        ["Docker Compose","Two nodes, Redis and Nginx on one machine"]
+      ],
+      challenges:[
+        ["File descriptors","Every socket is a file descriptor. The first load test failed at about a thousand connections, which matched the default `ulimit -n` of 1024 and had nothing to do with the code. Raising the limit and reading `ss -s` made the cost of a connection visible."],
+        ["Goroutine leaks on disconnect","A closed connection left its writer goroutine waiting on a channel. A done channel and a context fixed it, and a test now checks that the goroutine count returns to its baseline."],
+        ["The same user in two tabs","One user with two tabs produced two online entries. Presence is now keyed by user and counts connections, so a user goes offline only when the last connection closes."]
+      ],
+      outcome:[
+        "Two nodes behind Nginx deliver events to each other’s clients, presence survives a node being killed and reconnects resume cleanly. It is not a product.",
+        "It is a map of the problems I now recognize in any real-time system, and the starting point for the goroutine experiment in the lab."
+      ],
+      repo:["github.com/maziarheydari/pulse","https://github.com/maziarheydari/pulse"]
+    },
+
+    {
+      id:"ticketdesk", n:"04", title:"TICKETDESK",
+      tags:["Django REST Framework","PostgreSQL","APIs"],
+      short:"A support-desk REST API where the interesting part is who may see and change what, and how many queries it takes to find out.",
+      facts:[["Filed under","APIs"],["Language","Python"],["Framework","Django REST Framework"],["Data","PostgreSQL, Redis"],["Year","2026"],["Status","Complete"]],
+      overview:[
+        "TICKETDESK is a REST API for a small support desk. Customers open tickets, agents triage and reply, and administrators see everything. It is built with Django REST Framework and PostgreSQL.",
+        "Its interesting parts are the rules around who can see and change what."
+      ],
+      problem:[
+        "Basic CRUD takes an afternoon. The work is in the rules around it. A customer must never see another customer’s ticket. An agent may reply but not delete. List endpoints must stay fast when there are many rows.",
+        "I wanted a project where permissions and query behavior were the point."
+      ],
+      arch:{
+        text:[
+          "DRF viewsets handle the endpoints, and permission classes are composed per action. Visibility is enforced in `get_queryset`, which scopes every query by the caller’s role. Serializers are split into read and write variants. PostgreSQL carries indexes chosen from query plans, and Redis backs the cache used by throttling.",
+          "A ticket moves through a small state machine defined in one place."
+        ],
+        caption:"Fig. 1. Order of checks for every request",
+        diagram:`request
+  │
+  ▼
+┌────────────────┬────────────┬───────────────┐
+│ authentication │ throttling │ permissions   │
+└────────────────┴────────────┴───────┬───────┘
+                                      ▼
+                    get_queryset()  scoped by role
+                                      ▼
+                       serializer ──▶ PostgreSQL`
+      },
+      decisions:[
+        ["Scope the queryset, not the response","Visibility is enforced in `get_queryset`, so a ticket the caller may not see returns 404, never 403, and never reaches a serializer."],
+        ["Separate read and write serializers","Reads can be wide and nested. Writes accept only the fields a role may change, which makes mass-assignment mistakes hard to write."],
+        ["Cursor pagination for ticket lists","Offset pagination slows down as the offset grows. A cursor on updated time and id keeps the cost flat."],
+        ["An explicit status machine","open, pending, resolved, closed, with the allowed transitions listed in one module. An invalid transition returns a clear 400."],
+        ["Indexes from EXPLAIN, not guesswork","Each list filter was checked with `EXPLAIN ANALYZE` before an index was added, and the plan is saved next to the migration."]
+      ],
+      tech:[
+        ["Python","Application and tests"],
+        ["Django REST Framework","Viewsets, serializers, permissions, throttling"],
+        ["PostgreSQL","Tickets, replies and audit rows"],
+        ["Redis","Cache backend for throttle counters"],
+        ["pytest-django","Role-by-endpoint test matrix"],
+        ["drf-spectacular","OpenAPI schema generation"]
+      ],
+      challenges:[
+        ["N+1 queries","Listing tickets with their assignee and last reply produced a query per row. `select_related` and `prefetch_related` fixed it, and a test that asserts a fixed query count keeps it from coming back."],
+        ["Permissions growing sideways","Rules had spread across views. They now live in small permission classes with names that read like policy, such as `IsTicketParticipant`."],
+        ["Two agents claiming one ticket","A race on assignment let both agents succeed. The claim now runs in a transaction with `select_for_update`."]
+      ],
+      outcome:[
+        "The API has an OpenAPI schema, a test suite that exercises every role against every endpoint and list endpoints with a fixed query budget.",
+        "It changed how I read ORM code: I now look at the queries first."
+      ],
+      repo:["github.com/maziarheydari/ticketdesk","https://github.com/maziarheydari/ticketdesk"]
+    }
+  ];
+
+  /* ---------------- helpers ---------------- */
+  var $ = function(s, r){ return (r||document).querySelector(s); };
+  var esc = function(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  };
+  var md = function(s){ return esc(s).replace(/`([^`]+)`/g,"<code>$1</code>"); };
+  var paras = function(a, cls){
+    return a.map(function(t,i){ return "<p"+(i===0&&cls?" class=\""+cls+"\"":"")+">"+md(t)+"</p>"; }).join("");
+  };
+
+  /* ---------------- work index ---------------- */
+  function entryHTML(p, i){
+    var lead = i === 0;
+    var facts = "";
+    if(lead){
+      facts = "<dl class=\"facts-mini mono\">" + p.facts.slice(1).map(function(f){
+        return "<dt>"+esc(f[0])+"</dt><dd>"+esc(f[1])+"</dd>";
+      }).join("") + "</dl>";
+    }
+    return "<a class=\"entry"+(lead?" entry--lead":"")+"\" href=\"#"+p.id+"\">"
+      + "<span class=\"num mono\">"+p.n+"</span>"
+      + "<span class=\"tags mono\">"+p.tags.map(esc).join(" / ")+"</span>"
+      + "<h3 class=\"title display\">"+esc(p.title)+"</h3>"
+      + "<p class=\"stand\">"+md(lead ? p.lead : p.short)+"</p>"
+      + facts
+      + "<span class=\"go mono\">Explore <span class=\"arr\" aria-hidden=\"true\">→</span></span>"
+      + "</a>";
+  }
+  $("#work-list").innerHTML = P.map(entryHTML).join("");
+
+  /* ---------------- project pages ---------------- */
+  function section(n, label, body){
+    return "<section class=\"sec grid\"><h2 class=\"rail mono\"><span class=\"n\">"+n+"</span>"+label+"</h2><div class=\"main prose\">"+body+"</div></section>";
+  }
+  function figure(cls, caption, text, label){
+    return "<figure class=\"fig "+cls+"\""+(label?" role=\"img\" aria-label=\""+esc(label)+"\"":"")+"><figcaption class=\"mono\">"+esc(caption)+"</figcaption><pre><code>"+esc(text)+"</code></pre></figure>";
+  }
+  function projectHTML(p, i){
+    var prev = P[(i+P.length-1)%P.length], next = P[(i+1)%P.length];
+    var facts = "<dl class=\"facts\">" + p.facts.map(function(f){
+      return "<div><dt class=\"mono\">"+esc(f[0])+"</dt><dd>"+esc(f[1])+"</dd></div>";
+    }).join("") + "</dl>";
+
+    var decisions = "<ol class=\"decisions\">" + p.decisions.map(function(d,k){
+      return "<li><span class=\"d mono\">D"+(k+1)+"</span><div><h3>"+md(d[0])+"</h3><p>"+md(d[1])+"</p></div></li>";
+    }).join("") + "</ol>" + (p.snippet ? figure("code", p.snippet.caption, p.snippet.code) : "");
+
+    var tech = "<dl class=\"tech\">" + p.tech.map(function(t){
+      return "<div><dt>"+md(t[0])+"</dt><dd>"+md(t[1])+"</dd></div>";
+    }).join("") + "</dl>";
+
+    var chal = "<ol class=\"chal\">" + p.challenges.map(function(c,k){
+      return "<li><span class=\"c mono\">C"+(k+1)+"</span><h3>"+md(c[0])+"</h3><p>"+md(c[1])+"</p></li>";
+    }).join("") + "</ol>";
+
+    var repo = "<a class=\"repo\" href=\""+esc(p.repo[1])+"\" target=\"_blank\" rel=\"noopener\"><span class=\"u\">"+esc(p.repo[0])+"</span><span class=\"o mono\">Open repository ↗</span></a>";
+
+    return ""
+      + "<div class=\"p-top mono\"><a href=\"#work\">← All work</a><span class=\"muted\">Entry "+p.n+" of 0"+P.length+"</span></div>"
+      + "<header class=\"p-head\">"
+      +   "<p class=\"p-kicker mono\">"+p.tags.map(esc).join(" / ")+"</p>"
+      +   "<h1 class=\"p-title display\">"+esc(p.title)+"</h1>"
+      +   "<p class=\"p-lede\">"+md(p.lead || p.short)+"</p>"
+      +   facts
+      + "</header>"
+      + section("01","Overview", paras(p.overview,"lede"))
+      + section("02","Problem", paras(p.problem))
+      + section("03","Architecture", paras(p.arch.text) + figure("diagram", p.arch.caption, p.arch.diagram, "Diagram. "+p.arch.caption))
+      + section("04","Technical decisions", decisions)
+      + section("05","Technologies", tech)
+      + section("06","Challenges", chal)
+      + section("07","Outcome", paras(p.outcome))
+      + section("08","Repository", repo)
+      + "<nav class=\"pager\" aria-label=\"More work\">"
+      +   "<a href=\"#"+prev.id+"\"><span class=\"k mono\">← Previous entry "+prev.n+"</span><span class=\"t display\">"+esc(prev.title)+"</span></a>"
+      +   "<a href=\"#"+next.id+"\"><span class=\"k mono\">Next entry "+next.n+" →</span><span class=\"t display\">"+esc(next.title)+"</span></a>"
+      + "</nav>";
+  }
+
+  /* ---------------- fitted display type ---------------- */
+  function fitAll(){
+    var els = document.querySelectorAll("[data-fit]");
+    for(var i=0;i<els.length;i++){
+      var el = els[i], inner = el.firstElementChild;
+      if(!inner || !el.clientWidth) continue;
+      inner.style.fontSize = "100px";
+      var w = inner.getBoundingClientRect().width;
+      if(!w) continue;
+      var max = parseFloat(el.getAttribute("data-fit-max")) || 400;
+      inner.style.fontSize = Math.min(max, 100*el.clientWidth/w).toFixed(2) + "px";
+    }
+  }
+
+  /* ---------------- router ---------------- */
+  var home = $("#home"), view = $("#project-view");
+  var homeScroll = 0, onProject = false;
+  var BASE_TITLE = document.title;
+
+  function route(){
+    var raw = "";
+    try{ raw = decodeURIComponent(location.hash.replace(/^#/,"")); }catch(e){ raw = ""; }
+    var idx = -1;
+    for(var i=0;i<P.length;i++){ if(P[i].id === raw){ idx = i; break; } }
+
+    if(idx > -1){
+      if(!onProject) homeScroll = window.pageYOffset;
+      view.innerHTML = projectHTML(P[idx], idx);
+      home.hidden = true; view.hidden = false; onProject = true;
+      document.title = P[idx].title + " · " + BASE_TITLE;
+      window.scrollTo(0,0);
+      setNav("work");
+      return;
+    }
+
+    var wasProject = onProject;
+    view.hidden = true; home.hidden = false; onProject = false;
+    document.title = BASE_TITLE;
+    fitAll();
+    if(raw === "masthead" || raw === ""){
+      window.scrollTo(0, wasProject && raw === "" ? homeScroll : 0);
+    } else {
+      var t = document.getElementById(raw);
+      if(t && wasProject){ t.scrollIntoView(); }
+    }
+    updateNav();
+  }
+
+  /* ---------------- nav state ---------------- */
+  var navLinks = document.querySelectorAll("[data-nav]");
+  var sections = ["work","about","stack","learning","lab","contact"];
+  var navFor = {work:"work",about:"about",stack:"about",learning:"about",lab:"lab",contact:"contact"};
+  function setNav(key){
+    for(var i=0;i<navLinks.length;i++){
+      if(navLinks[i].getAttribute("data-nav") === key) navLinks[i].setAttribute("aria-current","true");
+      else navLinks[i].removeAttribute("aria-current");
+    }
+  }
+  var ticking = false;
+  function updateNav(){
+    ticking = false;
+    if(onProject){ setNav("work"); return; }
+    var line = window.innerHeight * 0.35, cur = null;
+    for(var i=0;i<sections.length;i++){
+      var el = document.getElementById(sections[i]);
+      if(el && el.getBoundingClientRect().top <= line) cur = sections[i];
+    }
+    setNav(cur ? navFor[cur] : null);
+  }
+  window.addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; window.requestAnimationFrame(updateNav); }
+  }, {passive:true});
+
+  window.addEventListener("hashchange", route);
+  window.addEventListener("resize", function(){ fitAll(); });
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitAll); }
+  window.addEventListener("load", fitAll);
+
+  /* ---------------- copy email ---------------- */
+  var btn = $("#copy-email"), mail = $("#email-text");
+  function flash(msg){
+    btn.textContent = msg;
+    setTimeout(function(){ btn.textContent = "Copy"; }, 1600);
+  }
+  function selectMail(){
+    try{
+      var r = document.createRange(); r.selectNodeContents(mail);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      flash("Selected");
+    }catch(e){ flash("Copy manually"); }
+  }
+  btn.addEventListener("click", function(){
+    try{
+      navigator.clipboard.writeText(mail.textContent.trim()).then(function(){ flash("Copied"); }, selectMail);
+    }catch(e){ selectMail(); }
+  });
+
+  route();
+  fitAll();
+})();
+</script>
+
+</body></html>

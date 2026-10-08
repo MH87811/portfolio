@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maziar Heydari — system map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root, :root[data-theme="dark"]{
+  --bg:#0B0D10; --surface:#111419; --surface2:#171A20;
+  --line:#20252D; --line2:#2C333D;
+  --text:#F1F3F5; --muted:#9AA1AC; --dim:#6B7480;
+  --accent:#6EE7B7;
+  --grid:rgba(255,255,255,.028); --grid2:rgba(255,255,255,.05);
+  --sans:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'Spline Sans Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#F4F5F3; --surface:#FFFFFF; --surface2:#ECEEEB;
+  --line:#DADDD8; --line2:#C3C8C1;
+  --text:#14171A; --muted:#4F5660; --dim:#78808A;
+  --accent:#0A7A53;
+  --grid:rgba(0,0,0,.035); --grid2:rgba(0,0,0,.06);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+body{height:100%;background:var(--bg);color:var(--text);font:400 15px/1.55 var(--sans);display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:28px;height:48px;padding:0 20px;border-bottom:1px solid var(--line)}
+.brand{font:500 13px var(--mono);color:var(--text);text-decoration:none;white-space:nowrap}
+.bar nav{display:flex;gap:2px;min-width:0}
+.bar nav button{position:relative;flex:none;white-space:nowrap;background:none;border:0;padding:6px 10px;font:400 12.5px var(--mono);color:var(--muted)}
+.bar nav button:hover{color:var(--text)}
+.bar nav button[aria-current="true"]{color:var(--text)}
+.bar nav button[aria-current="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:1px;background:var(--accent)}
+.bar .meta{margin-left:auto;font:400 11.5px var(--mono);color:var(--dim);white-space:nowrap}
+
+/* stage */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) clamp(380px,32vw,480px);min-height:0}
+.map{position:relative;min-width:0;min-height:0;overflow:hidden;
+  background-image:
+    linear-gradient(var(--grid2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid2) 1px,transparent 1px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:200px 200px,200px 200px,40px 40px,40px 40px;
+  background-position:-1px -1px}
+#svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cap{position:absolute;bottom:14px;font:400 11px var(--mono);color:var(--dim);pointer-events:none}
+.cap.l{left:20px}.cap.r{right:20px}
+
+/* svg: structure */
+.zone{font:400 10.5px var(--mono);fill:var(--dim)}
+.divider{stroke:var(--line2);stroke-dasharray:2 6;stroke-width:1}
+
+/* svg: edges */
+.edge{fill:none;stroke-width:1;transition:opacity .3s,stroke .3s}
+.t-core{stroke:var(--line2)}
+.t-route{stroke:var(--line2);stroke-dasharray:2 5}
+.t-rel{stroke:var(--line2);opacity:.5}
+.t-ch,.t-chp{stroke:var(--muted);opacity:.6}
+.edge.dim{opacity:.1}
+.edge.hide{opacity:0;pointer-events:none}
+.edge.on{stroke:var(--accent);opacity:1;stroke-dasharray:3 6;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-18}}
+.elabel{font:400 10px var(--mono);fill:var(--accent);opacity:0;text-anchor:middle;paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round;transition:opacity .25s;pointer-events:none}
+.elabel.on{opacity:1}
+.pkt{fill:var(--accent);pointer-events:none}
+
+/* svg: nodes */
+.node{cursor:pointer;outline:none;transition:opacity .3s;animation:appear .7s ease backwards;animation-delay:var(--d,0ms)}
+@keyframes appear{from{opacity:0}to{opacity:1}}
+.nbox{fill:var(--surface);stroke:var(--line2);stroke-width:1;transition:stroke .2s,fill .2s}
+.nl{font:500 12.5px var(--mono);fill:var(--text)}
+.nm{font:400 9.8px var(--mono);fill:var(--dim);transition:fill .2s}
+.k-route .nbox{stroke-dasharray:3 3}
+.node:hover .nbox{stroke:var(--muted)}
+.node.rel .nbox{stroke:var(--muted)}
+.node.sel .nbox{stroke:var(--accent);fill:var(--surface2);stroke-width:1.5}
+.node.sel .nm{fill:var(--muted)}
+.node:focus-visible .nbox{stroke:var(--accent);stroke-width:2}
+.node.dim{opacity:.32}
+.node.dim:hover{opacity:.8}
+.k-root .nl{font:600 22px var(--sans);letter-spacing:-.01em}
+.k-root .role{font:400 12px var(--mono);fill:var(--muted)}
+.k-root .nm{font-size:10px}
+.beat{fill:var(--accent);animation:beat 3.2s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:.35}50%{opacity:1}}
+.g-working{fill:var(--accent)}
+.g-active{fill:none;stroke:var(--accent);stroke-width:1.2}
+.g-active-in{fill:var(--accent)}
+.g-exploring{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:1.6 1.6}
+.child .inner{transition:opacity .3s,transform .3s}
+.child:not(.show){pointer-events:none}
+.child:not(.show) .inner{opacity:0;transform:translateY(-6px)}
+.child{animation:none}
+.k-module .nbox{fill:var(--surface2)}
+
+/* learning overlay */
+.lp-path{fill:none;stroke:var(--accent);stroke-width:1.3;stroke-dasharray:5 4;opacity:0;transition:opacity .3s;pointer-events:none}
+.lp-badge{opacity:0;transition:opacity .3s;pointer-events:none}
+.lp-badge circle{fill:var(--bg);stroke:var(--accent);stroke-width:1}
+.lp-badge text{font:500 9.5px var(--mono);fill:var(--accent);text-anchor:middle}
+.show.lp-path,.show.lp-badge{opacity:1}
+
+/* inspector */
+.inspector{border-left:1px solid var(--line);overflow-y:auto;padding:28px 28px 56px;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.swap{animation:rise .28s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.crumb{font:400 11.5px var(--mono);color:var(--dim);margin-bottom:16px;display:flex;flex-wrap:wrap;gap:0 2px}
+.crumb button{background:none;border:0;padding:0;color:var(--muted);font:inherit}
+.crumb button:hover{color:var(--accent)}
+.crumb i{font-style:normal;padding:0 3px}
+.title{font:600 30px/1.1 var(--sans);letter-spacing:-.022em;margin-bottom:14px}
+.lede{color:var(--text);font-size:16px;line-height:1.5;max-width:46ch;margin-bottom:6px}
+p.t{color:var(--muted);max-width:52ch;margin-top:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 18px;margin:18px 0 22px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:400 12px var(--mono)}
+.kv dt{color:var(--dim)}.kv dd{color:var(--text);display:flex;align-items:center;gap:7px}
+.sec{margin-top:30px}
+.sec h2{font:600 13.5px var(--sans);color:var(--muted);margin-bottom:10px;letter-spacing:0}
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(88px,132px) minmax(0,1fr);gap:14px;align-items:baseline;width:100%;text-align:left;text-decoration:none;background:none;border:0;border-bottom:1px solid var(--line);padding:10px 8px 10px 0;position:relative;color:var(--text)}
+.rk{font:400 12.5px var(--mono);color:var(--text);overflow-wrap:anywhere}
+.rv{font-size:13.5px;color:var(--muted);line-height:1.45}
+.rv small{display:block;font:400 11px var(--mono);color:var(--dim);margin-top:2px}
+button.row,a.row{cursor:pointer;transition:background .15s,padding .15s}
+button.row:hover,a.row:hover{background:var(--surface);padding-left:10px}
+button.row:hover::before,a.row:hover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+button.row:hover .rk,a.row:hover .rk{color:var(--accent)}
+.st{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none;border:1px solid var(--muted);vertical-align:-1px}
+.st.s-working{background:var(--accent);border-color:var(--accent)}
+.st.s-active{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--bg),inset 0 0 0 5px var(--accent);background:var(--bg)}
+.st.s-exploring{border-style:dashed}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font:400 11.5px var(--mono);color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+
+/* module diagram */
+.mod{border:1px solid var(--line2);background:var(--surface)}
+.mod-h{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line2);font:400 11px var(--mono);color:var(--dim)}
+.mod ol{list-style:none;position:relative}
+.mod ol::before{content:"";position:absolute;left:15px;top:20px;bottom:20px;width:1px;background:var(--line2)}
+.mod li{position:relative;padding:10px 12px 10px 36px;border-bottom:1px solid var(--line)}
+.mod li:last-child{border-bottom:0}
+.mod li::before{content:"";position:absolute;left:11px;top:17px;width:9px;height:9px;border-radius:50%;background:var(--surface);border:1px solid var(--muted);animation:hit .9s ease both;animation-delay:calc(var(--i)*200ms + 250ms)}
+@keyframes hit{0%{background:var(--surface);border-color:var(--muted)}35%{background:var(--accent);border-color:var(--accent)}100%{background:var(--surface);border-color:var(--muted)}}
+.mod .ln{display:block;font:500 12.5px var(--mono)}
+.mod .ld{display:block;font-size:13px;color:var(--muted)}
+.note{font:400 11.5px var(--mono);color:var(--dim);margin-top:8px}
+.tech{display:flex;flex-wrap:wrap;font:400 12.5px var(--mono);border:1px solid var(--line);}
+.tech span{padding:6px 12px;border-right:1px solid var(--line);margin:-1px 0 0 0}
+.tech span:last-child{border-right:0}
+.dec{list-style:none;border-top:1px solid var(--line)}
+.dec li{padding:12px 0;border-bottom:1px solid var(--line)}
+.dec b{display:block;font-weight:600;font-size:14px;margin-bottom:2px}
+.dec span{color:var(--muted);font-size:13.5px}
+
+/* learning path */
+.lp{list-style:none;position:relative;margin-left:5px;padding-left:24px}
+.lp::before{content:"";position:absolute;left:5px;top:14px;bottom:20px;width:1px;background:var(--line2)}
+.lp>li{position:relative;padding:4px 0 16px}
+.lp>li>.st{position:absolute;left:-24px;top:9px;background:var(--bg)}
+.lp>li>.st.s-working{background:var(--accent)}
+.lp>li>.st.s-active{background:var(--bg)}
+.lp-root{font:400 12px var(--mono);color:var(--dim);margin:0 0 6px 5px}
+.lp button.pn{display:flex;align-items:baseline;gap:10px;background:none;border:0;padding:0;text-align:left}
+.lp button.pn:hover .nm2{color:var(--accent)}
+.nm2{font:500 14px var(--mono)}
+.ns{font:400 11px var(--mono);color:var(--dim)}
+.lp .what{font-size:13px;color:var(--muted);margin:2px 0 6px}
+.leaves{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 11.5px var(--mono);color:var(--dim)}
+.leaves span{position:relative;padding-left:14px}
+.leaves span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:1px;background:var(--line2)}
+
+/* mobile tree */
+.tree{display:none}
+.trow{position:relative;display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:13px 0;color:var(--text);font:500 14px var(--mono)}
+.trow .tm{margin-left:auto;font:400 11.5px var(--mono);color:var(--dim);text-align:right}
+.trow[aria-expanded="true"]{color:var(--accent)}
+.trow.root{font:600 20px var(--sans);letter-spacing:-.015em;flex-wrap:wrap}
+.trow.root .tm{margin-left:0;flex-basis:100%;font:400 12px var(--mono)}
+.tg{margin:20px 0 0 4px;padding-left:18px;border-left:1px solid var(--line2)}
+.tgl{font:400 11px var(--mono);color:var(--dim);margin:0 0 2px}
+.tg .trow::before{content:"";position:absolute;left:-18px;top:50%;width:12px;height:1px;background:var(--line2)}
+.tbody{padding:14px 0 26px;border-bottom:1px solid var(--line)}
+.tbody .kv{margin-top:8px}
+
+/* mobile */
+@media (max-width:860px){
+  body{overflow:hidden}
+  .bar{gap:12px;padding:0 12px}
+  .bar nav{overflow-x:auto;scrollbar-width:none;flex:1}
+  .bar nav::-webkit-scrollbar{display:none}
+  .bar .meta{display:none}
+  .stage{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .map,.inspector{display:none}
+  .tree{display:block;padding:20px 16px 56px;max-width:640px;margin:0 auto}
+  .title{font-size:26px}
+  .row{grid-template-columns:minmax(80px,112px) minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="#/system" data-go="system">mh87811.ir</a>
+  <nav id="nav" aria-label="Sections"></nav>
+  <span class="meta" id="meta"></span>
+</header>
+
+<main class="stage">
+  <section class="map" id="map" aria-label="System map">
+    <svg id="svg" viewBox="0 0 1100 800" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Interactive system architecture of Maziar Heydari's work"></svg>
+    <div class="cap l">fig. 01 &nbsp;system map</div>
+    <div class="cap r">select a node to follow its connections · esc resets</div>
+  </section>
+  <aside class="inspector" id="inspector" aria-label="Node details"></aside>
+  <section class="tree" id="tree" aria-label="System outline"></section>
+</main>
+
+<noscript><p style="padding:24px;font-family:sans-serif">This page needs JavaScript to draw the system map.</p></noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const NS = 'http://www.w3.org/2000/svg';
+const el = (t,a,p)=>{const e=document.createElementNS(NS,t);if(a)for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- content: projects ---------- */
+const P = {
+  'gin-auth':{
+    title:'Gin-Auth', kind:'Authentication service', stack:'Go / Gin', primary:'go', related:['go','apis'],
+    overview:'A standalone authentication service. It registers users, issues and refreshes JWTs, and verifies tokens for other services.',
+    layers:[['HTTP Layer','Gin router and handlers'],['Auth Middleware','Token verification before any handler runs'],['JWT','Issue, refresh and revoke tokens'],['User Management','Accounts and credentials']],
+    tech:['Go','Gin','JWT','SQL database'],
+    repo:'github.com/mh87811/gin-auth',
+    decisions:[
+      ['Short-lived access tokens','Access tokens expire quickly. The refresh token is the only long-lived credential, and it can be revoked.'],
+      ['Verification lives in middleware','Handlers receive an authenticated user from the request context and never parse tokens themselves.'],
+      ['Passwords are hashed, never stored','A slow, salted hash is used. Credentials never appear in logs or responses.']
+    ]
+  },
+  'django-market':{
+    title:'Django-Market', kind:'E-commerce backend', stack:'Django / DRF', primary:'django', related:['django','apis','databases'],
+    overview:'A storefront backend: catalog, cart, checkout and order history, exposed through a REST API.',
+    layers:[['HTTP Layer','DRF viewsets and routers'],['Catalog','Products, categories and stock'],['Orders','Cart, checkout and order lifecycle'],['Persistence','Django ORM and migrations']],
+    tech:['Python','Django','Django REST Framework','SQL database'],
+    repo:'github.com/mh87811/django-market',
+    decisions:[
+      ['Prices are snapshotted at checkout','An order keeps the price it was sold at, so later catalog edits never rewrite history.'],
+      ['Stock changes happen in transactions','Checkout locks the affected rows so two buyers cannot take the last item.'],
+      ['Business rules live in service functions','Viewsets validate and serialize. Order rules sit in plain functions that are easy to test.']
+    ]
+  },
+  'django-chat':{
+    title:'Django-Chat', kind:'Real-time chat service', stack:'Django / Channels', primary:'django', related:['django','websockets'],
+    overview:'A real-time chat service with rooms, live delivery over WebSockets and persistent message history.',
+    layers:[['WebSocket Layer','Channels consumers'],['Auth','Session check during the handshake'],['Rooms','Channel-layer groups and fan-out'],['Persistence','Messages and history']],
+    tech:['Python','Django','Django Channels','WebSockets'],
+    repo:'github.com/mh87811/django-chat',
+    decisions:[
+      ['Authenticate on connect','The handshake is rejected unless the session is valid. There are no anonymous sockets.'],
+      ['Persist, then broadcast','A message is saved before it is sent to the room, so history and the live view never disagree.'],
+      ['REST for history, WebSocket for live','Clients load past messages over HTTP and use the socket only for new events.']
+    ]
+  },
+  'portfolio':{
+    title:'Portfolio', kind:'Personal site', stack:'Django / HTML / CSS / JS', primary:'django', related:['django'],
+    overview:'The site you are on. It turns the way I think about backend systems into something you can explore.',
+    layers:[['Templates','The HTML shell'],['Views','Django routes'],['Content','Project, stack and learning data'],['Static','CSS and JavaScript for this map']],
+    tech:['Django','HTML','CSS','JavaScript'],
+    repo:'github.com/mh87811/portfolio',
+    decisions:[
+      ['Content is data','Projects, stack and learning paths are structured records. The interface is generated from them.'],
+      ['One content model, two views','The graph on desktop and the outline on mobile render the same data.'],
+      ['No front-end framework','Plain HTML, CSS and a small amount of JavaScript keep the page light.']
+    ]
+  }
+};
+
+/* ---------- content: tech nodes ---------- */
+const TECH = {
+  django:{lede:'The framework most of my work starts from. Its conventions keep a large codebase predictable.',
+    concepts:[['drf','serializers, viewsets, permissions and throttling'],['orm','querysets, select_related and prefetch_related, migrations'],['channels','consumers and channel layers for WebSockets'],['admin','an internal operations tool, not a public surface'],['testing','API client tests against a real test database']]},
+  laravel:{lede:'Expressive PHP for server-rendered apps and JSON APIs, with a strong request pipeline.',
+    concepts:[['eloquent','relations, scopes and eager loading'],['middleware','the request pipeline: auth, throttling, CORS'],['form requests','validation kept out of controllers'],['queues','jobs and workers for slow or retryable work'],['artisan','commands for maintenance and one-off scripts']]},
+  go:{lede:'Small, fast services that compile to one binary. I reach for it when I want explicit control over concurrency and failure.',
+    concepts:[['goroutines','concurrent work with channels and sync primitives'],['net/http, gin','routing and middleware chains'],['context','cancellation and deadlines through every call'],['errors','explicit returns, wrapped with context'],['deploy','one static binary behind a reverse proxy']]},
+  apis:{lede:'Every service here is, first, a contract. I design the contract before the handler.',
+    concepts:[['resources','nouns, relations and predictable URLs'],['errors','one error shape, stable codes, useful messages'],['pagination','cursor or page based, never an unbounded list'],['auth','JWT and session flows, checked in middleware'],['idempotency','safe retries for the writes that matter']]},
+  databases:{lede:'Most backend problems are data problems. I model the data first and let the code follow.',
+    concepts:[['schema','constraints in the database, not only in code'],['indexes','reading query plans before adding one'],['transactions','isolation levels and what they actually guarantee'],['migrations','small, reversible, safe on live data'],['n+1','finding and removing hidden query loops']]},
+  websockets:{lede:'Long-lived connections turn a request/response service into a stateful one. Most of the care goes into the edges.',
+    concepts:[['handshake','authenticate before the connection is accepted'],['rooms','group membership and fan-out'],['heartbeat','ping and pong, timeouts, reconnect behaviour'],['backpressure','a slow consumer must not stall everyone else'],['history','REST for the past, WebSocket for the present']]},
+  linux:{lede:'The machine every service ends up on. Knowing it makes failures easier to read.',
+    concepts:[['systemd','units, restarts and logs through journald'],['nginx','reverse proxy, TLS termination, static files'],['processes','signals, limits and graceful shutdown'],['permissions','users, groups and least privilege'],['shell','small scripts for repeatable chores']]},
+  systems:{lede:'The layer between a service and everything it talks to: networks, protocols, and the trade-offs of putting pieces together.',
+    concepts:[['tcp / ip','connections, ports, what happens on the wire'],['dns and tls','resolution, certificates and handshakes'],['load balancing','spreading requests, health checks'],['caching','where it helps, and how it goes stale'],['architecture','boundaries, queues and failure modes']]}
+};
+
+const LAB = [
+  ['ws-hub','Go','working','In-memory pub/sub hub for WebSocket rooms'],
+  ['token-bucket','Go','sketch','Rate-limiting middleware for Gin'],
+  ['tcp-echo','Go','working','A raw TCP server, to see framing and half-open connections'],
+  ['explain-notes','SQL','notes','Notes on reading EXPLAIN output'],
+  ['nginx-lab','Linux','notes','Reverse proxy and TLS configs, tested in a throwaway VM']
+];
+
+const LEARN = [
+  {id:'django', name:'django', s:'working', what:'DRF, Channels, query tuning', next:['async views','caching strategies']},
+  {id:'laravel', name:'laravel', s:'working', what:'Eloquent, queues, request pipeline', next:['queue workers','package design']},
+  {id:'go', name:'go', s:'active', what:'Services, concurrency, tooling', next:['concurrency patterns','generics','profiling with pprof']},
+  {id:'systems', name:'networking', s:'active', what:'How packets, connections and names work', next:['tcp internals','tls handshakes','dns']},
+  {id:'linux', name:'linux', s:'active', what:'Running and debugging services', next:['namespaces and cgroups','systemd hardening','observability']},
+  {id:'systems', name:'systems', s:'exploring', what:'Design across service boundaries', next:['queues and caching','distributed failure modes']}
+];
+const LEARN_PATH = ['django','laravel','go','linux','systems'];
+
+/* ---------- graph model ---------- */
+const N = {};
+const add = o => { N[o.id] = Object.assign({w:136,h:52}, o); };
+add({id:'center',title:'Maziar Heydari',kind:'root',x:550,y:420,w:232,h:92});
+add({id:'django',title:'Django',label:'django',sub:'python · framework',kind:'framework',x:170,y:270,state:'working'});
+add({id:'laravel',title:'Laravel',label:'laravel',sub:'php · framework',kind:'framework',x:110,y:430,state:'working'});
+add({id:'go',title:'Go',label:'go',sub:'golang · compiled',kind:'framework',x:170,y:590,state:'active'});
+add({id:'apis',title:'APIs',label:'apis',sub:'http · json',kind:'interface',x:930,y:270,state:'working'});
+add({id:'databases',title:'Databases',label:'databases',sub:'sql · storage',kind:'datastore',x:990,y:430,state:'working'});
+add({id:'websockets',title:'WebSockets',label:'websockets',sub:'full-duplex',kind:'interface',x:930,y:590,state:'active'});
+add({id:'linux',title:'Linux',label:'linux',sub:'os · deployment',kind:'platform',x:400,y:725,state:'active'});
+add({id:'systems',title:'Systems',label:'systems',sub:'networking · design',kind:'platform',x:700,y:725,state:'exploring'});
+add({id:'about',title:'About',label:'/about',sub:'who · how',kind:'route',x:300,y:70,w:120,h:44});
+add({id:'projects',title:'Projects',label:'/projects',sub:Object.keys(P).length+' modules',kind:'route',x:550,y:70,w:120,h:44});
+add({id:'learning',title:'Learning',label:'/learning',sub:'path',kind:'route',x:800,y:70,w:120,h:44});
+add({id:'lab',title:'Lab',label:'/lab',sub:'experiments',kind:'route',x:110,y:700,w:120,h:44});
+add({id:'contact',title:'Contact',label:'/contact',sub:'reach out',kind:'route',x:990,y:700,w:120,h:44});
+const CHILD_X = {'gin-auth':355,'django-market':482,'django-chat':618,'portfolio':745};
+const CHILD_SUB = {'gin-auth':'go · gin','django-market':'django · drf','django-chat':'django · channels','portfolio':'site · django'};
+Object.keys(P).forEach(id=>add({id:id,title:P[id].title,label:id,sub:CHILD_SUB[id],kind:'module',child:true,x:CHILD_X[id],y:215,w:116,h:40}));
+
+const TECH_IDS = ['django','laravel','go','apis','databases','websockets','linux','systems'];
+const ROUTE_IDS = ['about','projects','learning','lab','contact'];
+const isTech = id => TECH_IDS.indexOf(id) > -1;
+
+const E = [];
+TECH_IDS.forEach(id=>E.push({a:'center',b:id,t:'core'}));
+ROUTE_IDS.forEach(id=>E.push({a:'center',b:id,t:'route'}));
+[
+  ['django','apis','DRF',-30],
+  ['django','databases','ORM',-60],
+  ['django','websockets','Channels',190],
+  ['laravel','apis','resources',-70],
+  ['laravel','databases','Eloquent',150],
+  ['go','apis','Gin, net/http',200],
+  ['go','websockets','goroutines',60],
+  ['go','linux','static binary',0],
+  ['linux','databases','hosts',0],
+  ['linux','systems','sockets, tcp',0],
+  ['websockets','systems','tcp',0],
+  ['apis','databases','queries',0],
+  ['lab','go','experiments',0],
+  ['lab','linux','experiments',0]
+].forEach(r=>E.push({a:r[0],b:r[1],t:'rel',l:r[2],bend:r[3]}));
+Object.keys(P).forEach(id=>{
+  E.push({a:id,b:'projects',t:'ch',ctrl:'up'});
+  E.push({a:id,b:P[id].primary,t:'chp',ctrl:'down'});
+});
+
+/* ---------- geometry ---------- */
+function clip(n,tx,ty){
+  const pad=3, dx=tx-n.x, dy=ty-n.y;
+  const k=Math.min(dx?(n.w/2+pad)/Math.abs(dx):1e9, dy?(n.h/2+pad)/Math.abs(dy):1e9);
+  return [n.x+dx*k, n.y+dy*k];
+}
+function geom(e){
+  const A=N[e.a], B=N[e.b];
+  let cx,cy;
+  if(e.ctrl==='down'){cx=A.x;cy=Math.max(A.y+55,B.y);}
+  else if(e.ctrl==='up'){cx=A.x;cy=B.y+80;}
+  else{
+    const mx=(A.x+B.x)/2,my=(A.y+B.y)/2,dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy)||1,bend=e.bend||0;
+    cx=mx+(-dy/len)*bend;cy=my+(dx/len)*bend;
+  }
+  const s=clip(A,cx,cy), t=clip(B,cx,cy);
+  const f=v=>v.toFixed(1);
+  return {
+    d:'M'+f(s[0])+' '+f(s[1])+'Q'+f(cx)+' '+f(cy)+' '+f(t[0])+' '+f(t[1]),
+    lx:.25*s[0]+.5*cx+.25*t[0], ly:.25*s[1]+.5*cy+.25*t[1]
+  };
+}
+
+/* ---------- build svg ---------- */
+const svg=$('#svg');
+const gZones=el('g',null,svg), gEdges=el('g',null,svg), gPath=el('g',null,svg), gPkt=el('g',null,svg), gNodes=el('g',null,svg), gLabels=el('g',null,svg);
+
+[[290,150,290,665],[810,150,810,665]].forEach(l=>el('line',{class:'divider',x1:l[0],y1:l[1],x2:l[2],y2:l[3]},gZones));
+[['frameworks',42,196,'start'],['interfaces and storage',1058,196,'end'],['platform',550,784,'middle'],['routes',550,28,'middle']].forEach(z=>{
+  const t=el('text',{class:'zone',x:z[1],y:z[2],'text-anchor':z[3]},gZones);t.textContent=z[0];
+});
+
+const edgeEls=[];
+E.forEach((e,i)=>{
+  const g=geom(e);
+  const path=el('path',{class:'edge t-'+e.t,d:g.d},gEdges);
+  let label=null;
+  if(e.l){label=el('text',{class:'elabel',x:g.lx.toFixed(1),y:(g.ly-7).toFixed(1)},gLabels);label.textContent=e.l;}
+  edgeEls.push({e:e,i:i,path:path,label:label});
+});
+
+/* learning overlay */
+const lpPaths=[];
+for(let i=0;i<LEARN_PATH.length-1;i++){
+  const g=geom({a:LEARN_PATH[i],b:LEARN_PATH[i+1],bend:0});
+  lpPaths.push(el('path',{class:'lp-path',d:g.d},gPath));
+}
+const lpBadges=LEARN_PATH.map((id,i)=>{
+  const n=N[id];
+  const b=el('g',{class:'lp-badge',transform:'translate('+(n.x-n.w/2)+' '+(n.y-n.h/2)+')'},gLabels);
+  el('circle',{r:9},b);
+  const t=el('text',{y:3.4},b);t.textContent=String(i+1);
+  return b;
+});
+
+/* nodes */
+const nodeEls={};
+const stateGlyph=(g,s,x,y)=>{
+  if(s==='working') el('circle',{class:'g-working',cx:x,cy:y,r:3.2},g);
+  else if(s==='active'){el('circle',{class:'g-active',cx:x,cy:y,r:3.8},g);el('circle',{class:'g-active-in',cx:x,cy:y,r:1.5},g);}
+  else if(s==='exploring') el('circle',{class:'g-exploring',cx:x,cy:y,r:3.6},g);
+};
+Object.keys(N).forEach((id,idx)=>{
+  const n=N[id];
+  const g=el('g',{class:'node k-'+n.kind+(n.child?' child':''),transform:'translate('+n.x+' '+n.y+')',tabindex:n.child?-1:0,role:'button','data-id':id},gNodes);
+  const d=Math.hypot(n.x-550,n.y-420);
+  g.style.setProperty('--d',Math.round(d*1.1)+'ms');
+  const inner=el('g',{class:'inner'},g);
+  el('rect',{class:'nbox',x:-n.w/2,y:-n.h/2,width:n.w,height:n.h,rx:n.kind==='root'?5:3},inner);
+  if(n.kind==='root'){
+    el('circle',{class:'beat',cx:-104+3,cy:-34,r:2.6},inner);
+    const r=el('text',{class:'nm',x:-92,y:-31},inner);r.textContent='root';
+    const a=el('text',{class:'nl',x:-104,y:-6},inner);a.textContent='Maziar Heydari';
+    const b=el('text',{class:'role',x:-104,y:16},inner);b.textContent='backend developer';
+    const c=el('text',{class:'nm',x:-104,y:34},inner);c.textContent='python · php · go';
+    g.setAttribute('aria-label','Maziar Heydari, backend developer. Show system overview.');
+  }else{
+    const a=el('text',{class:'nl',x:-n.w/2+12,y:n.child?-2:-3},inner);a.textContent=n.label;
+    const b=el('text',{class:'nm',x:-n.w/2+12,y:n.child?12:13},inner);b.textContent=n.sub;
+    if(n.state) stateGlyph(inner,n.state,n.w/2-14,-n.h/2+14);
+    g.setAttribute('aria-label',n.title+(n.state?' ('+n.state+')':'')+', '+n.kind);
+  }
+  nodeEls[id]=g;
+  g.addEventListener('click',()=>go(id==='center'?'system':id));
+  g.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go(id==='center'?'system':id);}});
+  g.addEventListener('mouseenter',()=>{hov=id;paint();});
+  g.addEventListener('mouseleave',()=>{hov=null;paint();});
+  g.addEventListener('focus',()=>{hov=id;paint();});
+  g.addEventListener('blur',()=>{hov=null;paint();});
+});
+
+/* ---------- state & painting ---------- */
+let sel='system', hov=null;
+const VALID = id => id==='system'||id==='stack'||!!N[id]&&id!=='center';
+
+function visChildren(){
+  const s=new Set();
+  if(sel==='projects'||P[sel]) Object.keys(P).forEach(k=>s.add(k));
+  else Object.keys(P).forEach(k=>{if(P[k].primary===sel) s.add(k);});
+  return s;
+}
+function edgeHidden(e,vis){
+  if(e.t==='ch') return !(sel==='projects'||!!P[sel]);
+  if(e.t==='chp') return !vis.has(e.a);
+  return false;
+}
+function paint(){
+  const vis=visChildren();
+  let f=sel;
+  if(hov && hov!=='center' && !(P[hov]&&!vis.has(hov))) f=hov;
+  const isSys=f==='system', isStack=f==='stack', isLearn=f==='learning';
+  const on=new Set(), keep=new Set([sel,f,'center']);
+
+  if(isStack){
+    TECH_IDS.forEach(i=>keep.add(i));
+    edgeEls.forEach(x=>{if(x.e.t==='core') on.add(x.i);});
+  }else if(isLearn){
+    LEARN_PATH.forEach(i=>keep.add(i));
+  }else if(!isSys){
+    edgeEls.forEach(x=>{
+      if(edgeHidden(x.e,vis)) return;
+      if(x.e.a===f||x.e.b===f){on.add(x.i);keep.add(x.e.a);keep.add(x.e.b);}
+    });
+    if(f==='projects'||P[f]) vis.forEach(k=>{keep.add(k);keep.add(P[k].primary);});
+  }
+  if(isSys) Object.keys(N).forEach(k=>keep.add(k));
+
+  edgeEls.forEach(x=>{
+    const hide=edgeHidden(x.e,vis), isOn=on.has(x.i)&&!hide;
+    x.path.classList.toggle('hide',hide);
+    x.path.classList.toggle('on',isOn);
+    x.path.classList.toggle('dim',!isSys&&!isOn&&!hide);
+    if(x.label) x.label.classList.toggle('on',isOn);
+  });
+  Object.keys(nodeEls).forEach(id=>{
+    const g=nodeEls[id], n=N[id];
+    g.classList.toggle('sel',id===sel||(id==='center'&&sel==='system'));
+    g.classList.toggle('rel',keep.has(id)&&id!==sel&&!isSys);
+    if(n.child){
+      const show=vis.has(id);
+      g.classList.toggle('show',show);
+      g.setAttribute('tabindex',show?'0':'-1');
+      g.setAttribute('aria-hidden',show?'false':'true');
+    }
+    g.classList.toggle('dim',!isSys&&!keep.has(id)&&!(n.child&&!vis.has(id)));
+  });
+  const showLp = sel==='learning';
+  lpPaths.forEach(p=>p.classList.toggle('show',showLp));
+  lpBadges.forEach(b=>b.classList.toggle('show',showLp));
+}
+
+/* ---------- inspector content ---------- */
+let INLINE=false;
+const glyph=s=>'<span class="st s-'+s+'" aria-hidden="true"></span>';
+const kv=rows=>'<dl class="kv">'+rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('')+'</dl>';
+const sec=(t,b)=>'<section class="sec"><h2>'+t+'</h2>'+b+'</section>';
+const rowsOf=a=>'<div class="rows">'+a.join('')+'</div>';
+const rowS=(k,v)=>'<div class="row"><span class="rk">'+k+'</span><span class="rv">'+v+'</span></div>';
+const rowB=(id,k,v)=>'<button class="row" data-go="'+id+'"><span class="rk">'+k+'</span><span class="rv">'+v+'</span></button>';
+const legendStates='<div class="legend"><span>'+glyph('working')+'working</span><span>'+glyph('active')+'active</span><span>'+glyph('exploring')+'exploring</span></div>';
+
+function head(id,title,kvs){
+  const parts=[];
+  if(id==='system') parts.push('<span>~/system</span>');
+  else{
+    parts.push('<button data-go="system">~/system</button>');
+    if(P[id]) parts.push('<button data-go="projects">projects</button>');
+    parts.push('<span>'+id+'</span>');
+  }
+  return '<div class="crumb">'+parts.join('<i>/</i>')+'</div>'+((INLINE&&!P[id])?'':'<h1 class="title">'+title+'</h1>')+(kvs?kv(kvs):'');
+}
+function related(id){
+  const out=[];
+  E.forEach(e=>{
+    if(e.t!=='rel') return;
+    if(e.a===id) out.push([e.b,e.l]); else if(e.b===id) out.push([e.a,e.l]);
+  });
+  return out;
+}
+function usedIn(id){
+  return Object.keys(P).filter(k=>P[k].related.indexOf(id)>-1);
+}
+function moduleRows(ids){
+  return rowsOf(ids.map(k=>rowB(k,k,P[k].kind+'<small>'+P[k].stack+'</small>')));
+}
+
+function sysHTML(){
+  const nodes=Object.keys(N).filter(k=>!N[k].child&&k!=='center').length;
+  const rels=E.filter(e=>e.t==='rel').length;
+  return head('system','System map',[['nodes',nodes],['modules',Object.keys(P).length],['relations',rels]])+
+    '<p class="lede">A backend developer’s mental model, drawn as a graph.</p>'+
+    '<p class="t">Frameworks sit on the left, interfaces and storage on the right, the platform underneath, and the pages of this site along the top. Everything connects to the person who built it.</p>'+
+    sec('How to read it',rowsOf([
+      rowS('solid line','a part of the working stack, tied to the centre'),
+      rowS('dotted line','a relationship between two nodes. Select a node to see them labelled'),
+      rowS('dashed line','a route: a page of this site'),
+      rowS('node marker',glyph('working')+' working &nbsp;'+glyph('active')+' active &nbsp;'+glyph('exploring')+' exploring')
+    ]))+
+    sec('Start somewhere',rowsOf([
+      rowB('django','django','Frameworks, and the modules built with them'),
+      rowB('projects','/projects','Open the architecture of each project'),
+      rowB('learning','/learning','The path I am on, and what is next'),
+      rowB('about','/about','Who I am and how I work')
+    ]));
+}
+function stackHTML(){
+  const grp=(t,ids)=>sec(t,rowsOf(ids.map(i=>rowB(i,i,glyph(N[i].state)+' '+N[i].sub.split(' · ')[0]+'<small>'+TECH[i].lede.split('. ')[0].replace(/\.$/,'')+'</small>'))));
+  return head('stack','Stack',[['view','everything, by layer'],['nodes',TECH_IDS.length]])+
+    '<p class="lede">What I use, grouped by the layer it sits in.</p>'+legendStates+
+    grp('Frameworks',['django','laravel','go'])+grp('Interfaces and storage',['apis','databases','websockets'])+grp('Platform',['linux','systems']);
+}
+function techHTML(id){
+  const n=N[id], c=TECH[id], u=usedIn(id), r=related(id);
+  let h=head(id,n.title,[['kind',n.kind],['state',glyph(n.state)+n.state],['links',r.length+1],['used in',u.length+(u.length===1?' module':' modules')]])+
+    '<p class="lede">'+c.lede+'</p>'+
+    sec('What I work with',rowsOf(c.concepts.map(x=>rowS(x[0],x[1]))));
+  if(u.length) h+=sec('Used in',moduleRows(u));
+  h+=sec('Connected to',rowsOf([rowB('system','center','Maziar Heydari')].concat(r.map(x=>rowB(x[0],N[x[0]].label,x[1])))));
+  return h;
+}
+function projectsHTML(){
+  return head('projects','Projects',[['route','/projects'],['modules',Object.keys(P).length]])+
+    '<p class="lede">Each project is a module: a few layers, each with one job.</p>'+
+    '<p class="t">Select one to open its architecture, stack and the decisions behind it.</p>'+
+    sec('Modules',moduleRows(Object.keys(P)))+
+    sec('Built on',rowsOf([rowB('django','django','Django-Market, Django-Chat, Portfolio'),rowB('go','go','Gin-Auth')]));
+}
+function projectHTML(id){
+  const p=P[id];
+  return head(id,p.title,[['type',p.kind],['stack',p.stack],['layers',p.layers.length]])+
+    '<p class="lede">'+p.overview+'</p>'+
+    sec('Architecture','<div class="mod"><div class="mod-h"><span>'+id+'</span><span>'+p.stack+'</span></div><ol>'+
+      p.layers.map((l,i)=>'<li style="--i:'+i+'"><span class="ln">'+l[0]+'</span><span class="ld">'+l[1]+'</span></li>').join('')+
+      '</ol></div><p class="note">A request passes through the layers from top to bottom.</p>')+
+    sec('Technologies','<div class="tech">'+p.tech.map(t=>'<span>'+t+'</span>').join('')+'</div>')+
+    sec('Repository','<div class="rows"><a class="row" href="https://'+p.repo+'" target="_blank" rel="noopener noreferrer"><span class="rk">'+p.repo+'</span><span class="rv">Open on GitHub</span></a></div>')+
+    sec('Key technical decisions','<ul class="dec">'+p.decisions.map(d=>'<li><b>'+d[0]+'</b><span>'+d[1]+'</span></li>').join('')+'</ul>')+
+    sec('Connected to',rowsOf(p.related.map(r=>rowB(r,N[r].label,N[r].sub))));
+}
+function aboutHTML(){
+  return head('about','About',[['route','/about'],['role','backend developer'],['focus','apis · data · services']])+
+    '<p class="lede">I’m Maziar Heydari, a backend developer.</p>'+
+    sec('What I build','<p class="t" style="margin-top:0">The part of a product people never see but always depend on: the API, the data model and the services behind them. Most of my work is in Python with Django, with Laravel when PHP fits and Go when a service should be small and fast.</p>')+
+    sec('What I focus on',rowsOf([rowB('apis','apis','Clear contracts between systems'),rowB('databases','data','Schemas that protect their own integrity'),rowB('websockets','real-time','Connections that survive bad networks'),rowB('linux','operations','Running what I build, on Linux')]))+
+    sec('How I approach backend work','<ul class="dec">'+[
+      ['Start from the data model','Get the entities and constraints right, and the endpoints become obvious.'],
+      ['Keep the HTTP layer thin','Handlers translate. Services decide.'],
+      ['Make failure visible','Clear errors, structured logs and health checks, so problems announce themselves.'],
+      ['Prefer boring infrastructure','Choose the simplest tool that someone can operate at 3 a.m.']
+    ].map(d=>'<li><b>'+d[0]+'</b><span>'+d[1]+'</span></li>').join('')+'</ul>')+
+    sec('Next',rowsOf([rowB('projects','/projects','See how these ideas turn into modules'),rowB('learning','/learning','Where I am heading')]));
+}
+function learningHTML(){
+  return head('learning','Learning',[['route','/learning'],['stations',LEARN.length],['direction','toward systems']])+
+    '<p class="lede">Learning is a path, not a list.</p>'+
+    '<p class="t">Each station is something I use. The branches are what I am pushing into next. The same path is drawn on the map.</p>'+legendStates+
+    '<div class="sec"><div class="lp-root">backend</div><ol class="lp">'+
+    LEARN.map(l=>'<li><span class="st s-'+l.s+'" aria-hidden="true"></span>'+
+      '<button class="pn" data-go="'+l.id+'"><span class="nm2">'+l.name+'</span><span class="ns">'+l.s+'</span></button>'+
+      '<div class="what">'+l.what+'</div><div class="leaves">'+l.next.map(n=>'<span>'+n+'</span>').join('')+'</div></li>').join('')+
+    '</ol></div>';
+}
+function labHTML(){
+  const r=related('lab');
+  return head('lab','Lab',[['route','/lab'],['entries',LAB.length]])+
+    '<p class="lede">Small experiments, unfinished on purpose.</p>'+
+    '<p class="t">Things I build to understand how something really behaves, before it goes into a project.</p>'+
+    sec('Experiments',rowsOf(LAB.map(x=>rowS(x[0],x[3]+'<small>'+x[1]+' · '+x[2]+'</small>'))))+
+    sec('Connected to',rowsOf(r.map(x=>rowB(x[0],N[x[0]].label,x[1]))));
+}
+function contactHTML(){
+  return head('contact','Contact',[['route','/contact'],['site','mh87811.ir']])+
+    '<p class="lede">The best reason to write is a system you are trying to get right.</p>'+
+    sec('Reach me',
+      '<div class="rows">'+
+      '<a class="row" href="mailto:hello@mh87811.ir"><span class="rk">email</span><span class="rv">hello@mh87811.ir</span></a>'+
+      '<a class="row" href="https://github.com/mh87811" target="_blank" rel="noopener noreferrer"><span class="rk">github</span><span class="rv">github.com/mh87811</span></a>'+
+      '<a class="row" href="https://mh87811.ir" target="_blank" rel="noopener noreferrer"><span class="rk">site</span><span class="rv">mh87811.ir</span></a>'+
+      '</div>');
+}
+function detail(id){
+  if(id==='system') return sysHTML();
+  if(id==='stack') return stackHTML();
+  if(P[id]) return projectHTML(id);
+  if(id==='projects') return projectsHTML();
+  if(id==='about') return aboutHTML();
+  if(id==='learning') return learningHTML();
+  if(id==='lab') return labHTML();
+  if(id==='contact') return contactHTML();
+  return techHTML(id);
+}
+
+/* ---------- nav, inspector, tree ---------- */
+const NAV=[['system','system'],['projects','projects'],['stack','stack'],['learning','learning'],['lab','lab'],['contact','contact']];
+function navKey(id){
+  if(id==='system'||id==='stack'||id==='learning'||id==='lab'||id==='contact') return id;
+  if(id==='projects'||P[id]) return 'projects';
+  if(isTech(id)) return 'stack';
+  return null;
+}
+function renderNav(){
+  const cur=navKey(sel);
+  $('#nav').innerHTML=NAV.map(n=>'<button data-go="'+n[0]+'"'+(cur===n[1]?' aria-current="true"':'')+'>'+n[1]+'</button>').join('');
+}
+function renderInspector(){
+  INLINE=false;
+  const box=$('#inspector');
+  box.innerHTML='<div class="swap">'+detail(sel)+'</div>';
+  box.scrollTop=0;
+}
+const TREE=[
+  {row:'system'},{row:'stack'},
+  {g:'frameworks',rows:['django','laravel','go']},
+  {g:'interfaces and storage',rows:['apis','databases','websockets']},
+  {g:'platform',rows:['linux','systems']},
+  {g:'routes',rows:['about','projects','learning','lab','contact']}
+];
+function rowOf(id){return P[id]?'projects':id;}
+function trowHTML(id,open){
+  let label,meta,cls='trow';
+  if(id==='system'){label='Maziar Heydari';meta='backend developer';cls+=' root';}
+  else if(id==='stack'){label='stack';meta='all technologies';}
+  else{label=N[id].label;meta=N[id].sub;}
+  const g=(N[id]&&N[id].state)?glyph(N[id].state):'';
+  let h='<button class="'+cls+'" data-tree="'+id+'" aria-expanded="'+(open?'true':'false')+'">'+(g?g+' ':'')+'<span>'+label+'</span><span class="tm">'+meta+'</span></button>';
+  if(open){INLINE=true;h+='<div class="tbody swap">'+detail(sel)+'</div>';INLINE=false;}
+  return h;
+}
+function renderTree(){
+  const open=rowOf(sel), t=$('#tree');
+  const hadFocus=document.activeElement&&document.activeElement.getAttribute&&document.activeElement.getAttribute('data-tree');
+  let h='';
+  TREE.forEach(x=>{
+    if(x.row) h+=trowHTML(x.row,open===x.row);
+    else h+='<div class="tg"><div class="tgl">'+x.g+'</div>'+x.rows.map(r=>trowHTML(r,open===r)).join('')+'</div>';
+  });
+  t.innerHTML=h;
+  if(hadFocus){const b=$('[data-tree="'+hadFocus+'"]',t);if(b)b.focus({preventScroll:true});}
+}
+
+/* ---------- routing ---------- */
+function go(id,opts){
+  if(!VALID(id)) id='system';
+  sel=id; hov=null;
+  paint(); renderNav(); renderInspector(); renderTree();
+  try{ if(!(opts&&opts.noHash)) history.replaceState(null,'','#/'+id); }catch(e){}
+  if(getComputedStyle($('#tree')).display!=='none'){
+    const b=$('[data-tree="'+rowOf(id)+'"]');
+    if(b&&id!=='system') b.scrollIntoView({block:'start',behavior:reduce?'auto':'smooth'});
+    else if(id==='system') $('.stage').scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+  }
+}
+document.addEventListener('click',ev=>{
+  const g=ev.target.closest('[data-go]');
+  if(g){ev.preventDefault();go(g.getAttribute('data-go'));return;}
+  const t=ev.target.closest('[data-tree]');
+  if(t){
+    const id=t.getAttribute('data-tree');
+    if(t.getAttribute('aria-expanded')==='true'&&id!=='system') go('system');
+    else go(id);
+  }
+});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&sel!=='system') go('system');});
+window.addEventListener('hashchange',()=>{
+  const m=/^#\/([\w-]+)$/.exec(location.hash);
+  if(m&&VALID(m[1])&&m[1]!==sel) go(m[1],{noHash:true});
+});
+
+/* ---------- ambient motion: requests passing along spokes ---------- */
+function packet(){
+  if(reduce||document.hidden) return;
+  const pool=edgeEls.filter(x=>x.e.t==='core'&&!x.path.classList.contains('dim'));
+  if(!pool.length) return;
+  const x=pool[Math.floor(Math.random()*pool.length)], p=x.path;
+  let len;try{len=p.getTotalLength();}catch(e){return;}
+  const c=el('circle',{class:'pkt',r:2.2,cx:-10,cy:-10},gPkt);
+  const rev=Math.random()<.5, t0=performance.now(), dur=1600;
+  (function step(t){
+    const k=Math.min(1,(t-t0)/dur), pt=p.getPointAtLength((rev?1-k:k)*len);
+    c.setAttribute('cx',pt.x);c.setAttribute('cy',pt.y);
+    c.style.opacity=String(Math.sin(Math.PI*k)*.9);
+    if(k<1) requestAnimationFrame(step); else c.remove();
+  })(t0);
+}
+if(!reduce) setInterval(packet,2800);
+
+/* ---------- init ---------- */
+$('#meta').textContent='map v2 · '+Object.keys(N).filter(k=>k!=='center').length+' nodes';
+const m0=/^#\/([\w-]+)$/.exec(location.hash||'');
+go(m0&&VALID(m0[1])?m0[1]:'system',{noHash:true});
+})();
+</script>
+</body>
+</html>

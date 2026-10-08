@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maziar Heydari, Backend Developer</title>
+<meta name="description" content="Maziar Heydari is a backend developer building reliable systems and thoughtful backends with Django, Laravel and Go.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Martian+Mono:wdth,wght@75..112,300..600&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------
+   Tokens
+   Warm graphite surfaces, off-white text, one accent: label-tape yellow.
+------------------------------------------------------------------- */
+:root{
+  --bg:#141312; --bg-2:#1A1917; --bg-3:#22211E;
+  --line:#2A2825; --line-2:#3B3834;
+  --text:#ECE9E2; --text-2:#B5B0A5; --text-3:#7F7A70;
+  --accent:#F2C230; --accent-ink:#F2C230; --on-accent:#17140A;
+  --bad:#E5604D;
+  --sans:"Bricolage Grotesque","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --side:276px;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#EFEDE8; --bg-2:#E7E4DD; --bg-3:#DEDAD1;
+  --line:#D5D1C7; --line-2:#B9B4A8;
+  --text:#1B1A17; --text-2:#4D4A43; --text-3:#7A766B;
+  --accent:#F2C230; --accent-ink:#7A5A00; --on-accent:#17140A;
+  --bad:#B63A27;
+  color-scheme:light;
+}
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,p,ul,ol,dl,dd{margin:0;padding:0}
+ul,ol{list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+::selection{background:var(--accent);color:var(--on-accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--accent);color:var(--on-accent);padding:8px 12px;font:12px var(--mono);z-index:100}
+.skip:focus{left:8px}
+kbd{font:11px/1 var(--mono);border:1px solid var(--line-2);padding:3px 5px;border-radius:2px;color:var(--text-3)}
+
+/* ------------------------------------------------------------------
+   Frame: sidebar + stage
+------------------------------------------------------------------- */
+.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;height:100dvh;border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:22px;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:0 22px;text-decoration:none}
+.brand svg{flex:none}
+.brand-n{display:block;font:600 17px/1.1 var(--sans);letter-spacing:-.015em}
+.brand-r{display:block;font:300 11px/1.4 var(--mono);color:var(--text-3);margin-top:4px}
+.jump{display:flex;align-items:center;justify-content:space-between;margin:24px 22px 18px;padding:9px 11px;border:1px solid var(--line-2);border-radius:2px;font:400 12px var(--mono);color:var(--text-3);transition:border-color .2s,color .2s}
+.jump:hover{border-color:var(--text-3);color:var(--text)}
+.nav a{display:block;position:relative;padding:11px 22px;text-decoration:none;transition:background .2s}
+.nav a::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;background:var(--accent);transform:scaleY(0);transition:transform .25s var(--ease)}
+.nav a:hover,.nav a:focus-visible{background:var(--bg-2)}
+.nav a:hover::before,.nav a:focus-visible::before{transform:scaleY(.45)}
+.nav a[aria-current="page"]{background:var(--bg-2)}
+.nav a[aria-current="page"]::before{transform:scaleY(1)}
+.nav-r{display:flex;justify-content:space-between;align-items:baseline;font:400 13px var(--mono);color:var(--text-2);transition:color .2s,transform .25s var(--ease)}
+.nav a:hover .nav-r,.nav a[aria-current="page"] .nav-r{color:var(--text)}
+.nav a:hover .nav-r{transform:translateX(3px)}
+.nav-k{font-size:11px;color:var(--text-3)}
+.peek{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
+.peek>span{overflow:hidden;font:400 13px/1.45 var(--sans);color:var(--text-3)}
+.peek>span>span{display:block;padding-top:5px}
+.nav a:hover .peek,.nav a:focus-visible .peek,.nav a[aria-current="page"] .peek{grid-template-rows:1fr}
+.sys{margin-top:auto;border-top:1px solid var(--line);padding:16px 22px 20px;display:grid;grid-template-columns:64px 1fr;row-gap:7px;font:300 11.5px/1.5 var(--mono)}
+.sys dt{color:var(--text-3)}
+.sys dd{color:var(--text-2)}
+.sys button{color:var(--text-2);border-bottom:1px solid var(--line-2)}
+.sys button:hover{color:var(--text);border-color:var(--text-3)}
+.dot{display:inline-block;width:7px;height:7px;background:var(--accent);margin-right:8px;vertical-align:1px;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.stage{min-width:0;display:flex;flex-direction:column;min-height:100vh}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;height:46px;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,5vw,72px);font:300 12px var(--mono);color:var(--text-3)}
+.crumb{display:flex;gap:8px;min-width:0;white-space:nowrap;overflow:hidden}
+.crumb span:last-child{color:var(--text)}
+.crumb i{font-style:normal;color:var(--line-2)}
+.code b{font-weight:500;color:var(--accent-ink)}
+main{flex:1;outline:0;padding:60px clamp(24px,5vw,72px) 96px}
+.wrap{max-width:1000px;border-left:1px solid var(--line);padding-left:clamp(20px,3.2vw,44px)}
+.foot{padding:20px clamp(24px,5vw,72px);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;font:300 11.5px var(--mono);color:var(--text-3)}
+
+.view.enter{animation:open .42s var(--ease) both}
+@keyframes open{from{clip-path:inset(0 100% 0 0);opacity:.2}to{clip-path:inset(0 0 0 0);opacity:1}}
+
+/* ------------------------------------------------------------------
+   Page header
+------------------------------------------------------------------- */
+.ph{margin-bottom:64px}
+.ph h1{font:600 clamp(46px,6.4vw,88px)/.92 var(--sans);letter-spacing:-.04em;font-stretch:88%}
+.lede{max-width:54ch;margin-top:26px;font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:var(--text-2)}
+h2.sec{font:600 22px/1.2 var(--sans);letter-spacing:-.02em;margin-bottom:22px}
+
+/* ------------------------------------------------------------------
+   Home
+------------------------------------------------------------------- */
+.name{display:block;font:600 clamp(58px,12vw,160px)/.85 var(--sans);letter-spacing:-.05em;font-stretch:90%;animation:widen 1.2s var(--ease) both}
+.name span{display:block}
+@keyframes widen{from{font-stretch:75%;letter-spacing:-.02em}to{font-stretch:90%;letter-spacing:-.05em}}
+.role{display:flex;align-items:center;gap:12px;margin-top:30px;font:500 clamp(20px,2.2vw,26px)/1.2 var(--sans);letter-spacing:-.01em}
+.role::before{content:"";width:28px;height:3px;background:var(--accent)}
+.tag{max-width:30ch;margin-top:12px;font:300 clamp(20px,2.4vw,30px)/1.25 var(--sans);letter-spacing:-.02em;color:var(--text-2)}
+
+.trace{margin-top:76px}
+.tr-head{display:flex;justify-content:space-between;padding-bottom:10px;font:300 11.5px var(--mono);color:var(--text-3)}
+.tr-head b{font-weight:500;color:var(--accent-ink)}
+.tr-row{display:grid;grid-template-columns:112px minmax(0,1fr) 150px;min-height:46px;border-top:1px solid var(--line);text-decoration:none;position:relative;transition:background .2s}
+.tr-row:last-child{border-bottom:1px solid var(--line)}
+.tr-row:hover,.tr-row:focus-visible{background:var(--bg-2)}
+.tr-name{align-self:center;font:400 13px var(--mono);color:var(--text-2);transition:color .2s}
+.tr-row:hover .tr-name{color:var(--text)}
+.tr-track{position:relative;background:repeating-linear-gradient(to right,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%)}
+.tr-bar{position:absolute;top:50%;left:var(--l);width:var(--w);height:14px;margin-top:-7px;background:color-mix(in srgb,var(--accent) 34%,transparent);border-left:2px solid var(--accent);transform-origin:left center;transition:background .2s;animation:grow .7s var(--ease) both;animation-delay:calc(var(--i) * 80ms + 350ms)}
+.tr-row:hover .tr-bar,.tr-row:focus-visible .tr-bar{background:var(--accent)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.tr-note{align-self:center;text-align:right;font:300 12px var(--mono);color:var(--text-3)}
+
+.focus{margin-top:72px}
+.focus ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}
+.focus li{border-top:1px solid var(--line-2);padding-top:14px}
+.focus .tg{display:block;font:400 12px var(--mono);color:var(--accent-ink);margin-bottom:8px}
+.focus p{color:var(--text-2);font-size:15.5px;line-height:1.5}
+
+/* ------------------------------------------------------------------
+   About
+------------------------------------------------------------------- */
+.ops{border-top:1px solid var(--line-2)}
+.ops div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:8px 32px;padding:22px 0;border-bottom:1px solid var(--line)}
+.ops dt{font:600 21px/1.2 var(--sans);letter-spacing:-.02em}
+.ops dd{max-width:58ch;color:var(--text-2)}
+.about-end{margin-top:64px;max-width:54ch;color:var(--text-2)}
+.about-end p+p{margin-top:16px}
+
+/* ------------------------------------------------------------------
+   Projects
+------------------------------------------------------------------- */
+.mod{position:relative;border-top:1px solid var(--line-2)}
+.mod:last-child{border-bottom:1px solid var(--line-2)}
+.mod::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
+.mod:hover::before,.mod[data-open]::before{transform:scaleX(1)}
+.mod[data-open]::before{width:48px}
+.mod:hover:not([data-open])::before{width:100%}
+.mod-t{font:inherit}
+.mod-h{display:flex;width:100%;justify-content:space-between;align-items:center;gap:20px;padding:26px 0;transition:background .25s}
+.mod-h:hover{background:var(--bg-2)}
+.mod-l{display:block;min-width:0;transition:transform .3s var(--ease)}
+.mod-h:hover .mod-l{transform:translateX(8px)}
+.mod-path{display:block;font:300 11.5px var(--mono);color:var(--text-3);margin-bottom:6px}
+.mod-name{display:block;font:600 clamp(30px,4vw,52px)/1 var(--sans);letter-spacing:-.035em;font-stretch:90%}
+.mod-stack{display:block;margin-top:10px;font:300 12.5px var(--mono);color:var(--text-2)}
+.mod-r{display:flex;align-items:center;gap:20px;flex:none;font:300 12px var(--mono);color:var(--text-3)}
+.mod-st::before{content:"";display:inline-block;width:6px;height:6px;border:1.5px solid var(--text-3);margin-right:8px;vertical-align:0}
+.mod-st.live::before,.mod-st.active::before{background:var(--accent);border-color:var(--accent)}
+.mod-go{font-size:20px;color:var(--text-3);transition:transform .3s var(--ease),color .2s;display:inline-block}
+.mod-h:hover .mod-go{color:var(--accent-ink);transform:translateX(5px)}
+.mod[data-open] .mod-go{transform:rotate(90deg);color:var(--accent-ink)}
+.mod[data-open] .mod-h:hover .mod-go{transform:rotate(90deg)}
+.mod-d{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .4s var(--ease),visibility 0s .4s}
+.mod[data-open] .mod-d{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .4s var(--ease),visibility 0s}
+.mod-d>div{overflow:hidden}
+.mod-di{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;padding:6px 0 44px}
+.viz{border:1px solid var(--line-2);background:var(--bg-2);padding:14px;align-self:start}
+.viz svg{display:block;width:100%;height:auto}
+.viz .b{fill:var(--bg-3);stroke:var(--line-2);stroke-width:1}
+.viz .bh{fill:var(--bg-3);stroke:var(--accent);stroke-width:1}
+.viz .p{fill:var(--bg-3);stroke:none}
+.viz .l{fill:none;stroke:var(--line-2);stroke-width:1;stroke-dasharray:3 3}
+.viz .ln{fill:none;stroke:var(--line-2);stroke-width:1}
+.viz .t{fill:var(--text-2);font:300 10.5px var(--mono)}
+.viz .tt{fill:var(--text);font:500 11.5px var(--mono)}
+.viz .m{fill:var(--text-3);font:300 10px var(--mono)}
+.viz .a{fill:var(--accent)}
+.viz .af{fill:var(--accent);opacity:.55}
+.viz .ar{fill:var(--text-2);opacity:.7}
+.mod-tx p.lead{font-size:18px;line-height:1.5;color:var(--text);max-width:48ch}
+.mod-tx h3{font:400 12px var(--mono);color:var(--text-3);margin:28px 0 10px}
+.mod-tx ul.dn li{position:relative;padding-left:20px;color:var(--text-2);font-size:15.5px;line-height:1.5;margin-bottom:8px;max-width:52ch}
+.mod-tx ul.dn li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:2px;background:var(--accent)}
+.surf li{display:flex;gap:14px;padding:7px 0;border-top:1px solid var(--line);font:300 12.5px var(--mono);color:var(--text-2)}
+.surf li:last-child{border-bottom:1px solid var(--line)}
+.surf em{font-style:normal;color:var(--accent-ink);min-width:44px}
+.src{display:inline-block;margin-top:22px;font:400 13px var(--mono);color:var(--text);text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px;transition:color .2s}
+.src:hover{color:var(--accent-ink)}
+
+/* ------------------------------------------------------------------
+   Stack
+------------------------------------------------------------------- */
+.legend{display:flex;flex-wrap:wrap;gap:8px 26px;margin:-28px 0 36px;font:300 12px var(--mono);color:var(--text-3)}
+.lv{display:inline-block;width:10px;height:10px;border:1.5px solid var(--accent);margin-right:9px;vertical-align:-1px}
+.lv.d{background:var(--accent)}
+.lv.r{background:linear-gradient(to right,var(--accent) 50%,transparent 50%)}
+.layer{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 32px;padding:22px 0 22px 0;border-top:1px solid var(--line);position:relative;transition:background .2s}
+.layer:last-child{border-bottom:1px solid var(--line)}
+.layer::before{content:"";position:absolute;left:calc(-1 * clamp(20px,3.2vw,44px) - 1px);top:26px;width:9px;height:9px;background:var(--bg);border:1.5px solid var(--line-2);transition:background .2s,border-color .2s}
+.layer:hover::before{background:var(--accent);border-color:var(--accent)}
+.layer h3{font:400 13px var(--mono);color:var(--text-2);padding-top:4px}
+.items{display:flex;flex-wrap:wrap;gap:6px 30px}
+.items li{font:500 clamp(19px,2.2vw,26px)/1.3 var(--sans);letter-spacing:-.02em}
+.layer-n{grid-column:2;color:var(--text-3);font-size:14.5px;max-width:56ch}
+
+/* ------------------------------------------------------------------
+   Learning
+------------------------------------------------------------------- */
+.sum{display:flex;flex-wrap:wrap;gap:6px 28px;margin:-28px 0 28px;font:300 12px var(--mono);color:var(--text-3)}
+.sum b{font-weight:500;color:var(--text)}
+.proc{border-top:1px solid var(--line-2)}
+.proc:last-child{border-bottom:1px solid var(--line-2)}
+.proc-h{display:grid;grid-template-columns:96px minmax(0,1fr) 150px;align-items:center;gap:8px 24px;width:100%;padding:22px 0;transition:background .25s}
+.proc-h:hover{background:var(--bg-2)}
+.st{font:400 12px var(--mono);color:var(--text-3)}
+.st::before{content:"";display:inline-block;width:7px;height:7px;margin-right:9px;border:1.5px solid var(--text-3)}
+.st.running{color:var(--text)}
+.st.running::before{background:var(--accent);border-color:var(--accent);animation:pulse 2.4s ease-in-out infinite}
+.st.sleeping::before{background:linear-gradient(to right,var(--text-3) 50%,transparent 50%)}
+.proc-n{display:block;font:600 clamp(21px,2.4vw,28px)/1.15 var(--sans);letter-spacing:-.025em}
+.proc-l{display:block;margin-top:4px;color:var(--text-3);font-size:14.5px;max-width:60ch}
+.seg{display:flex;gap:3px}
+.seg i{flex:1;height:8px;border:1px solid var(--line-2)}
+.seg i.done{background:var(--accent);border-color:var(--accent)}
+.seg i.now{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 35%,transparent)}
+.proc-d{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .35s var(--ease),visibility 0s .35s}
+.proc[data-open] .proc-d{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .35s var(--ease),visibility 0s}
+.proc-d>div{overflow:hidden}
+.steps{padding:0 0 28px 120px}
+.steps li{display:flex;gap:18px;padding:7px 0;border-top:1px solid var(--line);font-size:15px;color:var(--text-2)}
+.steps li span{min-width:44px;font:300 12px var(--mono);color:var(--text-3);padding-top:2px}
+.steps li.now{color:var(--text)}
+.steps li.now span{color:var(--accent-ink)}
+.steps li.done{color:var(--text-3)}
+
+/* ------------------------------------------------------------------
+   Lab
+------------------------------------------------------------------- */
+.bench{border:1px solid var(--line-2);margin-bottom:64px;background:var(--bg-2)}
+.bench-h{display:flex;justify-content:space-between;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line-2);font:300 12px var(--mono);color:var(--text-3)}
+.bench-h b{font-weight:500;color:var(--text)}
+.bench-b{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:0}
+.bench-l{padding:22px 18px 24px;border-right:1px solid var(--line-2)}
+.bench-r{padding:22px 18px 24px}
+.bench h2{font:600 24px/1.2 var(--sans);letter-spacing:-.02em}
+.bench p.q{margin-top:8px;color:var(--text-2);font-size:15px;max-width:46ch}
+.cells{display:flex;flex-wrap:wrap;gap:4px;margin:26px 0 8px}
+.cells i{width:22px;height:30px;border:1px solid var(--line-2);background:linear-gradient(to top,var(--accent) calc(var(--f,0) * 100%),transparent 0)}
+.cells i.on{background:var(--accent);border-color:var(--accent)}
+.read{font:300 12px var(--mono);color:var(--text-3)}
+.read b{font-weight:500;color:var(--text)}
+.ctl{display:grid;grid-template-columns:90px 1fr 34px;align-items:center;gap:12px;margin-top:18px;font:300 12px var(--mono);color:var(--text-3)}
+.ctl output{color:var(--text);text-align:right}
+input[type=range]{width:100%;accent-color:var(--accent);height:20px;background:transparent}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{padding:10px 16px;border:1px solid var(--line-2);border-radius:2px;font:400 12.5px var(--mono);color:var(--text);transition:background .2s,border-color .2s,color .2s}
+.btn:hover{border-color:var(--text-3);background:var(--bg-3)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.pri:hover{background:var(--accent);filter:brightness(1.08)}
+.btn:active{transform:translateY(1px)}
+.tally{display:flex;gap:26px;font:300 12px var(--mono);color:var(--text-3);margin-bottom:12px}
+.tally b{font-weight:500;color:var(--text)}
+.log{font:300 12px var(--mono);min-height:196px}
+.log li{display:flex;gap:14px;padding:6px 0;border-top:1px solid var(--line);color:var(--text-2)}
+.log li b{font-weight:500;min-width:30px;color:var(--accent-ink)}
+.log li.no b{color:var(--bad)}
+.log li.empty{color:var(--text-3)}
+.exp{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:6px 24px;padding:22px 0;border-top:1px solid var(--line)}
+.exp:last-child{border-bottom:1px solid var(--line)}
+.exp h3{font:400 13px var(--mono);color:var(--text-2)}
+.exp p{grid-column:1;color:var(--text);font-size:clamp(17px,1.7vw,20px);line-height:1.4;letter-spacing:-.01em;max-width:52ch}
+.exp .tgs{grid-column:1;font:300 12px var(--mono);color:var(--text-3)}
+.exp .st{grid-column:2;grid-row:1}
+
+/* ------------------------------------------------------------------
+   Contact
+------------------------------------------------------------------- */
+.chan{border-top:1px solid var(--line-2)}
+.chan>div{display:grid;grid-template-columns:110px minmax(0,1fr) auto;align-items:center;gap:8px 24px;padding:20px 0;border-bottom:1px solid var(--line)}
+.chan dt{font:400 12.5px var(--mono);color:var(--text-3)}
+.chan dd{font:500 clamp(18px,2.2vw,26px)/1.3 var(--sans);letter-spacing:-.02em;overflow-wrap:anywhere}
+.chan a{text-decoration:none;border-bottom:1px solid var(--line-2);transition:border-color .2s,color .2s}
+.chan a:hover{border-color:var(--accent);color:var(--accent-ink)}
+.compose{margin-top:64px;max-width:620px}
+.compose label{display:grid;gap:6px;margin-bottom:18px;font:300 12px var(--mono);color:var(--text-3)}
+.compose input,.compose textarea{width:100%;background:var(--bg-2);color:var(--text);border:1px solid var(--line-2);border-radius:2px;padding:11px 12px;font:400 15px/1.5 var(--sans);transition:border-color .2s}
+.compose input:focus,.compose textarea:focus{outline:0;border-color:var(--accent)}
+.compose textarea{min-height:120px;resize:vertical}
+.btn.link{display:inline-block;text-decoration:none}
+
+.nf{padding:24px 0}
+.nf p{margin:16px 0 28px;color:var(--text-2);max-width:46ch}
+
+/* ------------------------------------------------------------------
+   Command bar
+------------------------------------------------------------------- */
+.cmd{position:fixed;inset:0;z-index:60;background:rgba(10,9,8,.72);display:none;align-items:flex-start;justify-content:center;padding:calc(12vh + env(safe-area-inset-top,0px)) 16px 0}
+.cmd.open{display:flex}
+.cmd-p{width:100%;max-width:580px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:2px}
+.cmd-p input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line-2);color:var(--text);padding:16px 18px;font:400 14px var(--mono);outline:0}
+.cmd-p input::placeholder{color:var(--text-3)}
+.cmd-l{max-height:min(46vh,380px);overflow:auto;padding:6px 0}
+.cmd-l li{display:flex;justify-content:space-between;gap:16px;padding:10px 18px;cursor:pointer;font:400 13px var(--mono);color:var(--text-2);border-left:2px solid transparent}
+.cmd-l li small{font:300 12px var(--mono);color:var(--text-3);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmd-l li[aria-selected="true"]{background:var(--bg-3);color:var(--text);border-left-color:var(--accent)}
+.cmd-f{display:flex;gap:18px;padding:10px 18px;border-top:1px solid var(--line);font:300 11.5px var(--mono);color:var(--text-3)}
+
+/* ------------------------------------------------------------------
+   Mobile: dock + workspace map
+------------------------------------------------------------------- */
+.dock{display:none}
+.map{display:none}
+@media (max-width:1100px){
+  .focus ul{grid-template-columns:1fr;gap:20px}
+  .mod-di{grid-template-columns:1fr;gap:28px}
+  .bench-b{grid-template-columns:1fr}
+  .bench-l{border-right:0;border-bottom:1px solid var(--line-2)}
+}
+@media (max-width:880px){
+  .app{display:block}
+  .side{display:none}
+  .stage{min-height:100vh}
+  .bar{padding:0 20px}
+  main{padding:40px 20px calc(110px + env(safe-area-inset-bottom,0px))}
+  .wrap{border-left:0;padding-left:0}
+  .foot{padding:18px 20px calc(88px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:4px}
+  .layer::before{display:none}
+  .tr-row{grid-template-columns:92px minmax(0,1fr)}
+  .tr-note{display:none}
+  .ops div{grid-template-columns:1fr;gap:6px}
+  .layer{grid-template-columns:1fr;gap:6px}
+  .layer-n{grid-column:1}
+  .proc-h{grid-template-columns:minmax(0,1fr);gap:10px}
+  .steps{padding-left:0}
+  .exp{grid-template-columns:1fr}
+  .exp .st{grid-column:1;grid-row:auto}
+  .chan>div{grid-template-columns:1fr;gap:4px}
+  .mod-r .mod-st{display:none}
+  .ph{margin-bottom:44px}
+
+  .dock{display:block;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--line-2);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .dock-seg{display:flex;gap:3px;padding:0 16px;height:3px;margin-top:-1px}
+  .dock-seg i{flex:1;background:var(--line)}
+  .dock-seg i.on{background:var(--accent)}
+  .dock-in{display:grid;grid-template-columns:60px minmax(0,1fr) 60px;height:58px}
+  .dock-in button{display:flex;align-items:center;justify-content:center;font:300 22px var(--mono);color:var(--text-2)}
+  .dock-in button:active{background:var(--bg-2)}
+  .dock-mid{flex-direction:column;gap:3px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .dock-mid b{font:500 14px var(--mono);color:var(--text)}
+  .dock-mid small{font:300 10.5px var(--mono);color:var(--text-3)}
+
+  .map{display:flex;flex-direction:column;position:fixed;inset:0;z-index:50;background:var(--bg);padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(18px + env(safe-area-inset-bottom,0px));visibility:hidden;clip-path:inset(100% 0 0 0);transition:clip-path .42s var(--ease),visibility 0s .42s;overflow:auto}
+  .map.open{visibility:visible;clip-path:inset(0 0 0 0);transition:clip-path .42s var(--ease),visibility 0s}
+  .map-h{display:flex;justify-content:space-between;align-items:center;font:300 12px var(--mono);color:var(--text-3);margin-bottom:22px}
+  .map-h button{border:1px solid var(--line-2);padding:8px 12px;border-radius:2px;color:var(--text)}
+  .map a{display:block;padding:16px 0;border-top:1px solid var(--line);text-decoration:none}
+  .map a:last-of-type{border-bottom:1px solid var(--line)}
+  .map a .n{display:flex;justify-content:space-between;align-items:baseline;font:600 38px/1 var(--sans);letter-spacing:-.035em;font-stretch:90%}
+  .map a .n small{font:300 11px var(--mono);letter-spacing:0;color:var(--text-3)}
+  .map a .d{display:block;margin-top:8px;font:300 12px var(--mono);color:var(--text-3)}
+  .map a[aria-current="page"]{border-top-color:var(--accent)}
+  .map a[aria-current="page"] .n{color:var(--accent-ink)}
+  .map-s{margin-top:auto;padding-top:24px;display:grid;grid-template-columns:70px 1fr;row-gap:6px;font:300 11.5px var(--mono);color:var(--text-3)}
+  .map-s dd{color:var(--text-2)}
+  .map-s button{border-bottom:1px solid var(--line-2);color:var(--text-2)}
+}
+@media (max-width:520px){
+  .ctl{grid-template-columns:78px 1fr 28px}
+  .cells i{width:18px;height:26px}
+  .mod-h{padding:22px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:0s!important;transition-delay:0s!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <aside class="side" aria-label="Workspace">
+    <a class="brand" href="#/" aria-label="Maziar Heydari, home">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="5" height="18" fill="var(--text)"/><rect x="9.5" y="9" width="5" height="12" fill="var(--accent)"/><rect x="17" y="3" width="5" height="18" fill="var(--text)"/></svg>
+      <span><span class="brand-n">Maziar Heydari</span><span class="brand-r">backend developer</span></span>
+    </a>
+    <button class="jump" id="jump" type="button" aria-label="Open command bar"><span>Jump to</span><kbd id="jumpKey">Ctrl K</kbd></button>
+    <nav class="nav" id="nav" aria-label="Areas"></nav>
+    <dl class="sys" aria-label="System status">
+      <dt>status</dt><dd><span class="dot" aria-hidden="true"></span>building</dd>
+      <dt>focus</dt><dd>go, websockets</dd>
+      <dt>session</dt><dd id="uptime">00:00</dd>
+      <dt>theme</dt><dd><button type="button" id="themeBtn">dark</button></dd>
+    </dl>
+  </aside>
+
+  <div class="stage">
+    <header class="bar">
+      <div class="crumb" id="crumb" aria-label="Location"></div>
+      <div class="code mono" id="code"></div>
+    </header>
+    <main id="main" tabindex="-1"><div class="view wrap" id="view"></div></main>
+    <footer class="foot"><span>Maziar Heydari</span><span>mh87811.ir</span></footer>
+  </div>
+</div>
+
+<nav class="dock" aria-label="Workspace navigation">
+  <div class="dock-seg" id="dockSeg" aria-hidden="true"></div>
+  <div class="dock-in">
+    <button type="button" id="prev" aria-label="Previous area">&lsaquo;</button>
+    <button type="button" class="dock-mid" id="mapBtn" aria-haspopup="dialog" aria-controls="map"><b id="dockPath">~/</b><small>tap to open workspace map</small></button>
+    <button type="button" id="next" aria-label="Next area">&rsaquo;</button>
+  </div>
+</nav>
+
+<div class="map" id="map" role="dialog" aria-modal="true" aria-label="Workspace map">
+  <div class="map-h"><span>workspace map</span><button type="button" id="mapClose">Close</button></div>
+  <div id="mapList"></div>
+  <dl class="map-s">
+    <dt>status</dt><dd><span class="dot" aria-hidden="true"></span>building</dd>
+    <dt>focus</dt><dd>go, websockets</dd>
+    <dt>theme</dt><dd><button type="button" id="themeBtn2">dark</button></dd>
+  </dl>
+</div>
+
+<div class="cmd" id="cmd" role="dialog" aria-modal="true" aria-label="Command bar">
+  <div class="cmd-p">
+    <input id="cmdIn" type="text" role="combobox" aria-expanded="true" aria-controls="cmdList" aria-autocomplete="list" placeholder="Go to an area, open a module, run a command" autocomplete="off" spellcheck="false">
+    <ul class="cmd-l" id="cmdList" role="listbox" aria-label="Commands"></ul>
+    <div class="cmd-f"><span>arrows move</span><span>enter runs</span><span>esc closes</span></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ----------------------------------------------------------------
+     Config. Replace these with the real handles and address.
+  ----------------------------------------------------------------- */
+  const CONFIG = {
+    email: "hello@mh87811.ir",
+    github: "https://github.com/mh87811",
+    site: "mh87811.ir"
+  };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ----------------------------------------------------------------
+     Diagrams. One per module, drawn in the workspace's own grammar.
+  ----------------------------------------------------------------- */
+  const dot = path => `<circle class="a" r="3.5"><animateMotion dur="3.4s" repeatCount="indefinite" path="${path}"/></circle>`;
+
+  const SVG = {
+    "gin-auth": () => `<svg viewBox="0 0 480 250" role="img" aria-label="A request passes through the Gin middleware chain, reaches the login handler, and the service issues tokens and writes a session.">
+      <rect class="b" x="14" y="103" width="82" height="44"/><text class="tt" x="55" y="130" text-anchor="middle">client</text>
+      <rect class="b" x="150" y="26" width="190" height="196"/><text class="m" x="162" y="46">gin engine</text>
+      <rect class="p" x="162" y="58" width="166" height="28"/><text class="t" x="174" y="76">request id</text>
+      <rect class="p" x="162" y="94" width="166" height="28"/><text class="t" x="174" y="112">rate limit</text>
+      <rect class="p" x="162" y="130" width="166" height="28"/><text class="t" x="174" y="148">validate</text>
+      <rect class="bh" x="162" y="172" width="166" height="38"/><text class="tt" x="174" y="196">POST /login</text>
+      <rect class="b" x="376" y="54" width="92" height="52"/><text class="tt" x="388" y="76">tokens</text><text class="m" x="388" y="94">access, refresh</text>
+      <rect class="b" x="376" y="148" width="92" height="52"/><text class="tt" x="388" y="170">store</text><text class="m" x="388" y="188">sessions</text>
+      <path class="l" d="M96 125 H150"/><path class="l" d="M340 191 H358 V80 H376"/><path class="l" d="M340 191 H358 V174 H376"/>
+      ${dot("M96 125 H162 H245 V191 H340 H358 V174 H376")}
+    </svg>`,
+
+    "django-market": () => `<svg viewBox="0 0 480 250" role="img" aria-label="Entity diagram: category has products, a user places orders, and orders contain order items that reference products.">
+      <rect class="b" x="14" y="22" width="116" height="54"/><text class="tt" x="26" y="43">category</text><text class="m" x="26" y="61">name, slug</text>
+      <rect class="b" x="178" y="22" width="128" height="68"/><text class="tt" x="190" y="43">product</text><text class="m" x="190" y="60">sku, price_cents</text><text class="m" x="190" y="75">stock</text>
+      <rect class="b" x="14" y="150" width="116" height="54"/><text class="tt" x="26" y="171">user</text><text class="m" x="26" y="189">email</text>
+      <rect class="bh" x="178" y="150" width="128" height="68"/><text class="tt" x="190" y="171">order</text><text class="m" x="190" y="188">status, total_cents</text><text class="m" x="190" y="203">created_at</text>
+      <rect class="b" x="346" y="86" width="120" height="64"/><text class="tt" x="358" y="107">order_item</text><text class="m" x="358" y="124">qty, unit_price</text>
+      <path class="ln" d="M130 49 H178"/><path class="ln" d="M130 177 H178"/><path class="ln" d="M306 56 H406 V86"/><path class="ln" d="M306 184 H406 V150"/>
+      <text class="m" x="178" y="240">pending → paid → shipped</text>
+      ${dot("M130 177 H178 H306 H406 V150")}
+    </svg>`,
+
+    "django-chat": () => `<svg viewBox="0 0 480 250" role="img" aria-label="Three WebSocket clients connect to a channel layer group. Messages fan out to every client and are written to history.">
+      <rect class="b" x="14" y="24" width="84" height="34"/><text class="tt" x="56" y="45" text-anchor="middle">ws a</text>
+      <rect class="b" x="14" y="108" width="84" height="34"/><text class="tt" x="56" y="129" text-anchor="middle">ws b</text>
+      <rect class="b" x="14" y="192" width="84" height="34"/><text class="tt" x="56" y="213" text-anchor="middle">ws c</text>
+      <rect class="bh" x="176" y="90" width="136" height="70"/><text class="tt" x="188" y="116">channel layer</text><text class="m" x="188" y="136">group room:42</text>
+      <rect class="b" x="376" y="108" width="90" height="34"/><text class="tt" x="388" y="129">history</text>
+      <path class="l" d="M98 41 L176 108"/><path class="l" d="M98 125 H176"/><path class="l" d="M98 209 L176 142"/><path class="ln" d="M312 125 H376"/>
+      <text class="m" x="14" y="244">connect, authenticate, join group</text>
+      ${dot("M98 41 L176 108 L176 142 L98 209")}
+    </svg>`,
+
+    "portfolio": () => `<svg viewBox="0 0 480 250" role="img" aria-label="Wireframe of this workspace: a sidebar, a top bar, a large name and a request trace.">
+      <rect class="b" x="14" y="14" width="452" height="222"/><rect class="p" x="14" y="14" width="104" height="222"/>
+      <rect class="ar" x="28" y="30" width="12" height="12"/><rect class="ar" x="46" y="31" width="52" height="4"/><rect class="p" x="46" y="38" width="36" height="3" style="fill:var(--line-2)"/>
+      <rect style="fill:var(--line-2)" x="28" y="72" width="62" height="5"/><rect style="fill:var(--line-2)" x="28" y="94" width="48" height="5"/>
+      <rect class="a" x="14" y="110" width="2" height="22"/><rect style="fill:var(--text)" x="28" y="118" width="58" height="5"/>
+      <rect style="fill:var(--line-2)" x="28" y="144" width="56" height="5"/><rect style="fill:var(--line-2)" x="28" y="166" width="44" height="5"/><rect style="fill:var(--line-2)" x="28" y="188" width="52" height="5"/>
+      <path class="ln" d="M118 44 H466"/><rect style="fill:var(--line-2)" x="136" y="27" width="70" height="4"/>
+      <rect class="ar" x="138" y="62" width="176" height="26"/><rect class="ar" x="138" y="94" width="124" height="26"/>
+      <path class="ln" d="M138 148 H450"/><path class="ln" d="M138 172 H450"/><path class="ln" d="M138 196 H450"/><path class="ln" d="M138 220 H450"/>
+      <rect class="af" x="170" y="154" width="64" height="12"/><rect class="af" x="206" y="178" width="118" height="12"/><rect class="af" x="262" y="202" width="86" height="12"/>
+      <rect class="a" x="170" y="154" width="2" height="12"/><rect class="a" x="206" y="178" width="2" height="12"/><rect class="a" x="262" y="202" width="2" height="12"/>
+    </svg>`
+  };
+
+  /* ----------------------------------------------------------------
+     Content
+  ----------------------------------------------------------------- */
+  const PROJECTS = [
+    {
+      id: "gin-auth", name: "Gin-Auth", stack: "Go / Gin / Authentication", status: "active",
+      lead: "A standalone authentication service in Go. Credentials, token signing and session rules live in one small, testable place instead of being re-implemented in every app that needs a login.",
+      design: [
+        "Access tokens stay short-lived, refresh tokens rotate on use, so a stolen token has a narrow window.",
+        "Middleware does the repetitive work (request ID, rate limiting, validation) before any handler runs.",
+        "Handlers stay thin. Hashing, signing and session logic sit behind plain Go interfaces that tests can replace."
+      ],
+      surface: [["POST", "/v1/register"], ["POST", "/v1/login"], ["POST", "/v1/refresh"], ["POST", "/v1/logout"], ["GET", "/v1/me"]],
+      repo: "Gin-Auth"
+    },
+    {
+      id: "django-market", name: "Django-Market", stack: "Django / DRF / Commerce API", status: "maintained",
+      lead: "The backend of an online marketplace: catalog, cart and orders exposed as a REST API, with the rules for money and stock enforced on the server.",
+      design: [
+        "Prices are stored as integer minor units. No floats anywhere near money.",
+        "Order status is an explicit state machine, so impossible transitions are rejected instead of cleaned up later.",
+        "Stock is checked and reserved in the same transaction that creates the order. Serializers define the public contract."
+      ],
+      surface: [["GET", "/api/products/"], ["POST", "/api/cart/items/"], ["POST", "/api/orders/"], ["GET", "/api/orders/{id}/"], ["PATCH", "/api/orders/{id}/status/"]],
+      repo: "Django-Market"
+    },
+    {
+      id: "django-chat", name: "Django-Chat", stack: "Django / Channels / WebSockets", status: "maintained",
+      lead: "Real-time chat over WebSockets. Each room is a channel-layer group, so one message reaches everyone connected to that room without the sender knowing who they are.",
+      design: [
+        "Authentication happens on connect. An unauthenticated socket never joins a group.",
+        "Consumers stay thin: they parse, authorize and hand off. Persistence and rules live in plain service code.",
+        "Messages are stored, so a client that reconnects can catch up from history instead of missing what was said."
+      ],
+      surface: [["WS", "/ws/rooms/{id}/"], ["GET", "/api/rooms/"], ["GET", "/api/rooms/{id}/messages/"]],
+      repo: "Django-Chat"
+    },
+    {
+      id: "portfolio", name: "Portfolio", stack: "Django / HTML / CSS / JS", status: "live",
+      lead: "This workspace. Django serves it; the interface itself is plain HTML, CSS and JavaScript with no build step and no framework between the content and the browser.",
+      design: [
+        "Areas are routes and modules are rows, so the site is navigated the way a project is.",
+        "Keyboard first: a command bar, number keys for areas, and a separate navigation system built for phones.",
+        "One accent, two typefaces, one strict grid. Everything else is whitespace."
+      ],
+      surface: [["GET", "/"], ["GET", "#/projects"], ["GET", "#/stack"], ["GET", "#/lab"]],
+      repo: "Portfolio"
+    }
+  ];
+
+  const LAYERS = [
+    { name: "network", note: "Where every request starts. I want to know what is on the wire, not only what is in the logs.", items: [["HTTP", "d"], ["TCP/IP", "r"], ["DNS", "r"], ["Reverse proxies", "r"]] },
+    { name: "interface", note: "The contract other people write code against, so it gets designed before it gets built.", items: [["REST", "d"], ["Django REST Framework", "d"], ["WebSockets", "r"]] },
+    { name: "application", note: "Where behavior lives and where boundaries between modules matter most.", items: [["Django", "d"], ["Laravel", "r"], ["Gin", "e"]] },
+    { name: "language", note: "Python is the daily driver, PHP is familiar ground, Go is where I'm investing.", items: [["Python", "d"], ["PHP", "r"], ["Go", "e"]] },
+    { name: "data", note: "Schema and constraints do the heavy lifting. Indexes come from query plans, not hunches.", items: [["SQL databases", "d"], ["Migrations", "d"], ["Indexing", "r"]] },
+    { name: "host", note: "The machine underneath. If I can't explain it from the shell, it isn't finished.", items: [["Linux", "d"], ["Shell", "d"], ["Processes and permissions", "r"]] }
+  ];
+
+  const LEARN = [
+    { id: "go-concurrency", name: "Go concurrency", state: "running", line: "Goroutines, channels and cancellation, applied to a small job runner.",
+      steps: [["Goroutines and WaitGroup", "done"], ["Channels and select", "done"], ["Context and cancellation", "now"], ["Worker pools", "next"], ["Race detector and tests", "next"]] },
+    { id: "realtime", name: "Real-time at scale", state: "running", line: "WebSocket lifecycle, backpressure and fan-out beyond a single process.",
+      steps: [["Connection lifecycle and heartbeats", "done"], ["Channel layers and groups", "done"], ["Backpressure on slow clients", "now"], ["Fan-out across processes", "next"]] },
+    { id: "query-plans", name: "Query plans and indexing", state: "running", line: "Reading EXPLAIN output before reaching for another index.",
+      steps: [["Reading a plan", "done"], ["Composite and partial indexes", "now"], ["Locking and isolation", "next"], ["Slow query triage", "next"]] },
+    { id: "linux-net", name: "Linux networking", state: "sleeping", line: "Sockets, DNS and firewalling, working from the host outward.",
+      steps: [["Sockets and ports", "done"], ["The DNS resolution path", "done"], ["nftables basics", "next"], ["Tracing with tcpdump", "next"]] },
+    { id: "boundaries", name: "Architecture boundaries", state: "queued", line: "Where to cut a system: modules, services and the contracts between them.",
+      steps: [["Modular monolith patterns", "next"], ["Service contracts and versioning", "next"], ["Failure and retry design", "next"]] }
+  ];
+
+  const EXPS = [
+    { id: "ws-fanout", state: "hypothesis", q: "How does broadcast latency change as connected clients grow, in Django Channels versus a Go hub?", tags: "Python, Go, WebSockets" },
+    { id: "refresh-reuse", state: "running", q: "Can refresh-token reuse be detected without a store lookup on every request?", tags: "Go, Gin, authentication" },
+    { id: "index-limits", state: "running", q: "Where does an index stop helping? One query, varying row counts and selectivity.", tags: "SQL, query plans" },
+    { id: "proxy-upgrade", state: "hypothesis", q: "What does a reverse proxy need to keep long-lived WebSocket connections healthy?", tags: "Linux, networking" }
+  ];
+
+  const running = LEARN.filter(l => l.state === "running").length;
+
+  const AREAS = [
+    { id: "about", key: "1", bar: [0, 20], note: () => "engineering notes", peek: () => "How I approach backend work" },
+    { id: "projects", key: "2", bar: [8, 50], note: () => `${PROJECTS.length} modules`, peek: () => `${PROJECTS.length} modules in Go and Django` },
+    { id: "stack", key: "3", bar: [30, 56], note: () => `${LAYERS.length} layers`, peek: () => `${LAYERS.length} layers, in request order` },
+    { id: "learning", key: "4", bar: [44, 80], note: () => `${running} running`, peek: () => `${running} running, ${LEARN.length - running} waiting` },
+    { id: "lab", key: "5", bar: [62, 92], note: () => `${EXPS.length} experiments`, peek: () => "Experiments and a live rate limiter" },
+    { id: "contact", key: "6", bar: [84, 100], note: () => "open", peek: () => "Email, GitHub, a message starter" }
+  ];
+
+  /* ----------------------------------------------------------------
+     Views
+  ----------------------------------------------------------------- */
+  const head = (t, l) => `<header class="ph"><h1>${t}</h1><p class="lede">${l}</p></header>`;
+
+  function viewHome() {
+    const rows = AREAS.map((a, i) => `
+      <a class="tr-row" href="#/${a.id}" style="--i:${i}">
+        <span class="tr-name">/${a.id}</span>
+        <span class="tr-track"><span class="tr-bar" style="--l:${a.bar[0]}%;--w:${a.bar[1] - a.bar[0]}%"></span></span>
+        <span class="tr-note">${esc(a.note())}</span>
+      </a>`).join("");
+    return `
+      <h1 class="name"><span>Maziar</span><span>Heydari</span></h1>
+      <p class="role">Backend Developer</p>
+      <p class="tag">Building reliable systems and thoughtful backends.</p>
+
+      <section class="trace" aria-label="Workspace index">
+        <div class="tr-head"><span>GET /</span><span><b>200</b> six areas open</span></div>
+        ${rows}
+      </section>
+
+      <section class="focus" aria-labelledby="fh">
+        <h2 class="sec" id="fh">Current focus</h2>
+        <ul>
+          <li><span class="tg">go</span><p>Authentication services in Go: token rotation, middleware and tests that cover the whole lifecycle.</p></li>
+          <li><span class="tg">websockets</span><p>Backpressure and fan-out, so one slow client never slows a whole room.</p></li>
+          <li><span class="tg">sql</span><p>Reading query plans and choosing indexes from evidence instead of habit.</p></li>
+        </ul>
+      </section>`;
+  }
+
+  function viewAbout() {
+    const ops = [
+      ["Contracts first", "I write down the shape of an API before the handlers: requests, errors, limits and versioning. In DRF that is the serializer, in Go it is the struct. The contract lives in one place."],
+      ["Boring data", "Constraints and schema do the heavy lifting. Migrations stay small and reversible, and indexes are chosen from query plans rather than guesses."],
+      ["Plan for failure", "Timeouts, retries and idempotency are part of the design, not a patch after the first outage. A request should fail in a way the caller can understand."],
+      ["Small surfaces", "Modules own one thing and expose little. I would rather have clear boundaries inside one deployable than a network between things that change together."],
+      ["Readable operations", "Request IDs in logs, honest health checks, and enough Linux to debug a box without guessing. If I can't explain it from the logs, it isn't done."]
+    ].map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("");
+    return head("About", "I'm a backend developer. I care about the parts of a system that people only notice when they fail: the contracts between components, data that stays consistent, and behavior under load.") + `
+      <section aria-labelledby="oh"><h2 class="sec" id="oh">How I work</h2><dl class="ops">${ops}</dl></section>
+      <div class="about-end">
+        <p>Most of my work is in Python and PHP, with Django, Django REST Framework and Laravel. I build APIs, real-time features over WebSockets, and the data layer underneath them.</p>
+        <p>I'm putting more time into Go, Linux networking and architecture, because systems get interesting where those meet. Most of what I learn goes straight into a small project, so the lab is as important as the finished work.</p>
+      </div>`;
+  }
+
+  function viewProjects(sub) {
+    const open = PROJECTS.some(p => p.id === sub) ? sub : PROJECTS[0].id;
+    const mods = PROJECTS.map(p => `
+      <article class="mod" data-id="${p.id}"${p.id === open ? " data-open" : ""}>
+        <h2 class="mod-t"><button class="mod-h" type="button" aria-expanded="${p.id === open}" aria-controls="d-${p.id}">
+          <span class="mod-l"><span class="mod-path">~/projects/${p.id}</span><span class="mod-name">${p.name}</span><span class="mod-stack">${p.stack}</span></span>
+          <span class="mod-r"><span class="mod-st ${p.status}">${p.status}</span><span class="mod-go" aria-hidden="true">&rarr;</span></span>
+        </button></h2>
+        <div class="mod-d" id="d-${p.id}" role="region" aria-label="${p.name} details"><div>
+          <div class="mod-di">
+            <div class="viz" aria-hidden="false">${SVG[p.id]()}</div>
+            <div class="mod-tx">
+              <p class="lead">${p.lead}</p>
+              <h3>design notes</h3>
+              <ul class="dn">${p.design.map(d => `<li>${d}</li>`).join("")}</ul>
+              <h3>surface</h3>
+              <ul class="surf">${p.surface.map(([m, r]) => `<li><em>${m}</em><span>${esc(r)}</span></li>`).join("")}</ul>
+              <a class="src" href="${CONFIG.github}/${p.repo}" target="_blank" rel="noopener">View source on GitHub</a>
+            </div>
+          </div>
+        </div></div>
+      </article>`).join("");
+    return head("Projects", "Each project is a module you can open. Every one has its own diagram, the decisions behind it, and the surface it exposes.") + `<section aria-label="Project modules">${mods}</section>`;
+  }
+
+  function viewStack() {
+    const layers = LAYERS.map(l => `
+      <section class="layer">
+        <h3>${l.name}</h3>
+        <ul class="items">${l.items.map(([n, lv]) => `<li><span class="lv ${lv === "e" ? "" : lv}" aria-hidden="true"></span>${n}<span class="sr" style="position:absolute;left:-999px"> (${lv === "d" ? "daily" : lv === "r" ? "regular" : "exploring"})</span></li>`).join("")}</ul>
+        <p class="layer-n">${l.note}</p>
+      </section>`).join("");
+    return head("Stack", "Ordered the way a request travels: from the network, through the interface and application, down to the data and the machine underneath.") + `
+      <div class="legend" aria-label="Legend"><span><i class="lv d"></i>daily</span><span><i class="lv r"></i>regular</span><span><i class="lv"></i>exploring</span></div>
+      ${layers}`;
+  }
+
+  function viewLearning() {
+    const procs = LEARN.map((l, i) => {
+      const segs = l.steps.map(s => `<i class="${s[1]}"></i>`).join("");
+      const done = l.steps.filter(s => s[1] === "done").length;
+      return `
+      <article class="proc"${i === 0 ? " data-open" : ""} data-id="${l.id}">
+        <h2><button class="proc-h" type="button" aria-expanded="${i === 0}" aria-controls="p-${l.id}">
+          <span class="st ${l.state}">${l.state}</span>
+          <span><span class="proc-n">${l.name}</span><span class="proc-l">${l.line}</span></span>
+          <span class="seg" role="img" aria-label="${done} of ${l.steps.length} checkpoints done">${segs}</span>
+        </button></h2>
+        <div class="proc-d" id="p-${l.id}" role="region" aria-label="${l.name} checkpoints"><div>
+          <ul class="steps">${l.steps.map(([t, s]) => `<li class="${s}"><span>${s}</span>${t}</li>`).join("")}</ul>
+        </div></div>
+      </article>`;
+    }).join("");
+    const q = LEARN.filter(l => l.state === "queued").length, s = LEARN.filter(l => l.state === "sleeping").length;
+    return head("Learning", "Learning here is a set of processes with checkpoints, not a wall of badges. Running means I'm working on it now, sleeping means paused, queued means not started.") + `
+      <div class="sum"><span><b>${running}</b> running</span><span><b>${s}</b> sleeping</span><span><b>${q}</b> queued</span></div>
+      <section class="procs" aria-label="Learning processes">${procs}</section>`;
+  }
+
+  function viewLab() {
+    const exps = EXPS.map(e => `
+      <article class="exp">
+        <h3>lab/${e.id}</h3>
+        <span class="st ${e.state === "running" ? "running" : "hyp"}">${e.state}</span>
+        <p>${e.q}</p>
+        <span class="tgs">${e.tags}</span>
+      </article>`).join("");
+    return head("Lab", "Prototypes and experiments that aren't ready to be projects. Some answer a question, some just teach me where a system bends.") + `
+      <section class="bench" aria-labelledby="bh">
+        <div class="bench-h"><span><b>lab/token-bucket</b></span><span>live</span></div>
+        <div class="bench-b">
+          <div class="bench-l">
+            <h2 id="bh">Token bucket rate limiter</h2>
+            <p class="q">Each request spends a token. Tokens refill at a steady rate up to the bucket size. Send requests and watch when the limiter says no.</p>
+            <div class="cells" id="cells" aria-hidden="true"></div>
+            <p class="read" id="read" aria-live="off"></p>
+            <label class="ctl" for="cap"><span>bucket size</span><input id="cap" type="range" min="2" max="16" value="8"><output id="capO">8</output></label>
+            <label class="ctl" for="rate"><span>refill / sec</span><input id="rate" type="range" min="1" max="8" value="2"><output id="rateO">2</output></label>
+            <div class="btns"><button class="btn pri" id="send" type="button">Send request</button><button class="btn" id="burst" type="button">Burst of 10</button><button class="btn" id="reset" type="button">Reset</button></div>
+          </div>
+          <div class="bench-r">
+            <div class="tally"><span>allowed <b id="okN">0</b></span><span>limited <b id="noN">0</b></span></div>
+            <ul class="log" id="log"><li class="empty">No requests yet.</li></ul>
+          </div>
+        </div>
+      </section>
+      <h2 class="sec">Experiments</h2>
+      <section aria-label="Experiments">${exps}</section>`;
+  }
+
+  function viewContact() {
+    return head("Contact", "If you're working on APIs, real-time features or backend architecture, I'd like to hear about it. Email is the fastest way to reach me.") + `
+      <dl class="chan">
+        <div><dt>email</dt><dd><a href="mailto:${CONFIG.email}">${CONFIG.email}</a></dd><button class="btn" type="button" id="copy">Copy</button></div>
+        <div><dt>github</dt><dd><a href="${CONFIG.github}" target="_blank" rel="noopener">${CONFIG.github.replace("https://", "")}</a></dd><span></span></div>
+        <div><dt>web</dt><dd>${CONFIG.site}</dd><span></span></div>
+      </dl>
+      <section class="compose" aria-labelledby="ch">
+        <h2 class="sec" id="ch">Start a message</h2>
+        <label>your name<input id="cn" type="text" autocomplete="name"></label>
+        <label>what are you building<input id="ct" type="text" placeholder="An API for…"></label>
+        <label>anything I should know<textarea id="cm"></textarea></label>
+        <a class="btn pri link" id="cmail" href="mailto:${CONFIG.email}">Open in mail app</a>
+      </section>`;
+  }
+
+  function viewNotFound(raw) {
+    return `<div class="nf"><h1 class="mod-name" style="font-size:clamp(46px,7vw,92px)">404</h1><p>There is no area called <span class="mono">/${esc(raw)}</span> in this workspace. Pick one from the list, or press <kbd>/</kbd> to search.</p><a class="btn pri link" href="#/">Back to the index</a></div>`;
+  }
+
+  /* ----------------------------------------------------------------
+     Router
+  ----------------------------------------------------------------- */
+  const view = $("#view"), main = $("#main");
+  let current = null, labTimer = null, firstRender = true;
+
+  function parse() {
+    const [area = "", sub = ""] = location.hash.replace(/^#\/?/, "").split("/");
+    return { area, sub };
+  }
+
+  function setCrumb(parts, code) {
+    $("#crumb").innerHTML = ["maziar", ...parts].map((p, i, a) => `${i ? "<i>/</i>" : ""}<span>${esc(p)}</span>`).join("");
+    const path = "/" + parts.join("/");
+    $("#code").innerHTML = `GET ${esc(path)} <b>${code}</b>`;
+    $("#dockPath").textContent = "~" + path + (parts.length ? "" : "");
+  }
+
+  function route() {
+    const { area, sub } = parse();
+    stopLab();
+    const def = AREAS.find(a => a.id === area);
+    let html, title, parts, code = 200;
+    if (!area) { html = viewHome(); title = "Backend Developer"; parts = []; }
+    else if (def) {
+      parts = [area];
+      title = area[0].toUpperCase() + area.slice(1);
+      html = { about: viewAbout, projects: () => viewProjects(sub), stack: viewStack, learning: viewLearning, lab: viewLab, contact: viewContact }[area]();
+      if (area === "projects") parts = ["projects", PROJECTS.some(p => p.id === sub) ? sub : PROJECTS[0].id];
+    } else { html = viewNotFound(area); title = "Not found"; parts = [area]; code = 404; }
+
+    const areaChanged = current !== area;
+    current = area;
+    view.innerHTML = html;
+    if (!reduce) { view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter"); }
+    document.title = (area ? title + " | " : "") + "Maziar Heydari, Backend Developer";
+    setCrumb(parts, code);
+    $$("#nav a, #mapList a").forEach(a => {
+      const on = a.dataset.id === area;
+      on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current");
+    });
+    const idx = AREAS.findIndex(a => a.id === area);
+    $("#dockSeg").innerHTML = AREAS.map((_, i) => `<i class="${i === idx ? "on" : ""}"></i>`).join("");
+    if (areaChanged) window.scrollTo(0, 0);
+    if (!firstRender) main.focus({ preventScroll: true });
+    firstRender = false;
+    closeMap();
+
+    if (reduce) $$(".viz animateMotion").forEach(n => n.parentNode.remove());
+    bindView(area);
+  }
+
+  const go = path => { location.hash = "#/" + path; };
+
+  function bindView(area) {
+    if (area === "projects") {
+      $$(".mod-h").forEach(b => b.addEventListener("click", () => {
+        const mod = b.closest(".mod"), id = mod.dataset.id, was = mod.hasAttribute("data-open");
+        $$(".mod").forEach(m => { m.removeAttribute("data-open"); $(".mod-h", m).setAttribute("aria-expanded", "false"); });
+        if (!was) { mod.setAttribute("data-open", ""); b.setAttribute("aria-expanded", "true"); }
+        history.replaceState(null, "", was ? "#/projects" : "#/projects/" + id);
+        setCrumb(was ? ["projects"] : ["projects", id], 200);
+      }));
+    }
+    if (area === "learning") {
+      $$(".proc-h").forEach(b => b.addEventListener("click", () => {
+        const p = b.closest(".proc"), was = p.hasAttribute("data-open");
+        $$(".proc").forEach(x => { x.removeAttribute("data-open"); $(".proc-h", x).setAttribute("aria-expanded", "false"); });
+        if (!was) { p.setAttribute("data-open", ""); b.setAttribute("aria-expanded", "true"); }
+      }));
+    }
+    if (area === "lab") startLab();
+    if (area === "contact") bindContact();
+  }
+
+  /* ----------------------------------------------------------------
+     Lab: token bucket
+  ----------------------------------------------------------------- */
+  function stopLab() { if (labTimer) { clearInterval(labTimer); labTimer = null; } }
+
+  function startLab() {
+    const st = { cap: 8, rate: 2, tokens: 8, ok: 0, no: 0, n: 0, log: [] };
+    const cells = $("#cells"), read = $("#read"), log = $("#log");
+    const draw = () => {
+      const fl = Math.floor(st.tokens), fr = st.tokens - fl;
+      cells.innerHTML = Array.from({ length: st.cap }, (_, i) => i < fl ? '<i class="on"></i>' : `<i style="--f:${i === fl ? fr.toFixed(2) : 0}"></i>`).join("");
+      read.innerHTML = `tokens <b>${st.tokens.toFixed(1)}</b> of ${st.cap}, refilling ${st.rate} per second`;
+    };
+    const paint = () => {
+      $("#okN").textContent = st.ok; $("#noN").textContent = st.no;
+      log.innerHTML = st.log.length ? st.log.map(l => `<li class="${l.ok ? "" : "no"}"><b>${l.ok ? 200 : 429}</b><span>req ${l.n}</span><span>${l.msg}</span></li>`).join("") : '<li class="empty">No requests yet.</li>';
+    };
+    const send = () => {
+      st.n++;
+      if (st.tokens >= 1) { st.tokens -= 1; st.ok++; st.log.unshift({ ok: true, n: st.n, msg: "allowed" }); }
+      else { st.no++; const w = ((1 - st.tokens) / st.rate).toFixed(1); st.log.unshift({ ok: false, n: st.n, msg: `Retry-After ${w}s` }); }
+      st.log = st.log.slice(0, 7);
+    };
+    $("#send").addEventListener("click", () => { send(); draw(); paint(); });
+    $("#burst").addEventListener("click", () => { for (let i = 0; i < 10; i++) send(); draw(); paint(); });
+    $("#reset").addEventListener("click", () => { Object.assign(st, { tokens: st.cap, ok: 0, no: 0, n: 0, log: [] }); draw(); paint(); });
+    $("#cap").addEventListener("input", e => { st.cap = +e.target.value; st.tokens = Math.min(st.tokens, st.cap); $("#capO").textContent = st.cap; draw(); });
+    $("#rate").addEventListener("input", e => { st.rate = +e.target.value; $("#rateO").textContent = st.rate; draw(); });
+    draw(); paint();
+    labTimer = setInterval(() => { if (st.tokens < st.cap) { st.tokens = Math.min(st.cap, st.tokens + st.rate * 0.1); draw(); } }, 100);
+  }
+
+  /* ----------------------------------------------------------------
+     Contact
+  ----------------------------------------------------------------- */
+  async function copyEmail(btn) {
+    let ok = false;
+    try { await navigator.clipboard.writeText(CONFIG.email); ok = true; } catch (e) { /* clipboard may be blocked */ }
+    if (btn) { const t = btn.textContent; btn.textContent = ok ? "Copied" : "Press Ctrl C"; setTimeout(() => btn.textContent = t, 1600); }
+    return ok;
+  }
+
+  function bindContact() {
+    const cp = $("#copy"); cp && cp.addEventListener("click", () => copyEmail(cp));
+    const upd = () => {
+      const n = $("#cn").value.trim(), t = $("#ct").value.trim(), m = $("#cm").value.trim();
+      const subject = t ? "Backend work: " + t : "Hello from your portfolio";
+      const body = [n ? "Hi Maziar, I'm " + n + "." : "Hi Maziar,", t ? "I'm building: " + t : "", m].filter(Boolean).join("\n\n");
+      $("#cmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    };
+    ["#cn", "#ct", "#cm"].forEach(s => $(s).addEventListener("input", upd));
+  }
+
+  /* ----------------------------------------------------------------
+     Chrome: nav, map, theme, session clock
+  ----------------------------------------------------------------- */
+  const mac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  $("#jumpKey").textContent = mac ? "\u2318 K" : "Ctrl K";
+
+  $("#nav").innerHTML = AREAS.map(a => `
+    <a href="#/${a.id}" data-id="${a.id}">
+      <span class="nav-r"><span>/${a.id}</span><span class="nav-k">${a.key}</span></span>
+      <span class="peek"><span><span>${esc(a.peek())}</span></span></span>
+    </a>`).join("");
+
+  $("#mapList").innerHTML = AREAS.map(a => `
+    <a href="#/${a.id}" data-id="${a.id}"><span class="n">${a.id[0].toUpperCase() + a.id.slice(1)}<small>/${a.id}</small></span><span class="d">${esc(a.peek())}</span></a>`).join("");
+
+  const seq = ["", ...AREAS.map(a => a.id)];
+  const step = d => { const i = seq.indexOf(current); go(seq[(i + d + seq.length) % seq.length]); };
+  $("#prev").addEventListener("click", () => step(-1));
+  $("#next").addEventListener("click", () => step(1));
+
+  const map = $("#map");
+  let mapFocus = null;
+  function openMap() { mapFocus = document.activeElement; map.classList.add("open"); $("#mapClose").focus(); }
+  function closeMap() { if (map.classList.contains("open")) { map.classList.remove("open"); mapFocus && mapFocus.focus && mapFocus.focus(); } }
+  $("#mapBtn").addEventListener("click", openMap);
+  $("#mapClose").addEventListener("click", closeMap);
+  $("#mapList").addEventListener("click", e => { if (e.target.closest("a")) { mapFocus = null; map.classList.remove("open"); } });
+
+  function setTheme(t, save) {
+    document.documentElement.dataset.theme = t;
+    $("#themeBtn").textContent = t; $("#themeBtn2").textContent = t;
+    if (save) { try { localStorage.setItem("mh-theme", t); } catch (e) { /* storage may be unavailable */ } }
+  }
+  const toggleTheme = () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+  let saved = null; try { saved = localStorage.getItem("mh-theme"); } catch (e) { /* ignore */ }
+  setTheme(saved === "light" ? "light" : "dark", false);
+  $("#themeBtn").addEventListener("click", toggleTheme);
+  $("#themeBtn2").addEventListener("click", toggleTheme);
+
+  const t0 = Date.now();
+  const pad = n => String(n).padStart(2, "0");
+  setInterval(() => {
+    const s = Math.floor((Date.now() - t0) / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+    $("#uptime").textContent = (h ? pad(h) + ":" : "") + pad(m) + ":" + pad(s % 60);
+  }, 1000);
+  $("#uptime").textContent = "00:00";
+
+  /* ----------------------------------------------------------------
+     Command bar
+  ----------------------------------------------------------------- */
+  const cmd = $("#cmd"), cin = $("#cmdIn"), clist = $("#cmdList");
+  let cmdItems = [], cmdSel = 0, cmdReturn = null;
+
+  const commands = () => [
+    ...AREAS.map(a => ({ label: "/" + a.id, hint: a.peek(), run: () => go(a.id) })),
+    ...PROJECTS.map(p => ({ label: "~/projects/" + p.id, hint: p.stack, run: () => go("projects/" + p.id) })),
+    { label: "go home", hint: "index", run: () => go("") },
+    { label: "toggle theme", hint: "dark or light", run: toggleTheme },
+    { label: "copy email", hint: CONFIG.email, run: () => copyEmail() },
+    { label: "open github", hint: CONFIG.github.replace("https://", ""), run: () => window.open(CONFIG.github, "_blank", "noopener") }
+  ];
+
+  function renderCmd() {
+    const q = cin.value.trim().toLowerCase();
+    cmdItems = commands().filter(c => !q || (c.label + " " + c.hint).toLowerCase().includes(q));
+    cmdSel = Math.min(cmdSel, Math.max(cmdItems.length - 1, 0));
+    clist.innerHTML = cmdItems.length ? cmdItems.map((c, i) => `<li role="option" id="co${i}" data-i="${i}" aria-selected="${i === cmdSel}"><span>${esc(c.label)}</span><small>${esc(c.hint)}</small></li>`).join("") : '<li style="cursor:default">Nothing matches that. Try an area name.</li>';
+    cin.setAttribute("aria-activedescendant", cmdItems.length ? "co" + cmdSel : "");
+    const sel = $('[aria-selected="true"]', clist); sel && sel.scrollIntoView({ block: "nearest" });
+  }
+  function openCmd() { cmdReturn = document.activeElement; cmd.classList.add("open"); cin.value = ""; cmdSel = 0; renderCmd(); cin.focus(); }
+  function closeCmd() { cmd.classList.remove("open"); cmdReturn && cmdReturn.focus && cmdReturn.focus(); }
+  const runCmd = i => { const c = cmdItems[i]; if (!c) return; cmd.classList.remove("open"); cmdReturn = null; c.run(); };
+
+  cin.addEventListener("input", () => { cmdSel = 0; renderCmd(); });
+  cin.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); cmdSel = Math.min(cmdSel + 1, cmdItems.length - 1); renderCmd(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); cmdSel = Math.max(cmdSel - 1, 0); renderCmd(); }
+    else if (e.key === "Enter") { e.preventDefault(); runCmd(cmdSel); }
+    else if (e.key === "Tab") { e.preventDefault(); }
+  });
+  clist.addEventListener("click", e => { const li = e.target.closest("li[data-i]"); li && runCmd(+li.dataset.i); });
+  clist.addEventListener("mousemove", e => { const li = e.target.closest("li[data-i]"); if (li && +li.dataset.i !== cmdSel) { cmdSel = +li.dataset.i; renderCmd(); } });
+  cmd.addEventListener("mousedown", e => { if (e.target === cmd) closeCmd(); });
+  $("#jump").addEventListener("click", openCmd);
+
+  document.addEventListener("keydown", e => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); cmd.classList.contains("open") ? closeCmd() : openCmd(); return; }
+    if (e.key === "Escape") { if (cmd.classList.contains("open")) closeCmd(); else closeMap(); return; }
+    if (typing || e.metaKey || e.ctrlKey || e.altKey || cmd.classList.contains("open")) return;
+    if (e.key === "/") { e.preventDefault(); openCmd(); return; }
+    const a = AREAS.find(x => x.key === e.key);
+    if (a) go(a.id);
+  });
+
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
