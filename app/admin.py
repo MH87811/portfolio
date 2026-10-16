@@ -7,8 +7,8 @@ from .models import *
 class CategoryAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(Skill)
-class SkillAdmin(admin.ModelAdmin):
+@admin.register(Technology)
+class TechnologyAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Project)
@@ -17,4 +17,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(LearningItem)
 class LearningItemAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(LabEntry)
+class LabEntryAdmin(admin.ModelAdmin):
     pass
