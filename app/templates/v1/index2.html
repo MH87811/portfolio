@@ -1,4 +1,5 @@
 {% load static %}
+{% load project_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,64 +242,71 @@
         </article>
 
         {% for project in projects %}
-            <article class="project reveal">
-              <div class="project-body">
-                <span class="repo">{{ project.repo_name }}</span>
-                <h3 data-i18n="project{{ project.slug }}.title">{{ project.title }}</h3>
-                <p class="desc" data-i18n="project{{ project.slug }}.desc">
-                    {{ project.description }}
-                </p>
-                <div class="tags">
-                    {% for project_skill in project.skills.all %}
+            {% if not forloop.counter|divisibleby:2 %}
+                <article class="project reveal">
+                  <div class="project-body">
+                    <span class="repo">{{ project.repo_name }}</span>
+                    <h3 data-i18n="project{{ project.slug }}.title">{{ project.title }}</h3>
+                    <p class="desc" data-i18n="project{{ project.slug }}.desc">
+                        {{ project.description }}
+                    </p>
+                    <div class="tags">
+                        {% for project_skill in project.skills.all %}
+                            <span class="tag">{{ project_skill.name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="actions">
+                      <a class="btn btn-sm btn-primary" href="{{ project.github_url }}" data-link="github" data-repo="{{ project.repo_name }}" data-i18n="project.github">GitHub</a>
+                      <button class="btn btn-sm" type="button" data-toggle="details-{{ project.slug }}" aria-expanded="false" aria-controls="details-{{ project.slug }}" data-i18n="project.details">Details</button>
+                    </div>
+                  </div>
+
+                  <div class="viz" aria-hidden="true">
+                      {% render_svg project.visual %}
+                  </div>
+
+                  <div class="details" id="details-{{ project.slug }}">
+                    <div class="details-inner">
+                      <dl>
+                          {% for key, value in project.detail.items %}
+                            <dt data-i18n="project{{ project.slug }}.details.{{ key }}">{{ key }}</dt><dd data-i18n="project2.detail.{{ key }}.value">{{ value }}</dd>
+                          {% endfor %}
+                      </dl>
+                    </div>
+                  </div>
+                </article>
+                {% else %}
+                <article class="project reverse reveal">
+                  <div class="project-body">
+                    <span class="repo">{{ project.repo_name }}</span>
+                    <h3 data-i18n="project{{ project.slug }}.title">{{ project.title }}</h3>
+                    <p class="desc" data-i18n="project{{ project.slug }}.desc">{{ project.description }}</p>
+                    <div class="tags">
+                      {% for project_skill in project.skills.all %}
                         <span class="tag">{{ project_skill.name }}</span>
-                    {% endfor %}
-                </div>
-                <div class="actions">
-                  <a class="btn btn-sm btn-primary" href="{{ project.github_url }}" data-link="github" data-repo="Market-Django" data-i18n="project.github">GitHub</a>
-                  <button class="btn btn-sm" type="button" data-toggle="details-{{ project.slug }}" aria-expanded="false" aria-controls="details-market" data-i18n="project.details">Details</button>
-                </div>
-              </div>
-
-              <div class="viz" aria-hidden="true">
-                <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="presentation">
-                  <rect x="0.5" y="0.5" width="399" height="219" rx="8" fill="#0B0D10" stroke="#2C333D"/>
-                  <line x1="0" y1="30.5" x2="400" y2="30.5" stroke="#20252D"/>
-                  <rect x="14" y="9" width="150" height="12" rx="6" fill="#171A20"/>
-                  <rect x="346" y="9" width="40" height="12" rx="6" fill="#171A20"/>
-
-                  <rect x="14.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
-                  <rect x="22" y="52" width="92" height="66" rx="3" fill="#171A20"/>
-                  <rect x="22" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
-                  <rect x="22" y="140" width="48" height="6" rx="3" fill="#20252D"/>
-                  <rect x="22" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
-                  <text class="svg-mono" x="30" y="180.5" font-size="9" fill="#9AA1AC">vendor_a</text>
-
-                  <rect x="146.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#6EE7B7" stroke-opacity="0.55"/>
-                  <rect x="154" y="52" width="92" height="66" rx="3" fill="#171A20"/>
-                  <rect x="154" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
-                  <rect x="154" y="140" width="48" height="6" rx="3" fill="#20252D"/>
-                  <rect x="154" y="168" width="64" height="18" rx="3" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-opacity="0.6"/>
-                  <text class="svg-mono" x="162" y="180.5" font-size="9" fill="#6EE7B7">vendor_b</text>
-
-                  <rect x="278.5" y="44.5" width="107" height="159" rx="5" fill="#111419" stroke="#20252D"/>
-                  <rect x="286" y="52" width="92" height="66" rx="3" fill="#171A20"/>
-                  <rect x="286" y="128" width="76" height="6" rx="3" fill="#2C333D"/>
-                  <rect x="286" y="140" width="48" height="6" rx="3" fill="#20252D"/>
-                  <rect x="286" y="168" width="64" height="18" rx="3" fill="none" stroke="#2C333D"/>
-                  <text class="svg-mono" x="294" y="180.5" font-size="9" fill="#9AA1AC">vendor_c</text>
-                </svg>
-              </div>
-
-              <div class="details" id="details-{{ project.slug }}">
-                <div class="details-inner">
-                  <dl>
-                      {% for key, value in project.detail.items %}
-                        <dt data-i18n="project{{ project.slug }}.details.{{ key }}">{{ key }}</dt><dd data-i18n="project2.detail.{{ key }}.value">{{ value }}</dd>
                       {% endfor %}
-                  </dl>
-                </div>
-              </div>
-            </article>
+                    </div>
+                    <div class="actions">
+                      <a class="btn btn-sm btn-primary" href="{{ project.github_url }}" data-link="github" data-repo="{{ project.repo_name }}" data-i18n="project.github">GitHub</a>
+                      <button class="btn btn-sm" type="button" data-toggle="details-{{ project.slug }}" aria-expanded="false" aria-controls="details-{{ project.slug }}" data-i18n="project.details">Details</button>
+                    </div>
+                  </div>
+
+                  <div class="viz" aria-hidden="true">
+                      {% render_svg project.visual %}
+                  </div>
+
+                  <div class="details" id="details-{{ project.slug }}">
+                    <div class="details-inner">
+                      <dl>
+                          {% for key, value in project.detail.items %}
+                            <dt data-i18n="details.{{ key }}">{{ key }}</dt><dd dir="ltr">{{ value }}</dd>
+                          {% endfor %}
+                      </dl>
+                    </div>
+                  </div>
+                </article>
+            {% endif %}
         {% endfor %}
       </div>
     </div>

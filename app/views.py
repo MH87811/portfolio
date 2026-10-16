@@ -22,4 +22,4 @@ def index(request):
         'projects': projects,
         'learning_items': learning_items,
     }
-    return render(request, 'index2.html', context)
+    return render(request, 'index.html', context)
