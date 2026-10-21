@@ -4,9 +4,9 @@
 window.DevSystemData = {
 
 CONFIG: {
-  email: 'maziar@example.com',
-  github: 'https://github.com/maziarheydari',
-  linkedin: 'https://www.linkedin.com/in/maziarheydari/',
+  email: 'maziyarheydari87811@gmail.com',
+  github: 'https://github.com/MH87811',
+  linkedin: 'https://www.linkedin.com/in/maziyar-heydary-84b436397',
   availability: 'open to backend roles',
   rev: '2026.10'
 },
