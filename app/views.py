@@ -5,9 +5,11 @@ from .models import *
 
 def _project_detail(project):
     """
-    Keep the JSON structure compatible with the current app.js.
+    Normalize Project.detail for the Developer System frontend.
     """
-    detail = project.detail or {}
+    detail = project.detail
+    if not isinstance(detail, dict):
+        detail = {}
 
     overview = detail.get("overview", [])
     if not overview and project.description:
@@ -19,7 +21,13 @@ def _project_detail(project):
         "extras": detail.get("extras", []),
         "decisions": detail.get("decisions", []),
         "challenges": detail.get("challenges", []),
+        "problem": detail.get("problem", []),
+        "outcome": detail.get("outcome", []),
+        "limitations": detail.get("limitations", []),
+        "body": detail.get("body", []),
+        "updated": project.updated_at.date().isoformat() if project.updated_at else "",
     }
+
 
 
 def _build_developer_system_data():
@@ -132,7 +140,7 @@ def _build_developer_system_data():
                 for technology in project.technologies.all()
                 if technology.is_active
             ],
-            "repo": project.github_url or "#",
+            "repo": project.github_url or "",
             **detail,
         })
 

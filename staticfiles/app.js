@@ -118,7 +118,11 @@ function normalize(D){
       arch: arr(pick('arch')).filter(isObj).map(function(t){
         return {l:str(t.l), n:arr(t.n).filter(isObj).map(function(x){ return {t:str(x.t), s:str(x.s), side:!!x.side}; })};
       }).filter(function(t){ return t.n.length; }),
-      problem: paras(pick('problem')), outcome: paras(pick('outcome')), limitations: paras(pick('limitations')), updated: isoDay(pick('updated')),
+      problem: paras(pick('problem')),
+      outcome: paras(pick('outcome')),
+      limitations: paras(pick('limitations')),
+      body: blocks(pick('body')),
+      updated: isoDay(pick('updated')),
       decisions: arr(pick('decisions')).filter(isObj).map(function(d){ return {t:str(d.t), w:str(d.w), x:str(d.x)}; }),
       challenges: arr(pick('challenges')).filter(isObj).map(function(c){ return {p:str(c.p), r:str(c.r)}; })
     });
@@ -651,7 +655,19 @@ document.addEventListener('click', function(e){
 });
 
 /* ----- case study ----- */
-var SECS = [['overview','Overview'],['problem','Problem'],['architecture','Architecture'],['technologies','Technologies'],['decisions','Technical decisions'],['challenges','Challenges'],['outcome','Outcome'],['limitations','Limitations'],['related','Related'],['repository','Repository']];
+var SECS = [
+    ['overview','Overview'],
+    ['problem','Problem'],
+    ['architecture','Architecture'],
+    ['technologies','Technologies'],
+    ['decisions','Technical decisions'],
+    ['challenges','Challenges'],
+    ['body','Write-up'],
+    ['outcome','Outcome'],
+    ['limitations','Limitations'],
+    ['related','Related'],
+    ['repository','Repository']
+];
 /* problem / outcome / limitations render only when the data carries them; nothing is invented. */
 function proseSec(id, label, list){
   return list.length ? '<section class="csec" id="'+id+'"><span class="lbl">'+label+'</span>'+list.map(function(t){ return '<p dir="auto">'+md(t)+'</p>'; }).join('')+'</section>' : '';
@@ -675,6 +691,13 @@ function viewProject(p){
   if(p.repo) secs.repository = '<section class="csec" id="repository"><span class="lbl">repository</span><div class="repo"><span>'+host(p.repo)+'</span><button class="btn" data-copy="'+p.repo+'">COPY</button><a class="btn ext" href="'+p.repo+'" target="_blank" rel="noopener">OPEN</a></div></section>';
   secs.problem = proseSec('problem', 'problem', p.problem);
   secs.outcome = proseSec('outcome', 'outcome', p.outcome);
+  if(p.body.length){
+  var lf = longform(p.body);
+    secs.body = '<section class="csec" id="body"><span class="lbl">write-up</span>' +
+      lf.html.replace(/<section class="csec lf" id="writeup"><span class="lbl">write-up<\/span>/g, '')
+             .replace(/id="h-(\d+)"/g, 'id="project-h-$1"') +
+      '</section>';
+  }
   if(p.limitations.length) secs.limitations = '<section class="csec" id="limitations"><span class="lbl">limitations</span><ul class="lflist">'+p.limitations.map(function(t){ return '<li dir="auto">'+md(t)+'</li>'; }).join('')+'</ul></section>';
   secs.related = relatedSec(relatedFor(p.uses, {project:p.id}));
   var avail = SECS.filter(function(s){ return secs[s[0]]; });
@@ -1031,11 +1054,20 @@ function palReveal(li){
   if(ir.top < lr.top) l.scrollTop -= lr.top - ir.top;
   else if(ir.bottom > lr.bottom) l.scrollTop += ir.bottom - lr.bottom;
 }
+
+var PAL_TYPE = {
+  Pages: 'Page',
+  Projects: 'Project',
+  Notes: 'Note',
+  Technologies: 'Technology',
+  Learning: 'Learning'
+};
+
 function renderPal(){
   var q = pal.input.value.trim();
   pal.items = palFilter(q);
   pal.list.innerHTML = pal.items.length ? pal.items.map(function(it, i){
-    return '<li role="option" id="po'+i+'" data-i="'+i+'" aria-selected="false"><span class="pt" dir="auto">'+esc(it.t)+'</span><span class="pg">'+esc(it.g.replace(/s$/,''))+'</span><span class="ph" dir="auto">'+esc(it.h)+'</span></li>';
+    return '<li role="option" id="po'+i+'" data-i="'+i+'" aria-selected="false"><span class="pt" dir="auto">'+esc(it.t)+'</span><span class="pg">'+esc(PAL_TYPE[it.g] || it.g)+'</span><span class="ph" dir="auto">'+esc(it.h)+'</span></li>';
   }).join('') : '<li class="pal-empty" role="presentation">Nothing matches “'+esc(q)+'”.</li>';
   pal.input.setAttribute('aria-expanded', pal.items.length ? 'true' : 'false');
   pal.input.removeAttribute('aria-activedescendant');
