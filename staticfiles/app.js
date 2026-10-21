@@ -11,7 +11,7 @@ var arr = function(v){
 };
 var uniq = function(a){ return a.filter(function(x,i){ return a.indexOf(x) === i; }); };
 /* esc/md: all NEW rendering escapes data. md() then allows `inline code` only
-   (adapted from versions: "technical edotorial/Maziar Heydari.html", md()). */
+   (adapted from versions: "technical edotorial/maziyar Heydari.html", md()). */
 var esc = function(v){ return str(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
 var md = function(v){ return esc(v).replace(/`([^`]+)`/g,'<code>$1</code>'); };
 var isoDay = function(v){ var m = /^(\d{4}-\d{2}-\d{2})/.exec(str(v)); return m ? m[1] : ''; };
@@ -270,7 +270,7 @@ var NAV = [
 ];
 function buildRail(){
   var rail = $('#rail'); if(!rail) return;
-  var h = '<div><span class="lbl">/maziar</span><div class="rlist">';
+  var h = '<div><span class="lbl">/maziyar</span><div class="rlist">';
   NAV.forEach(function(n,i){
     h += '<a href="#'+n[0]+'" data-v="'+n[0]+'"><span class="k">'+i+'</span><span class="rn">'+n[1]+'</span><span class="rm">'+(n[2]?pad(n[2]):'')+'</span></a>';
   });
@@ -296,7 +296,7 @@ function setChrome(r){
   var shell = $('#shell');
   if(shell) shell.setAttribute('data-view', r.v === 'home' ? 'home' : view);
   $$('.rlist a').forEach(function(a){ a.classList.toggle('on', a.dataset.v === view); });
-  var segs = [['maziar','#home']];
+  var segs = [['maziyar','#home']];
   if(r.v !== 'home') segs.push([view, '#'+view]);
   if(r.v === 'project') segs.push([r.p.id, '#'+r.p.id]);
   if(r.v === 'note') segs.push([r.n.id, '#lab/'+r.n.id]);
@@ -364,7 +364,7 @@ function go(hash, o){
 
 /* ============ VIEWS ============ */
 function head(path, title, lede){
-  return '<a class="back" href="#home">‹ /maziar</a><header class="vhead"><p class="eyebrow">'+path+'</p><h1>'+title+'</h1>'+(lede?'<p class="lede">'+lede+'</p>':'')+'</header>';
+  return '<a class="back" href="#home">‹ /maziyar</a><header class="vhead"><p class="eyebrow">'+path+'</p><h1>'+title+'</h1>'+(lede?'<p class="lede">'+lede+'</p>':'')+'</header>';
 }
 
 /* ----- home ----- */
@@ -405,8 +405,8 @@ function viewHome(){
 }
 function rootBlock(boot){
   var r = function(i){ return boot ? ' reveal" style="--i:'+i : ''; };
-  return '<p class="eyebrow'+r(0)+'">/maziar</p>' +
-    '<h1 class="name'+r(1)+'"><span>MAZIAR</span><span>HEYDARI</span></h1>' +
+  return '<p class="eyebrow'+r(0)+'">/maziyar</p>' +
+    '<h1 class="name'+r(1)+'"><span>MAZIYAR</span><span>HEYDARI</span></h1>' +
     '<p class="role'+r(2)+'">BACKEND DEVELOPER</p>' +
     '<p class="sum'+r(3)+'">I build APIs and services with Django, Laravel and Go, and I care about the parts that keep them running.</p>' +
     '<dl class="sys'+r(4)+'"><div><dt>SYSTEM</dt><dd>backend engineer</dd></div><div><dt>FOCUS</dt><dd>reliable systems</dd></div><div><dt>CURRENTLY</dt><dd><span class="cur">'+curWord+'</span></dd></div></dl>' +
@@ -612,7 +612,7 @@ function aboutExtras(){
 }
 function viewAbout(){
   var gl = [
-    ['WHO','Maziar Heydari, backend developer','#about','about'],
+    ['WHO','maziyar Heydari, backend developer','#about','about'],
     ['BUILDS','APIs, authentication systems and realtime services','#projects','projects'],
     ['USES','Django, DRF, Laravel and Go on Linux','#stack','stack'],
     ['PROJECTS',PROJ.length+' modules, each with an architecture write-up','#projects','open'],
@@ -622,7 +622,7 @@ function viewAbout(){
     ['ROLE','backend developer'],['FOCUS','reliable systems'],['FRAMEWORKS','Django · DRF · Laravel · Gin'],['LANGUAGES','Python · PHP · Go · JavaScript'],
     ['PLATFORM','Linux'],['DATA','PostgreSQL · MySQL · Redis'],['STATUS',CONFIG.availability]
   ].filter(function(r){ return r[1]; });
-  return '<section class="view">' + head('/maziar/about','About',ABOUT.lede) +
+  return '<section class="view">' + head('/maziyar/about','About',ABOUT.lede) +
     '<dl class="glance">'+gl.map(function(g){return '<div><dt>'+g[0]+'</dt><dd>'+g[1]+'</dd><a href="'+g[2]+'">'+g[3]+' →</a></div>';}).join('')+'</dl>' +
     '<div class="twocol"><div>' +
     '<div class="prose">'+(ABOUT.body.length ? ABOUT.body.map(function(t){return '<p>'+t+'</p>';}).join('') : empty('Nothing written here yet.'))+'</div>' +
@@ -634,7 +634,7 @@ function viewAbout(){
 
 /* ----- projects ----- */
 function viewProjects(){
-  return '<section class="view">' + head('/maziar/projects','Projects','Each project is a module with an architecture, the decisions behind it, and a repository.') +
+  return '<section class="view">' + head('/maziyar/projects','Projects','Each project is a module with an architecture, the decisions behind it, and a repository.') +
     '<div class="plist">' + (PROJ.length ? PROJ.map(function(p){
       return '<article class="pmod"><div class="pmeta"><span class="path">'+p.id+'/</span><span class="pstatus">'+stat(p.status)+' status: '+p.status+'</span></div>' +
         '<div class="pbody"><h2>'+p.name+'</h2>' +
@@ -680,7 +680,7 @@ function viewProject(p){
   var avail = SECS.filter(function(s){ return secs[s[0]]; });
   var metaBits = (p.lang?'<span>'+p.lang+'</span>':'') + (p.kind?'<span>'+p.kind+'</span>':'') + (p.updated?'<span class="upd">updated '+esc(p.updated)+'</span>':'');
   return '<section class="view case"><a class="back" href="#projects">‹ /projects</a>' +
-    '<header class="chead"><p class="eyebrow">/maziar/projects/'+p.id+'</p><h1>'+p.name+'</h1><div class="cmeta">'+metaBits+'<span class="pstatus">'+stat(p.status)+' status: '+p.status+'</span></div></header>' +
+    '<header class="chead"><p class="eyebrow">/maziyar/projects/'+p.id+'</p><h1>'+p.name+'</h1><div class="cmeta">'+metaBits+'<span class="pstatus">'+stat(p.status)+' status: '+p.status+'</span></div></header>' +
     '<div class="cbody"><nav class="cidx" id="cidx" aria-label="Case study sections">'+avail.map(function(s){return '<button data-to="'+s[0]+'">'+s[0]+'</button>';}).join('')+'</nav>' +
     '<div class="csecs">' + (avail.length ? avail.map(function(s){ return secs[s[0]]; }).join('') : (p.desc ? '<section class="csec"><p>'+p.desc+'</p></section>' : empty('No details published for this project yet.'))) +
     '</div></div>' +
@@ -729,7 +729,7 @@ function toTop(){
 /* ----- stack ----- */
 function viewStack(){
   var groups = stackGroups();   /* categories without components are not rendered */
-  return '<section class="view">' + head('/maziar/stack','Stack','Installed components, grouped by layer. Each one lists what it requires and where it is used. Hover a row to trace its dependencies.') +
+  return '<section class="view">' + head('/maziyar/stack','Stack','Installed components, grouped by layer. Each one lists what it requires and where it is used. Hover a row to trace its dependencies.') +
     '<div class="sgrid" id="sgrid">' + (groups.length ? groups.map(function(d){
       var ids = techIds('d', d);
       return '<section class="sdom"><h2>'+domName(d)+'<small>'+pad(ids.length)+'</small></h2>'+(domText(d)?'<p class="sdesc">'+domText(d)+'</p>':'') +
@@ -796,7 +796,7 @@ function viewLearning(){
   var group = function(label, list){
     return list.length ? '<div class="lgroup"><span class="lbl">'+label+' · '+pad(list.length)+'</span>'+list.map(row).join('')+'</div>' : '';
   };
-  return '<section class="view">' + head('/maziar/learning','Learning','Processes that are running right now. State describes how I am working on something, not how much I know.') +
+  return '<section class="view">' + head('/maziyar/learning','Learning','Processes that are running right now. State describes how I am working on something, not how much I know.') +
     '<div class="states">'+Object.keys(STATE_DEF).map(function(s){return '<div>'+glyph(s)+'<b>'+s.toUpperCase()+'</b><small>'+STATE_DEF[s]+'</small></div>';}).join('')+'</div>' +
     (LEARN.length ? group('running', act) + group('queued', q) : '<div class="lgroup">'+empty('Nothing listed yet.')+'</div>') + '</section>';
 }
@@ -850,7 +850,7 @@ function labFilterHTML(){
 }
 function viewLab(){
   var n = function(s){ return LAB.filter(function(l){return l.s===s;}).length; };
-  return '<section class="view" id="labview">' + head('/maziar/lab','Lab','Experiments, prototypes and technical notes. Nothing here is finished by design. Entries move from queued to in progress to published.') +
+  return '<section class="view" id="labview">' + head('/maziyar/lab','Lab','Experiments, prototypes and technical notes. Nothing here is finished by design. Entries move from queued to in progress to published.') +
     '<div class="labnote"><span>in progress <b>'+pad(n('in progress'))+'</b></span><span>queued <b>'+pad(n('queued'))+'</b></span><span>published <b>'+pad(n('published'))+'</b></span></div>' +
     (LAB.length ? labFilterHTML() : '') +
     '<div class="lablist" id="lablist">' + labItemsHTML() + '</div></section>';
@@ -903,7 +903,7 @@ function viewNote(n){
   if(rel){ toc.push(['related','related']); secs += rel; }
   var useToc = toc.length >= 3;
   return '<section class="view case note"><a class="back" href="#lab">‹ /lab</a>' +
-    '<header class="chead"><p class="eyebrow">/maziar/lab/'+esc(n.id)+'</p><h1 dir="auto">'+esc(n.t)+'</h1><div class="cmeta">'+(n.kind?'<span>'+esc(n.kind.toUpperCase())+'</span>':'')+
+    '<header class="chead"><p class="eyebrow">/maziyar/lab/'+esc(n.id)+'</p><h1 dir="auto">'+esc(n.t)+'</h1><div class="cmeta">'+(n.kind?'<span>'+esc(n.kind.toUpperCase())+'</span>':'')+
     '<span class="pstatus">'+small(glyph(labGlyph(n.s)))+' status: '+esc(n.s)+'</span>'+(n.updated?'<span class="upd">updated '+esc(n.updated)+'</span>':'')+'</div></header>' +
     '<div class="cbody'+(useToc?'':' solo')+'">' + (useToc ? '<nav class="cidx" id="cidx" aria-label="Sections">'+toc.map(function(t){ return '<button type="button" data-to="'+esc(t[0])+'">'+esc(t[1])+'</button>'; }).join('')+'</nav>' : '') +
     '<div class="csecs">'+secs+'</div></div>' +
@@ -914,7 +914,7 @@ function viewNote(n){
 function viewContact(){
   var ch = contactChannels();
   var words = ['','One channel.','Two channels.','Three channels.'];
-  return '<section class="view">' + head('/maziar/contact','Contact', ch.length ? words[ch.length]+(CONFIG.email?' Email is the fastest.':'') : '') +
+  return '<section class="view">' + head('/maziyar/contact','Contact', ch.length ? words[ch.length]+(CONFIG.email?' Email is the fastest.':'') : '') +
     '<div class="eps">' + (ch.length ? ch.map(function(c){
       return '<div class="ep"><div><h2>'+c[0]+'</h2><div class="chan">'+c[1].toUpperCase()+'</div></div><div class="addr">'+c[2]+'</div><div class="acts">' +
         (c[4] ? '<button class="btn" data-copy="'+c[2]+'">COPY</button><a class="btn" href="mailto:'+c[2]+'">COMPOSE</a>' : '<a class="btn ext" href="'+c[3]+'" target="_blank" rel="noopener">OPEN</a>') + '</div></div>';
@@ -989,7 +989,7 @@ function startCurrentlyRotation(){
 }
 
 /* ============ COMMAND PALETTE (Jump to) ============
-   Adapted from versions: "develper workspace/Maziar Heydari, Developer Workspace.html"
+   Adapted from versions: "develper workspace/maziyar Heydari, Developer Workspace.html"
    (command bar: CSS .cmd*, markup #cmd, JS commands()/renderCmd()/runCmd()).
    Differences: native <dialog> (focus trap, inert page, Esc), flat ranked results across pages,
    projects, notes, technologies and learning, escaped output, IME-safe Enter, touch layout. */

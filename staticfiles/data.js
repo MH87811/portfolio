@@ -49,7 +49,7 @@ PROJ: [
     id:'gin-auth', name:'GIN-AUTH', lang:'Go / Gin', kind:'Authentication System', status:'completed',
     desc:'Token-based authentication service in Go. Registration, login, refresh and logout behind a small HTTP API.',
     uses:['go','gin','apis','postgresql','redis','docker','git'],
-    repo:'https://github.com/maziarheydari/gin-auth',
+    repo:'https://github.com/MH87811/gin-auth',
     overview:[
       'Gin-Auth is an authentication service written in Go. It handles registration, login, token refresh and logout behind a small HTTP API, so other services can depend on one place for identity.',
       'The goal was a codebase that reads end to end: one route, one handler, one service function, one query.'
@@ -79,7 +79,7 @@ PROJ: [
     id:'channels-pulse', name:'CHANNELS-PULSE', lang:'Django / Channels', kind:'Realtime Event Service', status:'prototype',
     desc:'Prototype that pushes events to browsers over WebSockets. A DRF endpoint accepts events and Channels fans them out through Redis.',
     uses:['python','django','drf','websockets','redis','postgresql'],
-    repo:'https://github.com/maziarheydari/channels-pulse',
+    repo:'https://github.com/MH87811/channels-pulse',
     overview:[
       'Channels-Pulse explores how a Django back end can push events to connected browsers. A DRF endpoint accepts an event, stores it, and Django Channels delivers it to every subscribed client.',
       'It exists to find out where a WebSocket service first becomes hard: connection count, slow clients and reconnects.'
@@ -103,10 +103,10 @@ PROJ: [
     ]
   },
   {
-    id:'maziar-system', name:'MAZIAR-SYSTEM', lang:'HTML / CSS / JavaScript', kind:'Personal Developer System', status:'active',
+    id:'maziyar-system', name:'MAZIYAR-SYSTEM', lang:'HTML / CSS / JavaScript', kind:'Personal Developer System', status:'active',
     desc:'This site. A portfolio built as a small software system, with technologies and projects drawn as a dependency graph.',
     uses:['javascript','git'],
-    repo:'https://github.com/maziarheydari/maziar-system',
+    repo:'https://github.com/MH87811/maziyar-system',
     overview:[
       'A portfolio designed as a system instead of a page. Every section is a module, and the relationships between technologies and projects are drawn as a graph instead of listed.',
       'It ships as a single page with no framework and no build step. Content lives as data, so a new project or lab entry is one object.'

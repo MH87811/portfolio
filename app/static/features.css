@@ -1,0 +1,129 @@
+/* features.css: styles for the features that app.js and index.html already use
+   but styles.css does not define: the "Jump to" command palette, back-to-top button,
+   lab filters, long-form notes (code / terminal / diagram figures), related links,
+   About extras and learning/lab details.
+   Uses only the tokens and patterns of styles.css (:root variables, .lbl, .btn, .chip, .csec ...).
+   Load it after styles.css. Logical properties are used so RTL text lays out correctly. */
+
+/* ---------- accessibility helpers ---------- */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.stage:focus{outline:none}                      /* main is focused programmatically after navigation */
+.stage:focus-visible{outline:none}
+kbd{font:500 10.5px/1 var(--mono);color:var(--dim);border:1px solid var(--line2);border-bottom-width:2px;border-radius:2px;padding:2px 5px;background:var(--panel)}
+
+/* ---------- header tools: "Jump to" + availability ---------- */
+.tools{display:flex;align-items:center;gap:18px;flex:none;min-width:0}
+.jump{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid var(--line2);border-radius:2px;padding:5px 6px 5px 10px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.jump:hover{color:var(--fg);border-color:var(--accent);background:var(--accent-dim)}
+
+/* ---------- command palette (native <dialog>) ---------- */
+dialog.pal{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:var(--fg);overflow:hidden}
+dialog.pal::backdrop{background:rgba(5,6,8,.72);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.pal-p{position:absolute;top:min(14vh,120px);inset-inline-start:50%;transform:translateX(-50%);width:min(640px,calc(100vw - 24px));max-height:min(72vh,560px);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line2);border-radius:2px;box-shadow:0 24px 60px rgba(0,0,0,.55);overflow:hidden}
+[dir=rtl] .pal-p,:root:lang(fa) .pal-p{transform:translateX(50%)}
+dialog.pal[open] .pal-p{animation:palin .16s cubic-bezier(.2,.7,.2,1) both}
+@keyframes palin{from{opacity:0;margin-top:-6px}to{opacity:1;margin-top:0}}
+.pal-in{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.pal-in:focus-within{border-bottom-color:var(--accent)}
+.pal-in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--fg);font:400 16px var(--sans);padding:6px 2px}
+.pal-in input::placeholder{color:var(--faint)}
+.pal-x{flex:none;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim);background:transparent;border:1px solid var(--line2);border-radius:2px;padding:6px 9px;cursor:pointer;min-height:32px}
+.pal-x:hover{color:var(--fg);border-color:var(--accent)}
+.pal-l{list-style:none;margin:0;padding:6px;overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1}
+.pal-l li[role=option]{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:baseline;column-gap:14px;padding:9px 10px;border-radius:2px;border-inline-start:2px solid transparent;cursor:pointer}
+.pal-l li[aria-selected=true]{background:var(--accent-dim);border-inline-start-color:var(--accent)}
+.pt{grid-column:1;grid-row:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;color:var(--fg)}
+.ph{grid-column:2;grid-row:1;font-family:var(--mono);font-size:11.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26ch}
+.pg{grid-column:3;grid-row:1;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line2);border-radius:2px;padding:1px 6px}
+.pal-empty{padding:18px 12px;font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+.pal-f{display:flex;gap:18px;padding:8px 12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint)}
+.k-t{display:none}
+@media (hover:none),(max-width:640px){
+  .pal-p{top:8px;max-height:calc(100dvh - 16px)}
+  .pal-l li[role=option]{grid-template-columns:minmax(0,1fr) auto;row-gap:2px;padding:11px 10px}
+  .ph{grid-column:1;grid-row:2;max-width:none}
+  .pg{grid-column:2;grid-row:1}
+  .pal-f{display:none}
+  .k-d{display:none}
+  .k-t{display:inline}
+  .jump kbd{display:none}
+}
+
+/* ---------- back to top ---------- */
+.totop{position:fixed;inset-inline-end:max(18px,env(safe-area-inset-right,0px));bottom:calc(44px + env(safe-area-inset-bottom,0px));z-index:6;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--fg);background:var(--panel);border:1px solid var(--line2);border-radius:2px;padding:9px 12px;cursor:pointer;transition:border-color .15s,background .15s}
+.totop:hover{border-color:var(--accent);background:var(--accent-dim)}
+.totop[hidden]{display:none}
+
+/* ---------- shared bits ---------- */
+.upd,p.upd{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em}
+p.upd{margin-top:8px}
+.csec .faint-p{color:var(--faint)}
+.csec code,.lrow code,.entry code{font-family:var(--mono);font-size:.9em;background:var(--panel);border:1px solid var(--line);border-radius:2px;padding:1px 5px;overflow-wrap:anywhere}
+.flash{animation:flash 2.2s ease-out}
+@keyframes flash{0%,55%{background:var(--accent-dim);box-shadow:0 0 0 8px var(--accent-dim)}100%{background:transparent;box-shadow:0 0 0 8px transparent}}
+.cbody.solo{grid-template-columns:minmax(0,1fr)}
+.csec h2.lfh{font-size:clamp(1.35rem,2.1vw,1.75rem);letter-spacing:-.02em;line-height:1.2;margin:0}
+.csec .lflist{margin:0;padding-inline-start:22px;display:grid;gap:8px;color:var(--dim);font-size:16.5px;max-width:62ch;list-style:square}
+
+/* right-to-left paragraphs (dir="auto" resolves per text) sit at the right edge of the column instead of mid-column */
+.csec :is(p,.lflist):dir(rtl){margin-left:auto}
+
+/* ---------- code / terminal / diagram figures (lab notes) ---------- */
+.fig{margin:0;border:1px solid var(--line2);border-radius:2px;background:var(--panel);min-width:0;max-width:100%}
+.fig figcaption{padding:7px 12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.fig pre{margin:0;padding:12px 14px;overflow-x:auto;font:13px/1.6 var(--mono);color:var(--fg);tab-size:4}
+.fig pre code{font:inherit;background:none;border:0;padding:0;overflow-wrap:normal}
+.fig.terminal{background:var(--bg)}
+.fig.terminal figcaption::before{content:"$ ";color:var(--accent)}
+.fig.diagram pre{line-height:1.3;color:var(--dim)}
+.fig pre:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* ---------- related links ---------- */
+.csec .relnote{font-size:14px;color:var(--faint);max-width:none}
+.relgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px 36px}
+.relgrp{display:grid;gap:4px;align-content:start;min-width:0}
+.relgrp ul{list-style:none;margin:0;padding:0}
+.relgrp li{display:grid;gap:2px;padding:9px 0;border-bottom:1px solid var(--line)}
+.relgrp li a{font-weight:500;overflow-wrap:anywhere;transition:color .15s}
+.relgrp li a:hover{color:var(--accent)}
+.relgrp small,.more{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---------- learning rows and lab list details ---------- */
+.lwork{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-top:10px;font-family:var(--mono);font-size:12px}
+.lwork a{color:var(--accent);border-bottom:1px solid var(--accent-line)}
+.lrow:target,.lrow.flash{scroll-margin-top:24px}
+.lablist .fn a:hover,.lablist h3 a:hover{color:var(--accent)}
+.lablist h3 a{transition:color .15s}
+
+/* ---------- lab filters ---------- */
+.lfilter{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 28px;margin:0 0 24px;max-width:1040px}
+.fgroup{display:grid;gap:6px;min-width:0}
+.fchips{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid var(--line2);border-radius:2px;padding:6px 10px;cursor:pointer;min-height:32px;transition:border-color .15s,color .15s,background .15s}
+.fchip:hover{border-color:var(--faint);color:var(--fg)}
+.fchip[aria-pressed=true]{color:var(--fg);border-color:var(--accent);background:var(--accent-dim)}
+.fgroup input[type=search],.fgroup select{font:400 13px var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line2);border-radius:2px;padding:7px 10px;min-height:34px;width:min(300px,100%);-webkit-appearance:none;appearance:none}
+.fgroup select{padding-inline-end:28px;background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);background-position:calc(100% - 15px) 14px,calc(100% - 10px) 14px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+[dir=rtl] .fgroup select{background-position:15px 14px,10px 14px}
+.fgroup input::placeholder{color:var(--faint)}
+.fgroup input:focus-visible,.fgroup select:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.lcount{flex-basis:100%;margin:0;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.lempty{padding:18px 0}
+.lnk{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* ---------- About extras ---------- */
+.asec{display:grid;gap:12px;margin-top:34px;padding-top:16px;border-top:1px solid var(--line2);max-width:60ch}
+.asec p{color:var(--dim);font-size:16.5px}
+.alist{list-style:none;margin:0;padding:0;display:grid}
+.alist li a{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.alist li a:hover span{color:var(--accent)}
+.alist small{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+@media (max-width:900px){
+  .tools{gap:10px}
+  .totop{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .lfilter{gap:14px 20px}
+}
+@media (prefers-reduced-motion:reduce){
+  dialog.pal[open] .pal-p,.flash{animation:none!important}
+}
