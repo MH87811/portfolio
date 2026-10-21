@@ -128,6 +128,15 @@ function normalize(D){
     });
   });
 
+    var featuredIds = {};
+    arr(D.FEATURED_PROJ).forEach(function(p){
+      if(isObj(p) && str(p.id)) featuredIds[p.id] = 1;
+    });
+
+    N.FEATURED_PROJ = N.PROJ.filter(function(p){
+      return !!featuredIds[p.id];
+    });
+
   /* learning */
   var sd = isObj(D.STATE_DEF) ? D.STATE_DEF : {};
   N.STATE_DEF = {};
@@ -163,7 +172,8 @@ function normalize(D){
 
 var D = normalize(DevSystemAdapter.load());
 var CONFIG = D.CONFIG, DOMAINS = D.DOMAINS, STACK_ORDER = D.STACK_ORDER, GRAPH_ORDER = D.GRAPH_ORDER,
-    TECH = D.TECH, PROJ = D.PROJ, LEARN = D.LEARN, STATE_DEF = D.STATE_DEF, LEARN_LINKS = D.LEARN_LINKS,
+    TECH = D.TECH, PROJ = D.PROJ, FEATURED_PROJ = D.FEATURED_PROJ,
+    LEARN = D.LEARN, STATE_DEF = D.STATE_DEF, LEARN_LINKS = D.LEARN_LINKS,
     LAB = D.LAB, LAB_LINKS = D.LAB_LINKS, ABOUT = D.ABOUT;
 
 /* ============ HELPERS ============ */
@@ -392,8 +402,8 @@ function viewHome(){
      which made the columns overlap. This row absorbs whatever extra height they need. */
   rows.push('minmax(0,1fr)'); row++;
 
-  var base = PROJ.length * 4;
-  var mods = PROJ.map(function(p, i){
+  var base = FEATURED_PROJ.length * 4;
+  var mods = FEATURED_PROJ.map(function(p, i){
     return '<button class="node mod'+(boot?' bnode':'')+'" style="--c:4;--r:'+(i*4)+'" data-id="m:'+p.id+'"><span class="mt"><b>'+p.name+'</b><small>'+p.lang+'</small></span>'+stat(p.status)+'</button>';
   }).join('') +
   '<button class="node mod'+(boot?' bnode':'')+'" style="--c:4;--r:'+(base+2)+'" data-id="m:learning"><span class="mt"><b>LEARNING</b><small>'+activeLearn().length+' active</small></span>'+glyph('developing').replace('width="20" height="20"','width="14" height="14"')+'</button>' +
@@ -481,7 +491,12 @@ function drawEdges(){
       add('dom:'+g,t,'h',elbow(ar.x,ar.y,b.x,b.y),k++);
     });
   });
-  var mods = PROJ.map(function(p){return {id:'m:'+p.id, t:p.uses};}).concat([{id:'m:learning',t:LEARN_LINKS},{id:'m:lab',t:LAB_LINKS}]);
+  var mods = FEATURED_PROJ.map(function(p){
+    return {id:'m:'+p.id, t:p.uses};
+  }).concat([
+    {id:'m:learning', t:LEARN_LINKS},
+    {id:'m:lab', t:LAB_LINKS}
+  ]);
   mods.forEach(function(m){
     var mn = $('[data-id="'+m.id+'"]'); if(!mn) return;
     var b = pt(mn,'l');
@@ -585,7 +600,7 @@ function mobileTree(){
     return '<li><button class="tbtn" aria-expanded="false" aria-controls="t-'+key+'"><span class="tn">'+name+'</span><span class="tm">'+meta+'</span><i class="chev"></i></button><div class="tbody" id="t-'+key+'"><div class="tin"><div>'+body+'</div></div></div></li>';
   };
   var about = (ABOUT.lede ? '<p>'+ABOUT.lede+'</p>' : '') + '<a class="open" href="#about">open about →</a>';
-  var projects = PROJ.map(function(p){ return '<a class="row" href="#'+p.id+'">'+stat(p.status)+'<span>'+p.name+'<br><small>'+p.lang+'</small></span><small>'+p.status+'</small></a>'; }).join('') + '<a class="open" href="#projects">open projects →</a>';
+  var projects = FEATURED_PROJ.map(function(p){ return '<a class="row" href="#'+p.id+'">'+stat(p.status)+'<span>'+p.name+'<br><small>'+p.lang+'</small></span><small>'+p.status+'</small></a>'; }).join('') + '<a class="open" href="#projects">open projects →</a>';
   var stack = '<dl>' + stackGroups().map(function(d){ return '<div><dt>'+domName(d)+'</dt><dd>'+techIds('d', d).map(function(k){return '<a href="#stack" data-focus="'+esc(k)+'">'+esc(TECH[k].n)+'</a>';}).join(' · ')+'</dd></div>'; }).join('') + '</dl><a class="open" href="#stack">open stack →</a>';
   var learning = LEARN.map(function(l){ return '<a class="row" href="#learning" data-anchor="l-'+esc(l.id)+'">'+glyph(l.s)+'<span>'+esc(l.n)+'</span><small>'+l.s+'</small></a>'; }).join('') + '<a class="open" href="#learning">open learning →</a>';
   var lab = LAB.map(function(l){ return '<a class="row p2" href="#lab/'+esc(l.id)+'"><span dir="auto">'+esc(l.t)+'</span><small>'+esc(l.s)+'</small></a>'; }).join('') + '<a class="open" href="#lab">open lab →</a>';
@@ -594,7 +609,7 @@ function mobileTree(){
   return '<div class="mtree">' + rootBlock(false).replace('<div class="rootlinks"><a href="#projects">projects →</a><a href="#contact">contact →</a></div>','') +
     '<ul class="tree">' +
     item('about','ABOUT','who and focus',about) +
-    item('projects','PROJECTS',pad(PROJ.length)+' modules',projects) +
+    item('projects','PROJECTS',pad(FEATURED_PROJ.length)+' modules',projects) +
     item('stack','STACK',pad(Object.keys(TECH).length)+' components',stack) +
     item('learning','LEARNING',activeLearn().length+' active',learning) +
     item('lab','LAB',LAB.length+' entries',lab) +
@@ -692,11 +707,13 @@ function viewProject(p){
   secs.problem = proseSec('problem', 'problem', p.problem);
   secs.outcome = proseSec('outcome', 'outcome', p.outcome);
   if(p.body.length){
-  var lf = longform(p.body);
-    secs.body = '<section class="csec" id="body"><span class="lbl">write-up</span>' +
-      lf.html.replace(/<section class="csec lf" id="writeup"><span class="lbl">write-up<\/span>/g, '')
-             .replace(/id="h-(\d+)"/g, 'id="project-h-$1"') +
-      '</section>';
+    var lf = longform(p.body);
+
+    var bodyHtml = lf.html
+      .replace(/id="h-(\d+)"/g, 'id="project-h-$1"')
+      .replace(/(<section class="csec lf" id=")[^"]+(")/, '$1body$2');
+
+    secs.body = bodyHtml;
   }
   if(p.limitations.length) secs.limitations = '<section class="csec" id="limitations"><span class="lbl">limitations</span><ul class="lflist">'+p.limitations.map(function(t){ return '<li dir="auto">'+md(t)+'</li>'; }).join('')+'</ul></section>';
   secs.related = relatedSec(relatedFor(p.uses, {project:p.id}));

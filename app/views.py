@@ -28,7 +28,29 @@ def _project_detail(project):
         "updated": project.updated_at.date().isoformat() if project.updated_at else "",
     }
 
+def serialize_projects(project_list):
+    data = []
 
+    for project in project_list:
+        detail = _project_detail(project)
+
+        data.append({
+            "id": project.slug,
+            "name": project.repo_name or project.title.upper(),
+            "lang": project.language_stack,
+            "kind": project.kind,
+            "status": project.status,
+            "desc": project.description,
+            "uses": [
+                technology.slug
+                for technology in project.technologies.all()
+                if technology.is_active
+            ],
+            "repo": project.github_url or "",
+            **detail,
+        })
+
+    return data
 
 def _build_developer_system_data():
     categories = list(
@@ -53,6 +75,13 @@ def _build_developer_system_data():
         .prefetch_related("technologies")
         .order_by("order")
     )
+
+    # Only active, featured, non-archived projects for the homepage graph.
+    featured_projects = [
+        project
+        for project in projects
+        if project.featured
+    ]
 
     learning_items = list(
         LearningItem.objects.filter(
@@ -123,26 +152,8 @@ def _build_developer_system_data():
     # Projects and case studies
     # --------------------------------------------------
 
-    project_data = []
-
-    for project in projects:
-        detail = _project_detail(project)
-
-        project_data.append({
-            "id": project.slug,
-            "name": project.repo_name or project.title.upper(),
-            "lang": project.language_stack,
-            "kind": project.kind,
-            "status": project.status,
-            "desc": project.description,
-            "uses": [
-                technology.slug
-                for technology in project.technologies.all()
-                if technology.is_active
-            ],
-            "repo": project.github_url or "",
-            **detail,
-        })
+    project_data = serialize_projects(projects)
+    featured_project_data = serialize_projects(featured_projects)
 
     # --------------------------------------------------
     # Learning
@@ -226,6 +237,7 @@ def _build_developer_system_data():
         "GRAPH_ORDER": graph_order,
         "TECH": tech_data,
         "PROJ": project_data,
+        "FEATURED_PROJ": featured_project_data,
         "LEARN": learning_data,
         "LAB": lab_data,
         "LEARN_LINKS": learning_links,

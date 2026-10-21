@@ -80,7 +80,19 @@ p.upd{margin-top:8px}
 
 /* ---------- related links ---------- */
 .csec .relnote{font-size:14px;color:var(--faint);max-width:none}
-.relgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px 36px}
+/*.relgrid{*/
+/*  display:grid;*/
+/*  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));*/
+/*  gap:22px 36px*/
+/*}*/
+.relgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 22px 36px;
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+}
 .relgrp{display:grid;gap:4px;align-content:start;min-width:0}
 .relgrp ul{list-style:none;margin:0;padding:0}
 .relgrp li{display:grid;gap:2px;padding:9px 0;border-bottom:1px solid var(--line)}
