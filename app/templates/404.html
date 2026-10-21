@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>404 · Page not found · Personal Developer System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Same tokens, frame and map grammar as "Personal Developer System".
+   Everything here is scoped to this page; nothing is shared with the home page. */
+:root{
+  --bg:#0a0b0d;
+  --panel:#0f1013;
+  --line:#1f2126;
+  --line2:#2d3037;
+  --fg:#e9e7e1;
+  --dim:#a3a5ab;
+  --faint:#7b7d84;
+  --accent:#8aa4ff;
+  --accent-dim:rgba(138,164,255,.12);
+  --accent-line:rgba(138,164,255,.5);
+  --sans:'Schibsted Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{box-sizing:border-box;height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+p,h1,dl,dd{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+/* frame */
+.shell{height:100%;display:grid;grid-template-columns:212px minmax(0,1fr);grid-template-rows:48px minmax(0,1fr) 30px;grid-template-areas:"top top" "rail stage" "status status"}
+.top{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--bg);min-width:0}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;flex:none}
+.brand svg{width:24px;height:24px;color:var(--fg)}
+.crumbs{display:flex;align-items:center;font-family:var(--mono);font-size:12px;color:var(--faint);min-width:0;overflow:hidden;white-space:nowrap}
+.crumbs a:hover{color:var(--fg)}
+.crumbs .cur-seg{color:var(--fg);overflow:hidden;text-overflow:ellipsis}
+.crumbs i{font-style:normal;padding:0 1px}
+.live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--dim);flex:none;letter-spacing:.04em}
+.dot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex:none}
+
+.rail{grid-area:rail;border-right:1px solid var(--line);padding:22px 0 16px;display:flex;flex-direction:column;gap:26px;overflow:auto;background:var(--bg)}
+.rail .lbl{padding:0 18px 8px;display:block}
+.rlist{list-style:none;margin:0;padding:0}
+.rlist a{position:relative;display:grid;grid-template-columns:18px 1fr;align-items:center;gap:6px;padding:7px 18px;font-family:var(--mono);font-size:13px;color:var(--dim);transition:color .15s,background .15s}
+.rlist a .k{font-size:10.5px;color:var(--faint)}
+.rlist a:hover{color:var(--fg);background:var(--panel)}
+.rev{margin-top:auto;padding:0 18px;font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.7}
+
+.stage{grid-area:stage;overflow:auto;min-width:0;position:relative;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 56px,var(--bg)}
+.stage::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.965;pointer-events:none}
+.stage>*{position:relative}
+.stage:focus{outline:0}
+.status{grid-area:status;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap;overflow:hidden}
+.status b{font-weight:400;color:var(--dim)}
+.status>span{display:flex;gap:18px;min-width:0}
+.status>span:first-child b{overflow:hidden;text-overflow:ellipsis}
+
+/* 404 view */
+.view{padding:34px clamp(20px,3.4vw,56px) 64px}
+.nf{display:grid;grid-template-columns:minmax(0,1fr);gap:48px;align-items:center;min-height:100%;max-width:1180px}
+.copy{display:grid;gap:22px;justify-items:start;min-width:0}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.04em;overflow-wrap:anywhere}
+h1{margin:0;font-weight:600;text-wrap:balance}
+.big{display:block;font-size:clamp(5.5rem,16vw,11rem);line-height:.85;letter-spacing:-.05em;font-weight:700}
+.what{display:block;margin-top:16px;font-size:clamp(1.5rem,2.6vw,2.1rem);letter-spacing:-.03em;line-height:1.1}
+.msg{color:var(--dim);font-size:16.5px;max-width:44ch}
+.sys{display:grid;width:100%;max-width:340px;border-top:1px solid var(--line2)}
+.sys>div{display:grid;grid-template-columns:96px minmax(0,1fr);padding:7px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.sys dt{color:var(--faint);letter-spacing:.1em}
+.sys dd{color:var(--fg);overflow-wrap:anywhere}
+.sys dd.acc{color:var(--accent)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;padding:9px 14px;border:1px solid var(--line2);border-radius:2px;color:var(--fg);background:transparent;cursor:pointer;transition:border-color .15s,background .15s,color .15s;display:inline-block;line-height:1.2}
+.btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.btn.pri{border-color:var(--accent);background:var(--accent-dim)}
+.btn.pri:hover{background:rgba(138,164,255,.22)}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* map: the route lookup that failed */
+.mapwrap{display:none}
+.mapwrap svg{display:block;width:100%;height:auto;overflow:visible}
+.edge{fill:none;stroke-width:1}
+.edge.h{stroke:var(--line2)}
+.edge.miss{stroke:var(--accent);stroke-dasharray:.62 1}
+.bx{fill:var(--bg);stroke:var(--line2);stroke-width:1}
+.bx.miss{stroke:var(--accent);stroke-dasharray:3 3}
+.tx{font:400 12.5px var(--mono);fill:var(--dim)}
+.tx.root{fill:var(--fg);font-weight:500;letter-spacing:.12em}
+.tx.miss{fill:var(--accent)}
+.sq{fill:none;stroke:var(--faint);stroke-width:1}
+.port{fill:var(--bg);stroke:var(--accent);stroke-width:1}
+.cross{stroke:var(--accent);stroke-width:1.4;fill:none}
+.tag404{font:500 11px var(--mono);fill:var(--accent);letter-spacing:.08em}
+
+@media (min-width:1100px){
+  .nf{grid-template-columns:minmax(0,1fr) minmax(380px,480px);gap:clamp(40px,6vw,96px)}
+  .mapwrap{display:block}
+}
+@media (prefers-reduced-motion:no-preference){
+  .edge.draw{stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,.1,.2,1) forwards;animation-delay:var(--dl,0s)}
+  .edge.miss.draw{stroke-dasharray:.62 1;stroke-dashoffset:.62;animation-name:drawmiss}
+  .fade{opacity:0;animation:appear .5s ease forwards;animation-delay:var(--dl,0s)}
+  .view{animation:enter .32s cubic-bezier(.2,.7,.2,1) both}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes drawmiss{to{stroke-dashoffset:0}}
+@keyframes appear{to{opacity:1}}
+@keyframes enter{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.edge.h.draw{stroke-dasharray:1}
+
+@media (max-width:900px){
+  html,body{height:auto}
+  .shell{display:block;height:auto;min-height:100%}
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;height:48px;padding:0 16px}
+  .live{display:none}
+  .crumbs{flex:1;justify-content:flex-end}
+  .rail{position:sticky;top:calc(48px + env(safe-area-inset-top,0px));z-index:4;flex-direction:row;padding:0;gap:0;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;overflow-y:hidden}
+  .rail .lbl,.rev{display:none}
+  .rlist{display:flex}
+  .rlist a{display:flex;gap:0;padding:13px 16px;white-space:nowrap;flex:none}
+  .rlist a .k{display:none}
+  .stage{overflow:visible;background:var(--bg)}
+  .stage::before{display:none}
+  .status{display:none}
+  .view{padding:28px 16px 56px}
+  .nf{min-height:0;gap:32px}
+  .btn{padding:13px 16px}
+  .acts .btn{flex:1 1 auto;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <a class="brand" href="/" data-home="" aria-label="Maziar system, home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h6M11 12V6.5h7M11 12v5.5h7" fill="none" stroke="currentColor" stroke-width="1"/><rect x="2" y="10" width="4" height="4" fill="#8aa4ff"/><rect x="18" y="5" width="3.5" height="3" fill="currentColor"/><rect x="18" y="16" width="3.5" height="3" fill="currentColor"/></svg>
+      <span>MAZIAR</span>
+    </a>
+    <nav class="crumbs" aria-label="Location">
+      <i>/</i><a href="/" data-home="">maziar</a><i>/</i><span class="cur-seg" dir="auto" data-path-seg>not-found</span>
+    </nav>
+    <div class="live"><i class="dot" aria-hidden="true"></i><span>route unresolved</span></div>
+  </header>
+
+  <nav class="rail" aria-label="System">
+    <div>
+      <span class="lbl">/maziar</span>
+      <ul class="rlist">
+        <li><a href="/" data-home=""><span class="k">0</span><span>/</span></a></li>
+        <li><a href="/#about" data-home="#about"><span class="k">1</span><span>about/</span></a></li>
+        <li><a href="/#projects" data-home="#projects"><span class="k">2</span><span>projects/</span></a></li>
+        <li><a href="/#stack" data-home="#stack"><span class="k">3</span><span>stack/</span></a></li>
+        <li><a href="/#learning" data-home="#learning"><span class="k">4</span><span>learning/</span></a></li>
+        <li><a href="/#lab" data-home="#lab"><span class="k">5</span><span>lab/</span></a></li>
+        <li><a href="/#contact" data-home="#contact"><span class="k">6</span><span>contact/</span></a></li>
+      </ul>
+    </div>
+    <div class="rev">esc or 0 returns home<br>keys 1 to 6 open a section</div>
+  </nav>
+
+  <main class="stage" id="stage" tabindex="-1">
+    <div class="view">
+      <div class="nf">
+        <section class="copy" aria-labelledby="t">
+          <p class="eyebrow">/maziar/<bdi dir="auto" data-path>not-found</bdi></p>
+          <h1 id="t"><span class="big">404</span><span class="what">Route not found</span></h1>
+          <p class="msg">No page in this system matches that address. It may have moved, or the link may be mistyped.</p>
+          <dl class="sys">
+            <div><dt>requested</dt><dd dir="auto" data-path>this address</dd></div>
+            <div><dt>resolved</dt><dd>none</dd></div>
+            <div><dt>status</dt><dd class="acc">404 not found</dd></div>
+            <div><dt>nearest</dt><dd>/maziar</dd></div>
+          </dl>
+          <div class="acts">
+            <a class="btn pri" href="/" data-home="">Back to home</a>
+            <button class="btn" type="button" id="back" hidden>Go back</button>
+          </div>
+        </section>
+
+        <div class="mapwrap" aria-hidden="true"><svg id="map" viewBox="0 0 480 372" focusable="false"></svg></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="status">
+    <span><b dir="auto" data-status-path>GET this address</b></span>
+    <span><span>RESOLVED <b>none</b></span><span>STATUS <b>404</b></span></span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var HOME_FILE = 'Personal Developer System.html';   /* used only when this file is opened from disk */
+  var local = location.protocol === 'file:';
+  function homeHref(h){ return (local ? encodeURI(HOME_FILE) : '/') + (h || ''); }
+  var all = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  all('[data-home]').forEach(function(a){ a.setAttribute('href', homeHref(a.getAttribute('data-home'))); });
+
+  var path = local ? '/' + location.pathname.split('/').pop() : location.pathname + location.search;
+  try{ path = decodeURI(path); }catch(e){}
+  if(path === '/' || !path) path = '/not-found';
+  var seg = path.replace(/^\//, '');
+  all('[data-path]').forEach(function(n){ n.textContent = n.parentNode.classList.contains('eyebrow') ? seg : path; });
+  all('[data-path-seg]').forEach(function(n){ n.textContent = seg; });
+  all('[data-status-path]').forEach(function(n){ n.textContent = 'GET ' + path; });
+  document.title = '404 · ' + document.title.split(' · ').slice(1).join(' · ');
+
+  var back = document.getElementById('back');
+  if(history.length > 1){
+    back.hidden = false;
+    back.addEventListener('click', function(){ history.back(); });
+  }
+
+  var ROUTES = ['about','projects','stack','learning','lab','contact'];
+  document.addEventListener('keydown', function(e){
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+    if(e.key === 'Escape' || e.key === '0'){ location.href = homeHref(''); }
+    else if(/^[1-6]$/.test(e.key)){ location.href = homeHref('#' + ROUTES[+e.key - 1]); }
+  });
+
+  /* decorative map: a lookup from the root that never reaches the requested node */
+  var svg = document.getElementById('map'), NS = 'http://www.w3.org/2000/svg';
+  function el(n, a, p, t){ var e = document.createElementNS(NS, n); for(var k in a) e.setAttribute(k, a[k]); if(t) e.textContent = t; (p || svg).appendChild(e); return e; }
+  var rootX = 0, rootY = 168, rootW = 112, rootH = 40, nx = 300, nw = 148, nh = 32, gap = 46;
+  var px = rootX + rootW + 8, py = rootY + rootH / 2;
+  el('rect', {class:'bx', x:rootX, y:rootY, width:rootW, height:rootH});
+  el('text', {class:'tx root', x:rootX + 14, y:py + 4.5}, null, 'maziar');
+  el('rect', {class:'port', x:px - 3.5, y:py - 3.5, width:7, height:7});
+  ROUTES.forEach(function(r, i){
+    var y = 8 + i * gap, cy = y + nh / 2;
+    el('path', {class:'edge h draw', pathLength:1, d:'M' + (px + 4) + ' ' + py + 'C' + (px + 90) + ' ' + py + ' ' + (nx - 90) + ' ' + cy + ' ' + nx + ' ' + cy, style:'--dl:' + (i * .09 + .1) + 's'});
+    el('rect', {class:'bx', x:nx, y:y, width:nw, height:nh});
+    el('rect', {class:'sq', x:nx + 11, y:cy - 3, width:6, height:6});
+    el('text', {class:'tx', x:nx + 26, y:cy + 4.5}, null, r + '/');
+  });
+  var my = 8 + 6 * gap + 14, mcy = my + nh / 2;
+  var miss = el('path', {class:'edge miss draw', pathLength:1, d:'M' + (px + 4) + ' ' + py + 'C' + (px + 90) + ' ' + py + ' ' + (nx - 90) + ' ' + mcy + ' ' + nx + ' ' + mcy, style:'--dl:.7s'});
+  el('rect', {class:'bx miss', x:nx, y:my, width:nw, height:nh});
+  var label = path.length > 15 ? path.slice(0, 14) + '\u2026' : path;
+  if(/[^\x00-\x7F]/.test(label)) label = 'this address';
+  el('text', {class:'tx miss', x:nx + 12, y:mcy + 4.5}, null, label);
+  el('text', {class:'tag404 fade', x:nx + nw - 34, y:mcy + 4, style:'--dl:1.5s'}, null, '404');
+  try{
+    var len = miss.getTotalLength(), pt = miss.getPointAtLength(len * .62), c = el('g', {class:'fade', style:'--dl:1.5s'});
+    el('path', {class:'cross', d:'M' + (pt.x - 4) + ' ' + (pt.y - 4) + 'l8 8M' + (pt.x + 4) + ' ' + (pt.y - 4) + 'l-8 8'}, c);
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -53,8 +53,16 @@ dl,dd{margin:0}
 .proc a:hover{color:var(--fg)}
 .proc small{display:block;font-size:10.5px;color:var(--faint);line-height:1.2}
 .rev{margin-top:auto;padding:0 18px;font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.7}
-.stage{grid-area:stage;overflow:auto;min-width:0;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 56px,var(--bg);background-blend-mode:normal;position:relative}
-.stage::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.965;pointer-events:none}
+.stage{
+    grid-area:stage;
+    overflow:auto;
+    min-width:0;
+    /*background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 56px,var(--bg);*/
+    /*background-blend-mode:normal;*/
+    background: var(--bg);
+    position:relative
+}
+/*.stage::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.965;pointer-events:none}*/
 .stage>*{position:relative}
 .status{grid-area:status;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap;overflow:hidden}
 .status b{font-weight:400;color:var(--dim)}

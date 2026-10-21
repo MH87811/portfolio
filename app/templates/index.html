@@ -18,17 +18,34 @@
       <span>MAZIAR</span>
     </a>
     <nav class="crumbs" id="crumbs" aria-label="Location"></nav>
-    <div class="live"><i class="dot"></i><span id="avail"></span></div>
+    <div class="tools">
+      <button class="jump" id="jump" type="button" aria-haspopup="dialog" aria-controls="palette" aria-keyshortcuts="Control+K Meta+K"><span>Jump to</span><kbd id="jumpKey">Ctrl K</kbd></button>
+      <div class="live"><i class="dot"></i><span id="avail"></span></div>
+    </div>
   </header>
   <nav class="rail" id="rail" aria-label="System"></nav>
   <main class="stage" id="stage" tabindex="-1"></main>
   <footer class="status" id="status"></footer>
 </div>
 
+<button class="totop" id="totop" type="button" hidden aria-label="Back to top">↑ TOP</button>
+
+<dialog class="pal" id="palette" aria-label="Jump to">
+  <div class="pal-p">
+    <div class="pal-in">
+      <input id="palIn" type="text" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" aria-label="Jump to a page, project, note or technology" placeholder="Jump to a page, project, note or technology" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+      <button class="pal-x" id="palX" type="button" aria-label="Close"><span class="k-d">esc</span><span class="k-t">close</span></button>
+    </div>
+    <ul class="pal-l" id="palList" role="listbox" aria-label="Results"></ul>
+    <div class="pal-f" aria-hidden="true"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+    <div class="sr" id="palLive" role="status" aria-live="polite"></div>
+  </div>
+</dialog>
+
 <noscript><p style="position:fixed;inset:auto 16px 16px;margin:0;color:#e9e7e1;font-family:monospace">This page needs JavaScript.</p></noscript>
 
-{# Optional future hook: when the view supplies `developer_system_data` (a dict
-   matching the data contract), it overrides the bundled data. Not required. #}
+{% comment %}Optional future hook: when the view supplies `developer_system_data` (a dict
+   matching the data contract), it overrides the bundled data. Not required.{% endcomment %}
 {% if developer_system_data %}{{ developer_system_data|json_script:"dev-system-data" }}{% endif %}
 
 <script src="{% static 'data.js' %}"></script>

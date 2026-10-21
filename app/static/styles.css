@@ -359,3 +359,114 @@ html,body{height:auto}
 @media (prefers-reduced-motion:reduce){
 *,*::before,*::after{animation:none!important;transition:none!important}
 }
+/* =====================================================================
+   Additions: command palette, notes archive/detail, related content,
+   long-form figures, back-to-top. New rules use logical properties so
+   they hold under dir="rtl". Sources for borrowed ideas are listed in
+   app.js (palette: versions "develper workspace"; figures: "technical edotorial").
+   ===================================================================== */
+.stage:focus{outline:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+code{font-family:var(--mono);font-size:.88em;background:var(--raise);padding:.06em .35em;border-radius:2px}
+kbd{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid var(--line2);border-radius:2px;color:var(--dim)}
+.upd{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.flash{animation:flash 2.2s ease-out}
+@keyframes flash{0%,35%{background:var(--accent-dim)}100%{background:transparent}}
+a.chip{display:inline-block}
+.faint-p{color:var(--faint)}
+
+/* header tools + jump button */
+.tools{display:flex;align-items:center;gap:16px;flex:none}
+.jump{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 9px;border:1px solid var(--line2);border-radius:2px;background:transparent;color:var(--dim);font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;cursor:pointer;transition:border-color .15s,color .15s}
+.jump:hover{border-color:var(--accent);color:var(--fg)}
+
+/* palette */
+dialog.pal{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:calc(10vh + env(safe-area-inset-top,0px)) 16px 16px;border:0;background:rgba(5,6,8,.72);color:var(--fg);justify-content:center;align-items:flex-start;overflow:hidden}
+dialog.pal[open]{display:flex}
+dialog.pal::backdrop{background:transparent}
+.pal-p{width:100%;max-width:620px;max-height:calc(100dvh - 10vh - 32px);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line2);border-radius:2px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.pal-in{display:flex;align-items:center;border-bottom:1px solid var(--line2)}
+.pal-in:focus-within{box-shadow:inset 0 -2px 0 var(--accent)}
+.pal-in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--fg);font:400 15px var(--mono);padding:16px 18px}
+.pal-in input::placeholder{color:var(--faint)}
+.pal-x{margin-inline-end:12px;background:transparent;border:1px solid var(--line2);border-radius:2px;color:var(--faint);font-family:var(--mono);font-size:11px;padding:4px 8px;cursor:pointer;min-height:28px}
+.pal-x .k-t{display:none}
+.pal-l{overflow:auto;padding:6px 0;overscroll-behavior:contain}
+.pal-l li{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t g" "h h";column-gap:14px;padding:9px 18px;min-height:44px;cursor:pointer;border-inline-start:2px solid transparent}
+.pal-l li[aria-selected="true"]{background:var(--raise);border-inline-start-color:var(--accent)}
+.pal-l .pt{grid-area:t;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pal-l .pg{grid-area:g;align-self:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.pal-l .ph{grid-area:h;font-family:var(--mono);font-size:11.5px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pal-l .pal-empty{display:block;cursor:default;color:var(--faint);font-size:14px;min-height:0}
+.pal-f{display:flex;gap:18px;padding:9px 18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+/* lab archive */
+.lfilter{display:grid;gap:12px;margin-bottom:22px;max-width:1040px;padding:14px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line)}
+.fgroup{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.fgroup>.lbl{min-width:76px}
+.fchips{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;min-height:28px;border:1px solid var(--line2);border-radius:2px;background:transparent;color:var(--dim);cursor:pointer}
+.fchip:hover{border-color:var(--faint)}
+.fchip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-dim);color:var(--fg)}
+.lfilter input,.lfilter select{font:400 13px var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line2);border-radius:2px;padding:6px 9px;min-height:32px;max-width:100%}
+.lfilter input{width:min(100%,320px)}
+.lcount{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.lnk{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px}
+.lempty{padding:20px 0;max-width:60ch}
+.entry h3 a:hover,.entry .fn a:hover{color:var(--accent)}
+.entry .upd{margin-top:8px}
+
+/* case study / note additions */
+.cbody.solo{grid-template-columns:minmax(0,1fr)}
+.cidx button{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.relnote{font-family:var(--mono);font-size:12px!important;color:var(--faint)!important}
+.relgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+.relgrp ul{display:grid;margin-top:8px;border-top:1px solid var(--line)}
+.relgrp li{display:grid;gap:2px;padding:8px 0;border-bottom:1px solid var(--line)}
+.relgrp li a{font-size:15px;color:var(--fg)}
+.relgrp li a:hover{color:var(--accent)}
+.relgrp small,.relgrp .more{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.lflist{display:grid;gap:8px;list-style:disc;padding-inline-start:1.2em;color:var(--dim);font-size:16.5px;max-width:62ch}
+.lf h2.lfh{font-size:22px;letter-spacing:-.02em;line-height:1.2}
+.fig{margin:6px 0 0;min-width:0}
+.fig figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.fig pre{margin:0;padding:14px 16px;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:2px;font-family:var(--mono);font-size:13px;line-height:1.55;color:var(--fg);tab-size:4;text-align:left;max-width:100%}
+.fig pre code{background:none;padding:0;font-size:inherit}
+.fig.terminal pre{border-inline-start:2px solid var(--accent);color:var(--dim)}
+.fig.diagram pre{line-height:1.3;background:transparent}
+
+/* learning / about */
+.lrow .lwork{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.lwork a{border-bottom:1px solid var(--line2)}
+.lwork a:hover{color:var(--accent);border-color:var(--accent)}
+.asec{margin-top:34px;border-top:1px solid var(--line2);padding-top:12px;display:grid;gap:12px;max-width:60ch}
+.asec p{color:var(--dim);font-size:16.5px}
+.alist a{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.alist a:hover span{color:var(--accent)}
+.alist small{font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+/* graph */
+.node.is-rel{border-color:var(--accent-line)}
+.chip.clr{margin-top:10px;justify-self:start}
+
+/* back to top */
+.totop{position:fixed;inset-inline-end:clamp(16px,3vw,40px);bottom:calc(44px + env(safe-area-inset-bottom,0px));z-index:6;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;padding:8px 12px;min-height:36px;border:1px solid var(--line2);border-radius:2px;background:var(--panel);color:var(--fg);cursor:pointer}
+.totop:hover{border-color:var(--accent)}
+.totop[hidden]{display:none}
+
+@media (max-width:900px){
+.jump{height:36px;padding:0 12px}
+.jump kbd{display:none}
+.totop{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.fchip{min-height:36px;padding:6px 11px}
+}
+@media (max-width:900px),(pointer:coarse){
+dialog.pal{padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 8px}
+.pal-p{max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px))}
+.pal-in input{font-size:16px}
+.pal-f{display:none}
+.pal-x .k-d{display:none}
+.pal-x .k-t{display:inline}
+.jump kbd{display:none}
+}
+.lcount,.upd{unicode-bidi:plaintext}
