@@ -1,0 +1,523 @@
+/* i18n.js: language state and interface dictionary for the Personal Developer System.
+
+   Loaded synchronously in <head> (before the stylesheets) so that <html lang dir> is correct
+   before the first paint. Used by index.html, app.js and 404.html.
+
+   Language resolution order (first match wins):
+     1. ?lang=fa | ?lang=en in the URL      (shareable link, never written unless it was already there)
+     2. localStorage "ds-lang"              (the visitor's last explicit choice)
+     3. navigator.languages                 (first visit only: Persian browsers get Persian)
+     4. "en"
+
+   Interface text lives in DICT. Keys under "copy." are owner-authored sentences that were
+   hard-coded in the frontend. They are deliberately NOT translated here: a Persian version has to
+   be supplied by the owner through I18N_CONTENT.fa.COPY (see data.js). Until then the English text is
+   shown and marked lang="en" instead of being passed off as translated.                      */
+(function(root){
+'use strict';
+
+var SUPPORTED = ['fa', 'en'];
+var STORE_KEY = 'ds-lang';
+var DIRS = {fa:'rtl', en:'ltr'};
+var NAMES = {fa:'فارسی', en:'English'};
+
+/* ============ INTERFACE DICTIONARY ============ */
+var DICT = {
+
+en: {
+  'doc.title':'Personal Developer System',
+  'brand.aria':'Maziyar system, home',
+  'crumbs.aria':'Location',
+  'jump':'Jump to',
+  'rail.aria':'System',
+  'totop':'↑ TOP',
+  'totop.aria':'Back to top',
+  'lang.group':'Language / زبان',
+  'lang.live':'Language: English',
+  'js.needed':'This page needs JavaScript.',
+
+  'pal.label':'Jump to',
+  'pal.ph':'Jump to a page, project, note or technology',
+  'pal.close':'Close',
+  'pal.esc':'esc',
+  'pal.closeShort':'close',
+  'pal.results':'Results',
+  'pal.move':'move',
+  'pal.open':'open',
+  'pal.empty':'Nothing matches “{q}”.',
+  'pal.n':'{n} results',
+  'pal.none':'No results',
+  'pal.type.Pages':'Page',
+  'pal.type.Projects':'Project',
+  'pal.type.Notes':'Note',
+  'pal.type.Technologies':'Technology',
+  'pal.type.Learning':'Learning',
+
+  'nav.home':'/', 'nav.about':'about/', 'nav.projects':'projects/', 'nav.stack':'stack/',
+  'nav.learning':'learning/', 'nav.lab':'lab/', 'nav.contact':'contact/',
+  'name.home':'Home', 'name.about':'About', 'name.projects':'Projects', 'name.stack':'Stack',
+  'name.learning':'Learning', 'name.lab':'Lab', 'name.contact':'Contact',
+  'crumb.maziyar':'maziyar', 'crumb.about':'about', 'crumb.projects':'projects', 'crumb.stack':'stack',
+  'crumb.learning':'learning', 'crumb.lab':'lab', 'crumb.contact':'contact',
+
+  'rail.processes':'active processes',
+  'rail.none':'none running',
+  'rail.rev':'rev {v}',
+  'rail.keys':'keys 0 to 6',
+  'status.focus':'FOCUS',
+  'status.now':'CURRENTLY',
+  'word.learning':'learning',
+
+  'hero.role':'BACKEND DEVELOPER',
+  'hero.system':'SYSTEM',
+  'hero.focus':'FOCUS',
+  'hero.now':'CURRENTLY',
+  'hero.projects':'projects →',
+  'hero.contact':'contact →',
+  'role':'backend developer',
+  'role.system':'backend engineer',
+
+  /* owner-authored copy that is hard-coded in the frontend: needs the owner's own Persian (see header) */
+  'copy.hero.sum':'I build APIs and services with Django, Laravel and Go, and I care about the parts that keep them running.',
+  'copy.hero.focus':'reliable systems',
+  'copy.about.builds':'APIs, authentication systems and realtime services',
+  'copy.about.uses':'Django, DRF, Laravel and Go on Linux',
+
+  'p.completed':'completed', 'p.active':'active', 'p.prototype':'prototype', 'p.archived':'archived',
+  'l.exploring':'exploring', 'l.learning':'learning', 'l.studying':'studying', 'l.developing':'developing', 'l.queued':'queued',
+  'lab.s.in progress':'in progress', 'lab.s.queued':'queued', 'lab.s.published':'published',
+  'lab.k.experiment':'experiment', 'lab.k.prototype':'prototype', 'lab.k.note':'note',
+  'status.label':'status: {s}',
+  'updated':'updated {d}',
+
+  'state.exploring':'first look, broad and curious',
+  'state.learning':'structured, working through material',
+  'state.studying':'deep reading, theory and trade-offs',
+  'state.developing':'building real things with it',
+  'state.queued':'Planned, not started.',
+
+  'about.title':'About',
+  'about.empty':'Nothing written here yet.',
+  'about.progress':'in progress · {n}',
+  'about.who':'maziyar Heydari, backend developer',
+  'about.projectsGlance':'{n} modules, each with an architecture write-up',
+  'about.contactGlance':'Email, GitHub and LinkedIn',
+  'glance.WHO':'WHO', 'glance.BUILDS':'BUILDS', 'glance.USES':'USES', 'glance.PROJECTS':'PROJECTS', 'glance.CONTACT':'CONTACT',
+  'glance.about':'about →', 'glance.projects':'projects →', 'glance.stack':'stack →', 'glance.open':'open →',
+  'kv.ROLE':'ROLE', 'kv.FOCUS':'FOCUS', 'kv.FRAMEWORKS':'FRAMEWORKS', 'kv.LANGUAGES':'LANGUAGES',
+  'kv.PLATFORM':'PLATFORM', 'kv.DATA':'DATA', 'kv.STATUS':'STATUS',
+
+  'projects.lede':'Each project is a module with an architecture, the decisions behind it, and a repository.',
+  'projects.empty':'No projects published yet.',
+  'btn.architecture':'ARCHITECTURE', 'btn.details':'DETAILS', 'btn.repo':'REPOSITORY',
+  'btn.details.for':'DETAILS: {n}', 'btn.architecture.for':'ARCHITECTURE: {n}', 'btn.repo.for':'REPOSITORY: {n}',
+  'ext.newtab':'(opens in a new tab)',
+
+  'sec.overview':'overview', 'sec.problem':'problem', 'sec.architecture':'architecture', 'sec.technologies':'technologies',
+  'sec.decisions':'technical decisions', 'sec.challenges':'challenges', 'sec.body':'write-up', 'sec.outcome':'outcome',
+  'sec.limitations':'limitations', 'sec.related':'related', 'sec.repository':'repository',
+  'cidx.overview':'overview', 'cidx.problem':'problem', 'cidx.architecture':'architecture', 'cidx.technologies':'technologies',
+  'cidx.decisions':'decisions', 'cidx.challenges':'challenges', 'cidx.body':'body', 'cidx.outcome':'outcome',
+  'cidx.limitations':'limitations', 'cidx.related':'related', 'cidx.repository':'repository',
+  'case.sections.aria':'Case study sections',
+  'back.home':'‹ /maziyar',
+  'case.back':'‹ /projects',
+  'case.tradeoff':'trade-off: ',
+  'case.problem':'problem',
+  'case.empty':'No details published for this project yet.',
+  'pn.prev':'‹ previous', 'pn.next':'next ›',
+  'pn.projects.aria':'Other projects', 'pn.notes.aria':'Notes',
+  'btn.copy':'COPY', 'btn.copied':'COPIED', 'btn.select':'SELECT TEXT', 'btn.open':'OPEN', 'btn.compose':'COMPOSE',
+
+  'rel.note':'Matched by shared technologies, not hand-picked.',
+  'rel.projects':'projects', 'rel.notes':'notes', 'rel.learning':'learning',
+  'more':'+{n} more',
+
+  'stack.lede':'Installed components, grouped by layer. Each one lists what it requires and where it is used. Hover a row to trace its dependencies.',
+  'stack.empty':'No components registered yet.',
+  'dep.requires':'requires', 'dep.requiredBy':'required by', 'dep.usedIn':'used in', 'dep.notes':'notes',
+  'dep.learning':'learning', 'dep.none':'no dependencies',
+
+  'learning.lede':'Processes that are running right now. State describes how I am working on something, not how much I know.',
+  'learning.running':'running', 'learning.queued':'queued', 'learning.related':'related work',
+  'learning.empty':'Nothing listed yet.',
+
+  'lab.lede':'Experiments, prototypes and technical notes. Nothing here is finished by design. Entries move from queued to in progress to published.',
+  'lab.search':'search', 'lab.kind':'kind', 'lab.status':'status', 'lab.tech':'technology', 'lab.all':'all',
+  'lab.ph':'Title, text or technology',
+  'lab.count':'{a} of {b} entries',
+  'lab.empty':'No entries published yet.',
+  'lab.noMatch':'No entries match these filters.',
+  'lab.clear':'Clear filters',
+  'lab.reserved':'RESERVED',
+  'lab.next':'Next experiment',
+  'lab.nextText':'New entries are added as they are started.',
+  'lab.summary':'summary', 'lab.writeup':'write-up', 'lab.technologies':'technologies', 'lab.related':'related',
+  'lab.nowriteup':'No long-form write-up has been published for this entry yet.',
+  'lab.back':'‹ /lab',
+  'sections.aria':'Sections',
+  'fig.code':'Code', 'fig.terminal':'Terminal', 'fig.diagram':'Diagram', 'fig.diagram.aria':'Diagram. {l}',
+
+  'contact.title':'Contact',
+  'contact.n1':'One channel.', 'contact.n2':'Two channels.', 'contact.n3':'Three channels.',
+  'contact.fastest':' Email is the fastest.',
+  'contact.empty':'No contact channels listed yet.',
+  'ch.EMAIL':'EMAIL', 'ch.GITHUB':'GITHUB', 'ch.LINKEDIN':'LINKEDIN',
+  'ch.direct':'direct channel', 'ch.source':'source code', 'ch.pro':'professional profile',
+
+  'insp.label':'inspector',
+  'insp.title':'System map',
+  'insp.hint':'Hover a node to trace what connects to it. Select one to pin it. Components sit on the left, the work that uses them on the right.',
+  'legend.contains':'contains', 'legend.usedIn':'used in',
+  'insp.glance':'at a glance',
+  'insp.counts':'{p} projects · {c} components · {l} active learning areas',
+  'node.components':'{n} components', 'node.active':'{n} active', 'node.entries':'{n} entries',
+  'node.learning':'LEARNING', 'node.lab':'LAB',
+  'insp.kind.domain':'domain', 'insp.kind.project':'project · {s}', 'insp.kind.module':'module', 'insp.kind.component':'component · {d}',
+  'insp.components':'components', 'insp.builtWith':'built with', 'insp.openCase':'open case study →',
+  'insp.touches':'touches', 'insp.areas':'areas', 'insp.entries':'entries',
+  'insp.openLearning':'open learning →', 'insp.openLab':'open lab →',
+  'insp.learningName':'/learning', 'insp.labName':'/lab',
+  'insp.learningText':'Areas being worked on right now, with the state each one is in.',
+  'insp.labText':'Experiments, prototypes and notes. Published as they are finished.',
+  'insp.usedIn':'used in', 'insp.nothing':'nothing yet', 'insp.requires':'requires', 'insp.requiredBy':'required by',
+  'insp.notes':'notes', 'insp.openStack':'open in stack →', 'insp.clear':'clear selection (esc)',
+  'map.aria':'System map',
+
+  'tree.about':'ABOUT', 'tree.projects':'PROJECTS', 'tree.stack':'STACK', 'tree.learning':'LEARNING', 'tree.lab':'LAB', 'tree.contact':'CONTACT',
+  'tree.aboutMeta':'who and focus',
+  'tree.projectsMeta':'{n} modules', 'tree.stackMeta':'{n} components', 'tree.learningMeta':'{n} active',
+  'tree.labMeta':'{n} entries', 'tree.contactMeta':'{n} channels',
+  'open.about':'open about →', 'open.projects':'open projects →', 'open.stack':'open stack →',
+  'open.learning':'open learning →', 'open.lab':'open lab →', 'open.contact':'open contact →',
+
+  'notice.only.en':'Most of the content on this page is currently available only in English.',
+  'notice.only.fa':'Most of the content on this page is currently available only in Persian.',
+
+  /* 404 page */
+  'nf.title':'404 · Page not found',
+  'nf.route':'route unresolved',
+  'nf.what':'Route not found',
+  'nf.msg':'No page in this system matches that address. It may have moved, or the link may be mistyped.',
+  'nf.requested':'requested', 'nf.resolved':'resolved', 'nf.status':'status', 'nf.nearest':'nearest',
+  'nf.none':'none', 'nf.notfound':'404 not found', 'nf.thisAddress':'this address',
+  'nf.home':'Back to home', 'nf.back':'Go back',
+  'nf.keys':'esc or 0 returns home<br>keys 1 to 6 open a section',
+  'nf.resolvedCaps':'RESOLVED', 'nf.statusCaps':'STATUS'
+},
+
+fa: {
+  'doc.title':'سامانه شخصی توسعه‌دهنده',
+  'brand.aria':'سامانه مازیار، صفحه اصلی',
+  'crumbs.aria':'مسیر صفحه',
+  'jump':'پرش به',
+  'rail.aria':'پیمایش اصلی',
+  'totop':'↑ بالا',
+  'totop.aria':'بازگشت به بالای صفحه',
+  'lang.group':'Language / زبان',
+  'lang.live':'زبان: فارسی',
+  'js.needed':'این صفحه به جاوااسکریپت نیاز دارد.',
+
+  'pal.label':'پرش به',
+  'pal.ph':'پرش به صفحه، پروژه، یادداشت یا فناوری',
+  'pal.close':'بستن',
+  'pal.esc':'esc',
+  'pal.closeShort':'بستن',
+  'pal.results':'نتایج',
+  'pal.move':'حرکت',
+  'pal.open':'باز کردن',
+  'pal.empty':'نتیجه‌ای برای «{q}» پیدا نشد.',
+  'pal.n':'{n} نتیجه',
+  'pal.none':'نتیجه‌ای نیست',
+  'pal.type.Pages':'صفحه',
+  'pal.type.Projects':'پروژه',
+  'pal.type.Notes':'یادداشت',
+  'pal.type.Technologies':'فناوری',
+  'pal.type.Learning':'یادگیری',
+
+  'nav.home':'خانه', 'nav.about':'درباره', 'nav.projects':'پروژه‌ها', 'nav.stack':'پشته فناوری',
+  'nav.learning':'یادگیری', 'nav.lab':'آزمایشگاه', 'nav.contact':'تماس',
+  'name.home':'خانه', 'name.about':'درباره', 'name.projects':'پروژه‌ها', 'name.stack':'پشته فناوری',
+  'name.learning':'یادگیری', 'name.lab':'آزمایشگاه', 'name.contact':'تماس',
+  'crumb.maziyar':'maziyar', 'crumb.about':'درباره', 'crumb.projects':'پروژه‌ها', 'crumb.stack':'پشته فناوری',
+  'crumb.learning':'یادگیری', 'crumb.lab':'آزمایشگاه', 'crumb.contact':'تماس',
+
+  'rail.processes':'فرایندهای فعال',
+  'rail.none':'فرایندی در حال اجرا نیست',
+  'rail.rev':'نسخه {v}',
+  'rail.keys':'کلیدهای ۰ تا ۶',
+  'status.focus':'تمرکز',
+  'status.now':'اکنون',
+  'word.learning':'یادگیری',
+
+  'hero.role':'توسعه‌دهنده بک‌اند',
+  'hero.system':'سامانه',
+  'hero.focus':'تمرکز',
+  'hero.now':'اکنون',
+  'hero.projects':'پروژه‌ها ←',
+  'hero.contact':'تماس ←',
+  'role':'توسعه‌دهنده بک‌اند',
+  'role.system':'مهندس بک‌اند',
+
+  /* no copy.* keys on purpose: see the header comment */
+
+  'p.completed':'تکمیل‌شده', 'p.active':'فعال', 'p.prototype':'نمونه اولیه', 'p.archived':'بایگانی‌شده',
+  'l.exploring':'در حال کاوش', 'l.learning':'در حال یادگیری', 'l.studying':'در حال مطالعه', 'l.developing':'در حال توسعه', 'l.queued':'در صف',
+  'lab.s.in progress':'در حال انجام', 'lab.s.queued':'در صف', 'lab.s.published':'منتشرشده',
+  'lab.k.experiment':'آزمایش', 'lab.k.prototype':'نمونه اولیه', 'lab.k.note':'یادداشت',
+  'status.label':'وضعیت: {s}',
+  'updated':'به‌روزرسانی: {d}',
+
+  'state.exploring':'نگاه اولیه، گسترده و کنجکاوانه',
+  'state.learning':'ساختارمند، در حال گذراندن منابع',
+  'state.studying':'مطالعه عمیق، نظریه و مبادله‌ها',
+  'state.developing':'ساختن چیزهای واقعی با آن',
+  'state.queued':'برنامه‌ریزی‌شده، هنوز شروع نشده.',
+
+  'about.title':'درباره',
+  'about.empty':'هنوز چیزی در اینجا نوشته نشده است.',
+  'about.progress':'در حال انجام · {n}',
+  'about.who':'maziyar Heydari، توسعه‌دهنده بک‌اند',
+  'about.projectsGlance':'{n} ماژول، هر کدام با شرح معماری',
+  'about.contactGlance':'ایمیل، گیت‌هاب و لینکدین',
+  'glance.WHO':'معرفی', 'glance.BUILDS':'می‌سازد', 'glance.USES':'ابزارها', 'glance.PROJECTS':'پروژه‌ها', 'glance.CONTACT':'تماس',
+  'glance.about':'درباره ←', 'glance.projects':'پروژه‌ها ←', 'glance.stack':'پشته فناوری ←', 'glance.open':'باز کردن ←',
+  'kv.ROLE':'نقش', 'kv.FOCUS':'تمرکز', 'kv.FRAMEWORKS':'فریم‌ورک‌ها', 'kv.LANGUAGES':'زبان‌ها',
+  'kv.PLATFORM':'پلتفرم', 'kv.DATA':'داده', 'kv.STATUS':'وضعیت',
+
+  'projects.lede':'هر پروژه یک ماژول است با معماری، تصمیم‌های پشت آن و یک مخزن کد.',
+  'projects.empty':'هنوز پروژه‌ای منتشر نشده است.',
+  'btn.architecture':'معماری', 'btn.details':'جزئیات', 'btn.repo':'مخزن کد',
+  'btn.details.for':'جزئیات: {n}', 'btn.architecture.for':'معماری: {n}', 'btn.repo.for':'مخزن کد: {n}',
+  'ext.newtab':'(در زبانه جدید باز می‌شود)',
+
+  'sec.overview':'نمای کلی', 'sec.problem':'مسئله', 'sec.architecture':'معماری', 'sec.technologies':'فناوری‌ها',
+  'sec.decisions':'تصمیم‌های فنی', 'sec.challenges':'چالش‌ها', 'sec.body':'شرح کامل', 'sec.outcome':'نتیجه',
+  'sec.limitations':'محدودیت‌ها', 'sec.related':'موارد مرتبط', 'sec.repository':'مخزن کد',
+  'cidx.overview':'نمای کلی', 'cidx.problem':'مسئله', 'cidx.architecture':'معماری', 'cidx.technologies':'فناوری‌ها',
+  'cidx.decisions':'تصمیم‌ها', 'cidx.challenges':'چالش‌ها', 'cidx.body':'شرح کامل', 'cidx.outcome':'نتیجه',
+  'cidx.limitations':'محدودیت‌ها', 'cidx.related':'مرتبط', 'cidx.repository':'مخزن',
+  'case.sections.aria':'بخش‌های مطالعه موردی',
+  'back.home':'› صفحه اصلی',
+  'case.back':'› پروژه‌ها',
+  'case.tradeoff':'بده‌بستان: ',
+  'case.problem':'مسئله',
+  'case.empty':'هنوز جزئیاتی برای این پروژه منتشر نشده است.',
+  'pn.prev':'› قبلی', 'pn.next':'بعدی ‹',
+  'pn.projects.aria':'پروژه‌های دیگر', 'pn.notes.aria':'یادداشت‌ها',
+  'btn.copy':'کپی', 'btn.copied':'کپی شد', 'btn.select':'متن را انتخاب کنید', 'btn.open':'باز کردن', 'btn.compose':'نوشتن ایمیل',
+
+  'rel.note':'بر اساس فناوری‌های مشترک تطبیق داده شده‌اند، نه انتخاب دستی.',
+  'rel.projects':'پروژه‌ها', 'rel.notes':'یادداشت‌ها', 'rel.learning':'یادگیری',
+  'more':'+{n} مورد دیگر',
+
+  'stack.lede':'مؤلفه‌های نصب‌شده، دسته‌بندی‌شده بر اساس لایه. هر مورد نشان می‌دهد به چه چیزی نیاز دارد و کجا استفاده شده است. برای دنبال کردن وابستگی‌ها، روی یک ردیف نشانگر ماوس را نگه دارید.',
+  'stack.empty':'هنوز مؤلفه‌ای ثبت نشده است.',
+  'dep.requires':'نیازمند', 'dep.requiredBy':'موردنیاز', 'dep.usedIn':'استفاده‌شده در', 'dep.notes':'یادداشت‌ها',
+  'dep.learning':'یادگیری', 'dep.none':'بدون وابستگی',
+
+  'learning.lede':'فرایندهایی که همین حالا در جریان هستند. وضعیت نشان می‌دهد چطور روی چیزی کار می‌کنم، نه اینکه چقدر می‌دانم.',
+  'learning.running':'در حال اجرا', 'learning.queued':'در صف', 'learning.related':'کارهای مرتبط',
+  'learning.empty':'هنوز چیزی فهرست نشده است.',
+
+  'lab.lede':'آزمایش‌ها، نمونه‌های اولیه و یادداشت‌های فنی. هیچ‌چیز اینجا عمداً کامل نیست. ورودی‌ها از «در صف» به «در حال انجام» و سپس «منتشرشده» می‌روند.',
+  'lab.search':'جستجو', 'lab.kind':'نوع', 'lab.status':'وضعیت', 'lab.tech':'فناوری', 'lab.all':'همه',
+  'lab.ph':'عنوان، متن یا فناوری',
+  'lab.count':'{a} از {b} مورد',
+  'lab.empty':'هنوز موردی منتشر نشده است.',
+  'lab.noMatch':'موردی با این فیلترها پیدا نشد.',
+  'lab.clear':'پاک کردن فیلترها',
+  'lab.reserved':'رزروشده',
+  'lab.next':'آزمایش بعدی',
+  'lab.nextText':'ورودی‌های جدید هم‌زمان با شروع کار اضافه می‌شوند.',
+  'lab.summary':'خلاصه', 'lab.writeup':'شرح کامل', 'lab.technologies':'فناوری‌ها', 'lab.related':'موارد مرتبط',
+  'lab.nowriteup':'هنوز شرح کاملی برای این مورد منتشر نشده است.',
+  'lab.back':'› آزمایشگاه',
+  'sections.aria':'بخش‌ها',
+  'fig.code':'کد', 'fig.terminal':'ترمینال', 'fig.diagram':'نمودار', 'fig.diagram.aria':'نمودار. {l}',
+
+  'contact.title':'تماس',
+  'contact.n1':'یک راه ارتباطی.', 'contact.n2':'دو راه ارتباطی.', 'contact.n3':'سه راه ارتباطی.',
+  'contact.fastest':' سریع‌ترین راه ایمیل است.',
+  'contact.empty':'هنوز راه ارتباطی ثبت نشده است.',
+  'ch.EMAIL':'ایمیل', 'ch.GITHUB':'GITHUB', 'ch.LINKEDIN':'LINKEDIN',
+  'ch.direct':'ارتباط مستقیم', 'ch.source':'کد منبع', 'ch.pro':'پروفایل حرفه‌ای',
+
+  'insp.label':'پنل جزئیات',
+  'insp.title':'نقشه سامانه',
+  'insp.hint':'برای دیدن اتصال‌ها، نشانگر را روی یک گره ببرید. برای ثابت کردن آن، گره را انتخاب کنید. مؤلفه‌ها در یک طرف و کارهایی که از آن‌ها استفاده می‌کنند در طرف دیگرند.',
+  'legend.contains':'شامل', 'legend.usedIn':'استفاده‌شده در',
+  'insp.glance':'در یک نگاه',
+  'insp.counts':'{p} پروژه · {c} مؤلفه · {l} حوزه یادگیری فعال',
+  'node.components':'{n} مؤلفه', 'node.active':'{n} فعال', 'node.entries':'{n} مورد',
+  'node.learning':'یادگیری', 'node.lab':'آزمایشگاه',
+  'insp.kind.domain':'دسته', 'insp.kind.project':'پروژه · {s}', 'insp.kind.module':'ماژول', 'insp.kind.component':'مؤلفه · {d}',
+  'insp.components':'مؤلفه‌ها', 'insp.builtWith':'ساخته‌شده با', 'insp.openCase':'باز کردن مطالعه موردی ←',
+  'insp.touches':'مرتبط با', 'insp.areas':'حوزه‌ها', 'insp.entries':'موردها',
+  'insp.openLearning':'باز کردن یادگیری ←', 'insp.openLab':'باز کردن آزمایشگاه ←',
+  'insp.learningName':'یادگیری', 'insp.labName':'آزمایشگاه',
+  'insp.learningText':'حوزه‌هایی که همین حالا رویشان کار می‌کنم، همراه با وضعیت هرکدام.',
+  'insp.labText':'آزمایش‌ها، نمونه‌های اولیه و یادداشت‌ها. هر کدام پس از تکمیل منتشر می‌شود.',
+  'insp.usedIn':'استفاده‌شده در', 'insp.nothing':'هنوز هیچ‌جا', 'insp.requires':'نیازمند', 'insp.requiredBy':'موردنیاز',
+  'insp.notes':'یادداشت‌ها', 'insp.openStack':'باز کردن در پشته ←', 'insp.clear':'پاک کردن انتخاب (esc)',
+  'map.aria':'نقشه سامانه',
+
+  'tree.about':'درباره', 'tree.projects':'پروژه‌ها', 'tree.stack':'پشته فناوری', 'tree.learning':'یادگیری', 'tree.lab':'آزمایشگاه', 'tree.contact':'تماس',
+  'tree.aboutMeta':'معرفی و تمرکز',
+  'tree.projectsMeta':'{n} ماژول', 'tree.stackMeta':'{n} مؤلفه', 'tree.learningMeta':'{n} فعال',
+  'tree.labMeta':'{n} مورد', 'tree.contactMeta':'{n} راه ارتباطی',
+  'open.about':'باز کردن درباره ←', 'open.projects':'باز کردن پروژه‌ها ←', 'open.stack':'باز کردن پشته فناوری ←',
+  'open.learning':'باز کردن یادگیری ←', 'open.lab':'باز کردن آزمایشگاه ←', 'open.contact':'باز کردن تماس ←',
+
+  'notice.only.en':'بیشتر محتوای این صفحه در حال حاضر فقط به زبان انگلیسی در دسترس است.',
+  'notice.only.fa':'بیشتر محتوای این صفحه در حال حاضر فقط به زبان فارسی در دسترس است.',
+
+  'nf.title':'۴۰۴ · صفحه پیدا نشد',
+  'nf.route':'مسیر نامشخص',
+  'nf.what':'مسیر پیدا نشد',
+  'nf.msg':'هیچ صفحه‌ای در این سامانه با این نشانی مطابقت ندارد. ممکن است جابه‌جا شده باشد یا پیوند اشتباه تایپ شده باشد.',
+  'nf.requested':'درخواست‌شده', 'nf.resolved':'پیداشده', 'nf.status':'وضعیت', 'nf.nearest':'نزدیک‌ترین',
+  'nf.none':'هیچ', 'nf.notfound':'۴۰۴ پیدا نشد', 'nf.thisAddress':'این نشانی',
+  'nf.home':'بازگشت به خانه', 'nf.back':'بازگشت',
+  'nf.keys':'esc یا ۰ شما را به خانه برمی‌گرداند<br>کلیدهای ۱ تا ۶ یک بخش را باز می‌کنند',
+  'nf.resolvedCaps':'پیداشده', 'nf.statusCaps':'وضعیت'
+}
+};
+
+/* ============ LANGUAGE STATE ============ */
+function readParam(){
+  try{
+    var m = /[?&]lang=([a-zA-Z-]+)/.exec(root.location.search || '');
+    var v = m && m[1].toLowerCase().slice(0, 2);
+    return SUPPORTED.indexOf(v) > -1 ? v : '';
+  }catch(e){ return ''; }
+}
+function readStored(){
+  try{
+    var v = root.localStorage.getItem(STORE_KEY);
+    return SUPPORTED.indexOf(v) > -1 ? v : '';
+  }catch(e){ return ''; }   /* storage blocked (private mode, sandboxed frame) */
+}
+function readBrowser(){
+  try{
+    var list = root.navigator.languages && root.navigator.languages.length ? root.navigator.languages : [root.navigator.language || ''];
+    for(var i = 0; i < list.length; i++){
+      var l = String(list[i] || '').toLowerCase().slice(0, 2);
+      if(SUPPORTED.indexOf(l) > -1) return l;
+    }
+  }catch(e){}
+  return '';
+}
+
+var state = {lang: readParam() || readStored() || readBrowser() || 'en'};
+var listeners = [];
+
+/* Persian glyph coverage: the design fonts are Latin only, so Vazirmatn is added for Persian visitors only.
+   unicode-range subsetting keeps the download small and English visitors never request it. */
+function ensureFont(){
+  if(state.lang !== 'fa' || !root.document || root.document.getElementById('ds-fa-font')) return;
+  var l = root.document.createElement('link');
+  l.id = 'ds-fa-font'; l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap';
+  root.document.head.appendChild(l);
+}
+function applyDoc(){
+  var de = root.document.documentElement;
+  de.setAttribute('lang', state.lang);
+  de.setAttribute('dir', DIRS[state.lang]);
+  ensureFont();
+}
+
+/* ============ HELPERS ============ */
+function t(key, params, lang){
+  lang = lang || state.lang;
+  var s = (DICT[lang] && DICT[lang][key] != null) ? DICT[lang][key] : (DICT.en[key] != null ? DICT.en[key] : key);
+  if(params) s = s.replace(/\{(\w+)\}/g, function(m, k){ return params[k] != null ? params[k] : m; });
+  return s;
+}
+function has(key, lang){ return !!(DICT[lang || state.lang] && DICT[(lang || state.lang)][key] != null); }
+
+/* Latin digits to Persian digits when the interface is Persian (counts, indexes). Dates, URLs, ids stay untouched. */
+var FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+function digits(v){
+  v = String(v);
+  return state.lang === 'fa' ? v.replace(/[0-9]/g, function(d){ return FA_DIGITS.charAt(+d); }) : v;
+}
+
+/* Search normalisation: one spelling per letter, no diacritics / ZWNJ / tatweel, Persian and Arabic-Indic digits to Latin. */
+function norm(s){
+  return String(s == null ? '' : s).toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+    .replace(/[\u200c\u200d\u0640]/g, '')
+    .replace(/[\u064A\u0649]/g, '\u06CC')
+    .replace(/\u0643/g, '\u06A9')
+    .replace(/[\u0623\u0625\u0622]/g, '\u0627')
+    .replace(/\u06C0|\u0629/g, '\u0647')
+    .replace(/[\u0660-\u0669]/g, function(d){ return String(d.charCodeAt(0) - 0x660); })
+    .replace(/[\u06F0-\u06F9]/g, function(d){ return String(d.charCodeAt(0) - 0x6F0); });
+}
+
+/* Which language is this text written in? Counts letters by script. '' means "no letters, don't judge". */
+var RE_AR = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g;
+var RE_LA = /[A-Za-z\u00C0-\u024F]/g;
+function count(text){
+  text = String(text == null ? '' : text).replace(/`[^`]*`/g, ' ').replace(/https?:\/\/\S+/g, ' ');
+  return {fa:(text.match(RE_AR) || []).length, en:(text.match(RE_LA) || []).length};
+}
+function detect(text){
+  var c = count(text);
+  if(!c.fa && !c.en) return '';
+  return c.fa >= c.en ? 'fa' : 'en';
+}
+
+function onChange(fn){ listeners.push(fn); }
+
+/* data-i18n="key" sets textContent, data-i18n-html="key" sets innerHTML (trusted dictionary strings only),
+   data-i18n-attr="aria-label:key;placeholder:key2" sets attributes. */
+function apply(scope){
+  var doc = root.document; if(!doc) return;
+  scope = scope || doc;
+  var all = function(sel){ return Array.prototype.slice.call(scope.querySelectorAll(sel)); };
+  all('[data-i18n]').forEach(function(el){ el.textContent = t(el.getAttribute('data-i18n')); });
+  all('[data-i18n-html]').forEach(function(el){ el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+  all('[data-i18n-attr]').forEach(function(el){
+    el.getAttribute('data-i18n-attr').split(';').forEach(function(pair){
+      var i = pair.indexOf(':'); if(i < 1) return;
+      el.setAttribute(pair.slice(0, i).trim(), t(pair.slice(i + 1).trim()));
+    });
+  });
+  all('[data-lang-btn]').forEach(function(b){
+    var on = b.getAttribute('data-lang-btn') === state.lang;
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+function set(lang, opts){
+  opts = opts || {};
+  if(SUPPORTED.indexOf(lang) < 0) return;
+  var changed = lang !== state.lang;
+  state.lang = lang;
+  if(opts.persist !== false){
+    try{ root.localStorage.setItem(STORE_KEY, lang); }catch(e){}
+    /* keep a ?lang= that is already in the address bar in sync, so reload and shared links agree with the choice */
+    try{
+      if(/[?&]lang=/.test(root.location.search)){
+        var u = new URL(root.location.href); u.searchParams.set('lang', lang);
+        root.history.replaceState(root.history.state, '', u.pathname + u.search + u.hash);
+      }
+    }catch(e){}
+  }
+  applyDoc();
+  apply();
+  if(changed || opts.force) listeners.forEach(function(fn){ try{ fn(lang); }catch(err){ if(root.console) console.error(err); } });
+}
+
+applyDoc();   /* runs in <head>: lang/dir are right before the first paint */
+
+root.DSI18N = {
+  SUPPORTED: SUPPORTED, DIRS: DIRS, NAMES: NAMES, DICT: DICT,
+  get lang(){ return state.lang; },
+  get dir(){ return DIRS[state.lang]; },
+  t: t, has: has, digits: digits, norm: norm, detect: detect, count: count, apply: apply, set: set, onChange: onChange
+};
+})(window);

@@ -18,6 +18,23 @@ class Category(models.Model):
 class Technology(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='techs')
     name = models.CharField(max_length=128)
+
+    class TechnologyKind(models.TextChoices):
+        LANGUAGE = "language", "Language"
+        FRAMEWORK = "framework", "Framework"
+        DATABASE = "database", "Database"
+        CACHE = "cache", "Cache"
+        PROTOCOL = "protocol", "Protocol"
+        TOOL = "tool", "Tool"
+        PLATFORM = "platform", "Platform"
+        OTHER = "other", "Other"
+
+    kind = models.CharField(
+        max_length=16,
+        choices=TechnologyKind,
+        default=TechnologyKind.OTHER,
+    )
+
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)

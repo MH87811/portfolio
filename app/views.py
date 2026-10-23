@@ -138,7 +138,7 @@ def _build_developer_system_data():
     for technology in technologies:
         tech_data[technology.slug] = {
             "n": technology.name,
-            "d": technology.category.slug,
+            "d": technology.kind,
             "g": technology.graph_group or None,
             "r": technology.description,
             "needs": [

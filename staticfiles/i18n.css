@@ -1,0 +1,49 @@
+/* i18n.css: bilingual (fa / en) additions. Loaded last.
+   The base stylesheets use logical properties (inset-inline, padding-inline, text-align:start ...), so
+   direction itself needs no duplicated rules. This file only holds what is genuinely new or
+   language specific: the language switcher, the content-language notice, Persian typography and bidi isolation. */
+
+:root[dir=rtl]{--dirsign:-1}
+
+/* ---------- language switcher ---------- */
+.lang{display:inline-flex;flex:none;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+.lang button{font-family:var(--mono);font-size:11.5px;line-height:1.2;color:var(--dim);background:transparent;border:0;padding:6px 10px;min-height:30px;min-width:36px;cursor:pointer;transition:color .15s,background .15s}
+.lang button+button{border-inline-start:1px solid var(--line2)}
+.lang button:hover{color:var(--fg);background:var(--accent-dim)}
+.lang button[aria-pressed=true]{color:var(--fg);background:var(--accent-dim);box-shadow:inset 0 -2px 0 var(--accent)}
+.lang button:focus-visible{outline-offset:-3px}          /* the group clips overflow: keep the ring inside */
+.lang button[lang=fa]{font-family:var(--sans);font-size:13px}
+@media (max-width:640px){
+  .tools{gap:10px}
+  .lang button{padding:6px 8px;min-width:34px}
+  .live{display:none}
+}
+
+/* ---------- content that exists only in the other language ---------- */
+.lnote{margin:0 0 26px;padding:9px 12px;border-inline-start:2px solid var(--accent);background:var(--accent-dim);color:var(--dim);font-size:13.5px;max-width:68ch}
+
+/* ---------- bidi isolation for technical strings ---------- */
+code,kbd,samp,pre{unicode-bidi:isolate}
+code{direction:ltr}
+.addr,.path,.fn,.repo>span{unicode-bidi:isolate}
+
+/* ---------- Persian typography ----------
+   Arabic-script letters join, so letter-spacing must be zero (spaced letters break the words apart);
+   Persian glyphs are also taller and need more leading. Elements marked lang="en" keep their design spacing. */
+:lang(fa){letter-spacing:0!important}
+:lang(fa) body,body:lang(fa){line-height:1.8}
+:lang(fa) :is(.lbl,.pg,.ph,.chan,.kind,.upd,.rev,.legend,.status,.labnote,.lcount,.tlabel,.tm,.states small,.fchip,.chip,.btn,.pal-f,.pal-x,.eyebrow){font-size:12.5px}
+:lang(fa) :is(.lead,.lede){line-height:1.9}
+:lang(fa) h1,:lang(fa) h2,:lang(fa) h3{line-height:1.45}
+:lang(fa) .name{line-height:1}                          /* the Latin display name keeps its tight setting */
+:lang(fa) .big{line-height:1}
+:lang(fa) .lbl,:lang(fa) .pg{text-transform:none}
+/* mono labels carry Persian text now: let the Persian face show through at a readable weight */
+:lang(fa) :is(.lbl,.chip,.btn,.fchip,.rlist,.status,.crumbs){font-weight:500}
+
+/* Blocks of authored text follow their own direction (a Latin paragraph on a Persian page sits at the left,
+   as the base stylesheet already does for Persian paragraphs on an English page). Headings follow the page, so a
+   page header stays one aligned stack whatever language its title is written in. */
+:root[dir=rtl] .csec :is(p,.lflist):dir(ltr){margin-right:auto;margin-left:0}
+:root[dir=rtl] :is(h1,h2,h3,.ln)[dir=auto]{text-align:right}
+:root[dir=ltr] :is(h1,h2,h3,.ln)[dir=auto]{text-align:left}

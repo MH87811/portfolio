@@ -29,6 +29,28 @@ ABOUT: {
     ['Keep the data model boring','Clear tables and constraints outlast clever abstractions.'],
     ['Understand the layer below','Frameworks change. Sockets, processes and SQL change much less.']
   ]
-}
+},
+
+/* Persian (or English) versions of content, supplied by the owner. EMPTY ON PURPOSE: nothing here is
+   machine-translated or invented. Whatever is missing is shown in its original language and marked so.
+   Only add text you wrote or approved. Shape (every key optional, only the fields you give are replaced):
+
+   I18N_CONTENT: {
+     fa: {
+       COPY:   { 'copy.hero.sum': '...', 'copy.hero.focus': '...', 'copy.about.builds': '...', 'copy.about.uses': '...' },
+       CONFIG: { availability: '...' },
+       ABOUT:  { lede: '...', body: ['...'], principles: [['title', 'text']], sections: [{t: '...', p: ['...']}] },
+       STATE_DEF: { exploring: '...' },
+       DOMAINS: { '<category-slug>': { n: '...', r: '...' } },
+       TECH:    { '<technology-slug>': { r: '...' } },
+       PROJ:    { '<project-slug>': { name: '...', desc: '...', kind: '...', overview: ['...'], problem: ['...'],
+                                      outcome: ['...'], limitations: ['...'], decisions: [{t:'',w:'',x:''}],
+                                      challenges: [{p:'',r:''}], body: [{type:'p', text:'...'}] } },
+       LEARN:   { '<learning-slug>': { n: '...', note: '...' } },
+       LAB:     { '<entry-slug>': { t: '...', d: '...', body: [{type:'p', text:'...'}] } }
+     }
+   }
+   Django can supply the same fields per item as item.i18n.fa (see the backend checklist); it wins over this file. */
+I18N_CONTENT: {}
 
 };

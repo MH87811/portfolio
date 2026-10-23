@@ -6,44 +6,52 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0a0b0d">
   <title>Personal Developer System</title>
+  <script src="{% static 'i18n.js' %}"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="{% static 'styles.css' %}">
   <link rel="stylesheet" href="{% static 'features.css' %}">
+  <link rel="stylesheet" href="{% static 'i18n.css' %}">
 </head>
 <body>
 
 <div class="shell" id="shell" data-view="home">
   <header class="top">
-    <a class="brand" href="#home" aria-label="Maziyar system, home">
+    <a class="brand" href="#home" aria-label="Maziyar system, home" data-i18n-attr="aria-label:brand.aria">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h6M11 12V6.5h7M11 12v5.5h7" fill="none" stroke="currentColor" stroke-width="1"/><rect x="2" y="10" width="4" height="4" fill="#8aa4ff"/><rect x="18" y="5" width="3.5" height="3" fill="currentColor"/><rect x="18" y="16" width="3.5" height="3" fill="currentColor"/></svg>
-      <span>MAZIYAR</span>
+      <span lang="en">MAZIYAR</span>
     </a>
-    <nav class="crumbs" id="crumbs" aria-label="Location"></nav>
+    <nav class="crumbs" id="crumbs" aria-label="Location" data-i18n-attr="aria-label:crumbs.aria"></nav>
     <div class="tools">
-      <button class="jump" id="jump" type="button" aria-haspopup="dialog" aria-controls="palette" aria-keyshortcuts="Control+K Meta+K"><span>Jump to</span><kbd id="jumpKey">Ctrl K</kbd></button>
+      <div class="lang" id="lang" role="group" aria-label="Language / زبان" data-i18n-attr="aria-label:lang.group">
+        <button type="button" data-lang-btn="fa" lang="fa" dir="rtl" aria-label="فارسی" aria-pressed="false">فارسی</button>
+        <button type="button" data-lang-btn="en" lang="en" dir="ltr" aria-label="English" aria-pressed="true"><span aria-hidden="true">EN</span></button>
+      </div>
+      <button class="jump" id="jump" type="button" aria-haspopup="dialog" aria-controls="palette" aria-keyshortcuts="Control+K Meta+K"><span data-i18n="jump">Jump to</span><kbd id="jumpKey" dir="ltr">Ctrl K</kbd></button>
       <div class="live"><i class="dot"></i><span id="avail"></span></div>
     </div>
   </header>
-  <nav class="rail" id="rail" aria-label="System"></nav>
+  <nav class="rail" id="rail" aria-label="System" data-i18n-attr="aria-label:rail.aria"></nav>
   <main class="stage" id="stage" tabindex="-1"></main>
   <footer class="status" id="status"></footer>
 </div>
 
-<button class="totop" id="totop" type="button" hidden aria-label="Back to top">↑ TOP</button>
+<button class="totop" id="totop" type="button" hidden aria-label="Back to top" data-i18n-attr="aria-label:totop.aria" data-i18n="totop">↑ TOP</button>
 
-<dialog class="pal" id="palette" aria-label="Jump to">
+<dialog class="pal" id="palette" aria-label="Jump to" data-i18n-attr="aria-label:pal.label">
   <div class="pal-p">
     <div class="pal-in">
-      <input id="palIn" type="text" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" aria-label="Jump to a page, project, note or technology" placeholder="Jump to a page, project, note or technology" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
-      <button class="pal-x" id="palX" type="button" aria-label="Close"><span class="k-d">esc</span><span class="k-t">close</span></button>
+      <input id="palIn" type="text" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" aria-label="Jump to a page, project, note or technology" placeholder="Jump to a page, project, note or technology" data-i18n-attr="aria-label:pal.ph;placeholder:pal.ph" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+      <button class="pal-x" id="palX" type="button" aria-label="Close" data-i18n-attr="aria-label:pal.close"><span class="k-d" dir="ltr" data-i18n="pal.esc">esc</span><span class="k-t" data-i18n="pal.closeShort">close</span></button>
     </div>
-    <ul class="pal-l" id="palList" role="listbox" aria-label="Results"></ul>
-    <div class="pal-f" aria-hidden="true"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+    <ul class="pal-l" id="palList" role="listbox" aria-label="Results" data-i18n-attr="aria-label:pal.results"></ul>
+    <div class="pal-f" aria-hidden="true"><span><kbd>↑</kbd> <kbd>↓</kbd> <span data-i18n="pal.move">move</span></span><span><kbd>↵</kbd> <span data-i18n="pal.open">open</span></span><span><kbd dir="ltr">esc</kbd> <span data-i18n="pal.closeShort">close</span></span></div>
     <div class="sr" id="palLive" role="status" aria-live="polite"></div>
   </div>
 </dialog>
 
-<noscript><p style="position:fixed;inset:auto 16px 16px;margin:0;color:#e9e7e1;font-family:monospace">This page needs JavaScript.</p></noscript>
+<div class="sr" id="langLive" role="status" aria-live="polite"></div>
+
+<noscript><p style="position:fixed;inset:auto 16px 16px;margin:0;color:#e9e7e1;font-family:monospace"><span lang="en" dir="ltr">This page needs JavaScript.</span> <span lang="fa" dir="rtl">این صفحه به جاوااسکریپت نیاز دارد.</span></p></noscript>
 
 {% comment %}Optional future hook: when the view supplies `developer_system_data` (a dict
    matching the data contract), it overrides the bundled data. Not required.{% endcomment %}
