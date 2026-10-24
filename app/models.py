@@ -4,8 +4,10 @@ from django.db import models
 
 class Category(models.Model):
     name = models.CharField(max_length=128)
+    name_fa = models.CharField(max_length=128, blank=True)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
+    description_fa = models.TextField(blank=True)
     order = models.IntegerField()
     is_active = models.BooleanField(default=False)
 
@@ -18,6 +20,7 @@ class Category(models.Model):
 class Technology(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='techs')
     name = models.CharField(max_length=128)
+    name_fa = models.CharField(max_length=128, blank=True)
 
     class TechnologyKind(models.TextChoices):
         LANGUAGE = "language", "Language"
@@ -37,6 +40,7 @@ class Technology(models.Model):
 
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
+    description_fa = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     graph_group = models.SlugField(blank=True)
     is_active = models.BooleanField(default=True)
@@ -57,6 +61,7 @@ class Project(models.Model):
     description_fa = models.TextField(blank=True)
     language_stack = models.CharField(max_length=128)
     kind = models.CharField(max_length=128)
+    kind_fa = models.CharField(max_length=128, blank=True)
 
     class ProjectStatus(models.TextChoices):
         ACTIVE = "active", "Active"
@@ -67,6 +72,7 @@ class Project(models.Model):
     status = models.CharField(choices=ProjectStatus, default=ProjectStatus.ACTIVE, max_length=10)
 
     detail = models.JSONField(blank=True, default=dict)
+    detail_fa = models.JSONField(blank=True, default=dict)
     github_url = models.URLField(blank=True)
     live_url = models.URLField(blank=True)
     technologies = models.ManyToManyField(Technology, related_name='projects', blank=True)
@@ -88,6 +94,7 @@ class LearningItem(models.Model):
     title_fa = models.CharField(max_length=150, blank=True)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
+    description_fa = models.TextField(blank=True)
 
     class LearningStatus(models.TextChoices):
         EXPLORING = ('exploring', 'Exploring')
@@ -114,6 +121,7 @@ class LearningItem(models.Model):
 
 class LabEntry(models.Model):
     title = models.CharField(max_length=128)
+    title_fa = models.CharField(max_length=128, blank=True)
     slug = models.SlugField(unique=True)
 
     class EntryKind(models.TextChoices):
@@ -130,6 +138,7 @@ class LabEntry(models.Model):
 
     status = models.CharField(max_length=16, choices=EntryStatus, default=EntryStatus.QUEUED)
     description = models.TextField(blank=True)
+    description_fa = models.TextField(blank=True)
     technologies = models.ManyToManyField(Technology, related_name='entries', blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
