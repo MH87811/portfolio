@@ -1,0 +1,641 @@
+{
+  "categories": [
+    {
+      "slug": "backend",
+      "name": "Backend & API",
+      "name_fa": "",
+      "description": "I focus on developing the parts of software that handle core application logic, process requests, and coordinate communication between different system components. API design is an important part of this work because it enables standardized data exchange between frontends, backends, and external services. To me, a good backend is more than a system that works correctly. It should also have a clear structure, predictable behavior, and maintainable code.",
+      "description_fa": "",
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "db",
+      "name": "Database & Caching",
+      "name_fa": "",
+      "description": "I consider data management a fundamental part of backend design. Choosing the right database structure, defining relationships and constraints, and optimizing data access all affect the correctness and performance of a system. Alongside primary storage, caching can reduce repeated database queries by temporarily keeping frequently accessed information readily available. My goal is to keep data reliable while making access as efficient as reasonably possible.",
+      "description_fa": "",
+      "is_active": true,
+      "order": 1
+    },
+    {
+      "slug": "real-time",
+      "name": "Real-Time and Background Processing",
+      "name_fa": "",
+      "description": "Not every operation needs to run immediately within a user's main request. Features such as chat and live notifications require real-time communication, while tasks like sending emails, processing files, or generating reports can run in the background. I see this as an important part of building responsive systems, since choosing the right execution model can significantly improve both user experience and application efficiency.",
+      "description_fa": "",
+      "is_active": true,
+      "order": 2
+    },
+    {
+      "slug": "tools",
+      "name": "Infrastructure & tools",
+      "name_fa": "",
+      "description": "Software development involves more than writing and running code. Applications need a suitable runtime environment, traceable changes, and a manageable development and deployment process. I use tools in this area to work with operating systems, manage code versions, collaborate on projects, and better understand how applications run. Understanding these components helps me develop a more complete view of the software lifecycle.",
+      "description_fa": "",
+      "is_active": true,
+      "order": 3
+    }
+  ],
+  "technologies": [
+    {
+      "slug": "python",
+      "name": "Python",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "language",
+      "description": "Python is a general-purpose programming language known for its readable syntax, relatively simple structure, and extensive ecosystem. Its applications go beyond web development, covering automation, data analysis, artificial intelligence, and security tooling. Its wide range of libraries and frameworks lets me use existing solutions for common problems instead of implementing everything from scratch. I choose Python for backend development because readable code and a focus on problem-solving are important to building maintainable software.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "django",
+      "name": "Django",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "framework",
+      "description": "Django is a Python web framework that provides many of the tools commonly needed for web development. Its ORM enables database operations through Python models, its authentication and permission systems help manage user access, and its built-in admin interface simplifies data management. Django's clear structure helps separate application responsibilities and makes projects easier to maintain over time. I choose Django for projects that benefit from rapid development, a consistent structure, and reliable tools for implementing backend logic.",
+      "description_fa": "",
+      "dependencies": [
+        "python"
+      ],
+      "is_active": true,
+      "order": 1
+    },
+    {
+      "slug": "drf",
+      "name": "Django REST Framework (DRF)",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "framework",
+      "description": "Django REST Framework is a Django-based toolkit for building Web APIs, particularly RESTful APIs. Its serializers let me define how data is converted into formats such as JSON and how incoming data is validated. Features like authentication, permissions, pagination, and filtering help keep APIs manageable as projects grow. I use DRF when I need a structured and maintainable way to connect backend systems with their clients.",
+      "description_fa": "",
+      "dependencies": [
+        "python",
+        "django"
+      ],
+      "is_active": true,
+      "order": 2
+    },
+    {
+      "slug": "php",
+      "name": "PHP",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "language",
+      "description": "PHP is a server-side programming language widely used to build websites and web applications. It supports dynamic content generation, request handling, and database interaction, backed by a mature ecosystem of libraries and frameworks. Broad hosting support and a large developer community have also helped PHP remain relevant across many types of web projects. I see PHP as a practical backend development tool that can support structured and maintainable systems when paired with appropriate architecture and tooling.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 3
+    },
+    {
+      "slug": "laravel",
+      "name": "Laravel",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "framework",
+      "description": "Laravel is a PHP web framework that simplifies many common development tasks through its integrated tools. Routing, Eloquent ORM, data validation, authentication, and job queues help different parts of an application work together consistently. Its defined structure and development tools also make adding features and maintaining code more manageable as projects grow. I choose Laravel when I want to build a web application or API with PHP using a structured framework and a rich set of built-in capabilities.",
+      "description_fa": "",
+      "dependencies": [
+        "php"
+      ],
+      "is_active": true,
+      "order": 4
+    },
+    {
+      "slug": "go",
+      "name": "Golang",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "language",
+      "description": "Go is a compiled language designed to combine simplicity, solid performance, and practical software development tools. Its concurrency features, particularly goroutines and channels, help applications handle multiple tasks efficiently without requiring a separate process for every operation. Fast compilation and built-in tooling for building and distributing applications are also important strengths. I find Go especially interesting for backend services and systems where performance and concurrency are important considerations.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": false,
+      "order": 5
+    },
+    {
+      "slug": "gin",
+      "name": "Gin Framework",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "framework",
+      "description": "Gin is a lightweight web framework for Go, designed for building web services and APIs. Its routing system directs HTTP requests to the appropriate handlers, while middleware supports shared tasks such as authentication checks, logging, and error handling. This separation keeps endpoint logic focused and makes the code easier to extend. I consider Gin a good fit for lightweight, high-performance Go APIs, especially when I want direct control over the structure of a service.",
+      "description_fa": "",
+      "dependencies": [
+        "go"
+      ],
+      "is_active": false,
+      "order": 6
+    },
+    {
+      "slug": "jwt",
+      "name": "JWT",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "",
+      "description_fa": "",
+      "dependencies": [
+        "auth"
+      ],
+      "is_active": false,
+      "order": 9
+    },
+    {
+      "slug": "auth",
+      "name": "Authentication & Authorization",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "Authentication and authorization are two distinct but complementary parts of application security. Authentication establishes who a user is, for example by verifying a password or token, while authorization determines which data and operations that user can access. Successfully signing in doesn't automatically mean a user should be able to view other people's private information or change administrative settings. I treat these concepts separately in backend design because verifying identity without enforcing proper access control isn't enough to build a secure system.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": false,
+      "order": 10
+    },
+    {
+      "slug": "jinja",
+      "name": "Django Templates (Jinja)",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "Django's template system lets me combine HTML with server-side data to render dynamic pages. Features such as template inheritance, filters, and template tags make it possible to define shared elements, like headers and footers, once and reuse them across multiple pages. It also supports conditional rendering and iterating over collections without requiring every page to be written from scratch. I use DTL when I want server-side rendering that integrates naturally with Django's application structure.",
+      "description_fa": "",
+      "dependencies": [
+        "python",
+        "django"
+      ],
+      "is_active": false,
+      "order": 10
+    },
+    {
+      "slug": "blade",
+      "name": "Laravel Templates (Blade)",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "Blade is Laravel's templating engine for building dynamic pages and combining HTML with application data. Features such as template inheritance, components, conditionals, and loops let me reuse interface elements and avoid unnecessary duplication in presentation logic. Blade also integrates closely with Laravel and escapes output by default in its standard escaped-output syntax, helping reduce the risk of certain HTML injection attacks. I use Blade to build server-rendered interfaces that remain structured, maintainable, and closely integrated with the Laravel backend.",
+      "description_fa": "",
+      "dependencies": [
+        "php",
+        "laravel"
+      ],
+      "is_active": true,
+      "order": 10
+    },
+    {
+      "slug": "pgsql",
+      "name": "PostgreSQL",
+      "name_fa": "",
+      "category": "db",
+      "kind": "database",
+      "description": "PostgreSQL is an open-source relational database system with extensive capabilities for reliable data storage and complex queries. Transactions allow related operations to be handled as a single reliable unit, while constraints such as UNIQUE and FOREIGN KEY help prevent inconsistent data. Features like indexing, advanced querying, and JSONB support both well-structured relationships and more flexible data when needed. I prefer PostgreSQL for projects where data integrity, clearly defined relationships, and long-term database flexibility are important.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 11
+    },
+    {
+      "slug": "sqlite",
+      "name": "SQLite",
+      "name_fa": "",
+      "category": "db",
+      "kind": "database",
+      "description": "SQLite is a lightweight relational database that stores data in a single file and requires no separate database server. Despite its simple setup, it supports important features such as SQL queries, transactions, and data constraints. This makes it useful for small applications, local tools, prototyping, and development environments, although its locking and write-concurrency limitations matter for workloads with frequent simultaneous writes. I consider SQLite a good choice when simple deployment and minimal infrastructure management are priorities.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 12
+    },
+    {
+      "slug": "redis",
+      "name": "Redis",
+      "name_fa": "",
+      "category": "db",
+      "kind": "cache",
+      "description": "Redis is a high-performance data store that supports structures such as strings, lists, sets, and hashes, with many operations performed in memory. One of its key uses is caching, which temporarily stores frequently requested data so applications don't have to fetch it from the primary database every time. Redis is also useful for counters, rate limiting, and temporary data storage. I consider Redis when a system's requirements or performance measurements show that faster access to frequently used data would be beneficial.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 13
+    },
+    {
+      "slug": "socket",
+      "name": "Websocket",
+      "name_fa": "",
+      "category": "real-time",
+      "kind": "protocol",
+      "description": "WebSocket is a protocol that establishes a persistent, two-way connection between a client and a server. With ordinary HTTP interactions, clients generally need to send new requests to retrieve updates, whereas an established WebSocket connection allows either side to send messages whenever needed. This makes it useful for live chat, instant notifications, and real-time status updates. I consider WebSockets when continuous, low-latency communication is a genuine requirement, rather than using them as a default replacement for regular HTTP requests.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 21
+    },
+    {
+      "slug": "asgi",
+      "name": "ASGI",
+      "name_fa": "",
+      "category": "real-time",
+      "kind": "protocol",
+      "description": "ASGI, short for Asynchronous Server Gateway Interface, is a standard for communication between compatible servers and Python applications. Unlike the older WSGI interface, which primarily follows a synchronous request-response model, ASGI supports asynchronous capabilities and long-lived connections such as WebSockets. In the Django ecosystem, it enables asynchronous application features and real-time communication, although adopting ASGI alone doesn't automatically make every part of an application asynchronous. I see ASGI as an important part of the infrastructure for applications that need capabilities beyond conventional HTTP requests.",
+      "description_fa": "",
+      "dependencies": [
+        "python",
+        "django",
+        "drf"
+      ],
+      "is_active": true,
+      "order": 22
+    },
+    {
+      "slug": "celery",
+      "name": "Celery",
+      "name_fa": "",
+      "category": "real-time",
+      "kind": "other",
+      "description": "Celery is a system for executing tasks outside the main user request cycle. For example, an application can queue an email, a large file-processing operation, or a report-generation job for a separate worker to execute. Celery also supports features such as scheduling, retrying certain failed tasks, and distributing work across multiple workers, although overall reliability still depends on task design and system configuration. I find Celery useful for long-running or scheduled operations because it separates these workloads from the handling of regular user requests.",
+      "description_fa": "",
+      "dependencies": [
+        "python"
+      ],
+      "is_active": true,
+      "order": 23
+    },
+    {
+      "slug": "linux",
+      "name": "Linux",
+      "name_fa": "",
+      "category": "tools",
+      "kind": "platform",
+      "description": "Linux is a family of operating systems built around the Linux kernel and plays a major role in servers and software infrastructure. Working with the command line, managing files and permissions, inspecting processes and services, and using networking tools gives me greater control over application environments. Linux knowledge is valuable in backend development because many web applications run on Linux-based systems, and understanding the operating system can make a real difference in debugging and deployment. I see Linux not just as a place to run applications, but as an important part of the infrastructure knowledge needed for backend engineering.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 31
+    },
+    {
+      "slug": "git",
+      "name": "Git",
+      "name_fa": "",
+      "category": "tools",
+      "kind": "tool",
+      "description": "Git is a distributed version control system that records changes to project files and allows me to inspect history, compare versions, and restore previous states. Branches let me develop new features or fixes separately from the main codebase before reviewing and merging the changes. This workflow is valuable not only for team collaboration but also for managing changes and reducing the risk of regressions in personal projects. I consider Git an essential part of software development because code should be traceable and manageable, as well as functional.",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": true,
+      "order": 32
+    },
+    {
+      "slug": "github",
+      "name": "GitHub",
+      "name_fa": "",
+      "category": "tools",
+      "kind": "tool",
+      "description": "GitHub is a platform for hosting Git repositories and collaborating on software projects. Beyond storing code online, features such as pull requests, code reviews, issue tracking, and automation tools help organize the development workflow. To me, GitHub is more than a place to upload code; it's a space where I can preserve project history, review changes in a structured way, and make my work available through repositories that others can explore. I use it to manage projects and maintain a clearer record of the software development process.",
+      "description_fa": "",
+      "dependencies": [
+        "git"
+      ],
+      "is_active": true,
+      "order": 33
+    },
+    {
+      "slug": "deploy",
+      "name": "Deployment",
+      "name_fa": "",
+      "category": "tools",
+      "kind": "other",
+      "description": "",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": false,
+      "order": 90
+    },
+    {
+      "slug": "django-test",
+      "name": "Django Test",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "",
+      "description_fa": "",
+      "dependencies": [
+        "python",
+        "django",
+        "pytest"
+      ],
+      "is_active": false,
+      "order": 90
+    },
+    {
+      "slug": "network",
+      "name": "Networking",
+      "name_fa": "",
+      "category": "tools",
+      "kind": "other",
+      "description": "",
+      "description_fa": "",
+      "dependencies": [],
+      "is_active": false,
+      "order": 90
+    },
+    {
+      "slug": "pytest",
+      "name": "Pytest",
+      "name_fa": "",
+      "category": "backend",
+      "kind": "other",
+      "description": "",
+      "description_fa": "",
+      "dependencies": [
+        "python",
+        "django"
+      ],
+      "is_active": false,
+      "order": 90
+    }
+  ],
+  "projects": [
+    {
+      "slug": "django-market",
+      "title": "Django E-commere Platform",
+      "title_fa": "",
+      "repo_name": "Market-Django",
+      "description": "A mulit-vendor e-commere application built with Django Framework",
+      "description_fa": "",
+      "language_stack": "Python · Django · Django Channels · Celery · Redis",
+      "kind": "E-commere Platform",
+      "kind_fa": "",
+      "status": "active",
+      "detail": {
+        "overview": [
+          "A concise project overview.",
+          "Another paragraph describing the project."
+        ],
+        "arch": [
+          {
+            "l": "Application layer",
+            "n": [
+              {
+                "t": "Django REST Framework",
+                "s": "API endpoints"
+              },
+              {
+                "t": "Authentication",
+                "s": "Token-based auth",
+                "side": true
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "t": "Use PostgreSQL",
+            "w": "Why this option was selected.",
+            "x": "The trade-off or limitation."
+          }
+        ],
+        "challenges": [
+          {
+            "p": "The problem encountered",
+            "r": "How it was addressed."
+          }
+        ],
+        "extras": [
+          [
+            "Database",
+            "PostgreSQL"
+          ],
+          [
+            "Deployment",
+            "Linux"
+          ]
+        ]
+      },
+      "detail_fa": {},
+      "technologies": [
+        "python",
+        "django",
+        "auth",
+        "jinja",
+        "sqlite",
+        "redis",
+        "socket",
+        "asgi",
+        "celery"
+      ],
+      "github_url": "https://github.com/MH87811/Django-Market-MVP.git",
+      "featured": true,
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "django-chat",
+      "title": "Real-Time Chat Platform",
+      "title_fa": "",
+      "repo_name": "Django-Chat",
+      "description": "A real-time messaging system built With Django REST Framework, Websocket and Redis",
+      "description_fa": "",
+      "language_stack": "Python · DRF · Django Channels · Celery · Redis",
+      "kind": "Real-Time Platform",
+      "kind_fa": "",
+      "status": "active",
+      "detail": {
+        "blocks": [
+          {
+            "type": "heading",
+            "level": 2,
+            "content": "Overview"
+          },
+          {
+            "type": "paragraph",
+            "content": "What this project does."
+          },
+          {
+            "type": "list",
+            "style": "unordered",
+            "items": [
+              "Feature one",
+              "Feature two"
+            ]
+          },
+          {
+            "type": "code",
+            "language": "python",
+            "content": "def example():\n    return True"
+          },
+          {
+            "type": "quote",
+            "content": "A key design consideration",
+            "cite": "optional source"
+          },
+          {
+            "type": "image",
+            "src": "https://example.com/diagram.png",
+            "alt": "System diagram",
+            "caption": "Optional"
+          },
+          {
+            "type": "link",
+            "label": "View repository",
+            "url": "https://github.com/example/repo"
+          }
+        ]
+      },
+      "detail_fa": {},
+      "technologies": [
+        "python",
+        "django",
+        "drf",
+        "auth",
+        "pgsql",
+        "redis",
+        "socket",
+        "asgi",
+        "celery"
+      ],
+      "github_url": "https://github.com/MH87811/Django-Chat.git",
+      "featured": true,
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "gin-auth",
+      "title": "Golang/Gin Authentication System",
+      "title_fa": "",
+      "repo_name": "",
+      "description": "A backend authentication service built with Go and Gin, featuring JWT-based access and refresh tokens, database-backed sessions, hashed refresh tokens, token rotation, revocation, PostgreSQL, GORM, and a layered repository/service architecture.",
+      "description_fa": "",
+      "language_stack": "Golang · Gin",
+      "kind": "Authentication Service",
+      "kind_fa": "",
+      "status": "completed",
+      "detail": {},
+      "detail_fa": {},
+      "technologies": [
+        "go",
+        "gin",
+        "auth",
+        "pgsql"
+      ],
+      "github_url": "",
+      "featured": false,
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "laravel-auth",
+      "title": "Laravel Authentication Service",
+      "title_fa": "",
+      "repo_name": "auth_app-laravel",
+      "description": "A Laravel authentication API implementing JWT-based authentication with access and refresh tokens, hashed token storage, token rotation and revocation, Form Requests, API Resources, service-layer business logic, and structured API responses.",
+      "description_fa": "",
+      "language_stack": "PHP · Laravel",
+      "kind": "Authentication Service",
+      "kind_fa": "",
+      "status": "completed",
+      "detail": {
+        "body": [
+          {
+            "type": "p",
+            "text": "Intro with `inline code`."
+          },
+          {
+            "type": "h",
+            "text": "Why Redis"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Shared groups",
+              "Fan-out across workers"
+            ]
+          },
+          {
+            "type": "code",
+            "text": "await channel_layer.group_send(...)",
+            "caption": "consumers.py"
+          }
+        ]
+      },
+      "detail_fa": {},
+      "technologies": [
+        "php",
+        "laravel",
+        "jwt",
+        "auth",
+        "pgsql"
+      ],
+      "github_url": "",
+      "featured": true,
+      "is_active": true,
+      "order": 0
+    }
+  ],
+  "learning": [
+    {
+      "slug": "inf",
+      "title": "Infrastructure",
+      "title_fa": "",
+      "description": "Moving an application beyond development introduces new challenges, including server configuration, environment variables, permissions, networking, and deployment. I'm expanding my knowledge in this area to better understand how applications run and are maintained in production, as well as where common issues originate. My goal is to complement backend development with a stronger understanding of the environment in which software operates.",
+      "description_fa": "",
+      "status": "exploring",
+      "technologies": [
+        "linux",
+        "deploy",
+        "network"
+      ],
+      "is_active": true,
+      "order": 0
+    },
+    {
+      "slug": "test",
+      "title": "Testing",
+      "title_fa": "",
+      "description": "Software testing helps me verify application behavior systematically instead of relying on a few manual checks. Unit tests, integration tests, and API tests each examine different parts of a system and can reveal issues before they reach production. I'm expanding my knowledge in this area so I can make changes with greater confidence and reduce the risk of breaking existing functionality.",
+      "description_fa": "",
+      "status": "learning",
+      "technologies": [
+        "django-test",
+        "pytest"
+      ],
+      "is_active": true,
+      "order": 41
+    },
+    {
+      "slug": "background",
+      "title": "Background Processing",
+      "title_fa": "",
+      "description": "Running time-consuming operations inside the main request can increase response times and create a poor user experience. Task queues allow work to be delegated to separate workers, scheduled for later execution, and retried when necessary. I'm developing a deeper understanding of queue management, scheduling, task failures, and reliable background execution so I can apply these concepts more effectively in system design.",
+      "description_fa": "",
+      "status": "learning",
+      "technologies": [
+        "redis",
+        "asgi",
+        "celery"
+      ],
+      "is_active": true,
+      "order": 90
+    }
+  ],
+  "lab": [
+    {
+      "slug": "tst-lab",
+      "title": "test lab",
+      "title_fa": "",
+      "kind": "prototype",
+      "status": "queued",
+      "description": "testingl bab",
+      "description_fa": "",
+      "technologies": [
+        "python"
+      ],
+      "is_active": true,
+      "order": 0
+    }
+  ]
+}

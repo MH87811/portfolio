@@ -3,10 +3,40 @@ from .models import *
 
 # Create your views here.
 
-def _project_detail(project):
+
+def _project_detail(project, language="en"):
     """
     Normalize Project.detail for the Developer System frontend.
+    Return only available Persian translations when language="fa".
     """
+    if language == "fa":
+        detail = project.detail_fa
+        if not isinstance(detail, dict):
+            detail = {}
+
+        result = {}
+
+        for key in (
+            "overview",
+            "arch",
+            "extras",
+            "decisions",
+            "challenges",
+            "problem",
+            "outcome",
+            "limitations",
+            "body",
+        ):
+            value = detail.get(key)
+
+            if key == "overview" and not value and project.description_fa:
+                value = [project.description_fa]
+
+            if value:
+                result[key] = value
+
+        return result
+
     detail = project.detail
     if not isinstance(detail, dict):
         detail = {}
@@ -25,14 +55,20 @@ def _project_detail(project):
         "outcome": detail.get("outcome", []),
         "limitations": detail.get("limitations", []),
         "body": detail.get("body", []),
-        "updated": project.updated_at.date().isoformat() if project.updated_at else "",
+        "updated": (
+            project.updated_at.date().isoformat()
+            if project.updated_at
+            else ""
+        ),
     }
+
 
 def serialize_projects(project_list):
     data = []
 
     for project in project_list:
         detail = _project_detail(project)
+        detail_fa = _project_detail(project, language="fa")
 
         data.append({
             "id": project.slug,
@@ -48,6 +84,14 @@ def serialize_projects(project_list):
             ],
             "repo": project.github_url or "",
             **detail,
+            "i18n": {
+                "fa": {
+                    "name": project.title_fa or project.title,
+                    "kind": project.kind_fa or project.kind,
+                    "desc": project.description_fa or project.description,
+                    **detail_fa,
+                }
+            },
         })
 
     return data
@@ -107,6 +151,12 @@ def _build_developer_system_data():
         category.slug: {
             "n": category.name.upper(),
             "r": category.description,
+            "i18n": {
+                "fa": {
+                    "n": category.name_fa or category.name,
+                    "r": category.description_fa or category.description,
+                }
+            },
         }
         for category in categories
     }
@@ -146,6 +196,12 @@ def _build_developer_system_data():
                 for dependency in technology.dependencies.all()
                 if dependency.is_active
             ],
+            "i18n": {
+                "fa": {
+                    "n": technology.name_fa or technology.name,
+                    "r": technology.description_fa or technology.description,
+                }
+            },
         }
 
     # --------------------------------------------------
@@ -167,6 +223,12 @@ def _build_developer_system_data():
             "n": item.title,
             "s": item.status,
             "note": item.description,
+            "i18n": {
+                "fa": {
+                    "n": item.title_fa or item.title,
+                    "note": item.description_fa or item.description,
+                }
+            },
             "t": [
                 technology.slug
                 for technology in item.technologies.all()
@@ -196,6 +258,12 @@ def _build_developer_system_data():
             "s": status,
             "t": entry.title,
             "d": entry.description,
+            "i18n": {
+                "fa": {
+                    "t": entry.title_fa or entry.title,
+                    "d": entry.description_fa or entry.description,
+                }
+            },
             "tags": [
                 technology.slug
                 for technology in entry.technologies.all()
