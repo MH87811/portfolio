@@ -146,7 +146,7 @@ function normalize(D){
   };
 
   var c = isObj(D.CONFIG) ? D.CONFIG : {};
-  N.CONFIG = {rev:str(c.rev), email:str(c.email), github:str(c.github), linkedin:str(c.linkedin), availability:str(c.availability)};
+  N.CONFIG = {rev:str(c.rev), email:str(c.email), github:str(c.github), linkedin:str(c.linkedin), telegram:str(c.telegram), availability:str(c.availability)};
   LANGS.forEach(function(lang){
     var o = isObj(OV[lang]) && isObj(OV[lang].CONFIG) ? OV[lang].CONFIG : null;
     if(o && str(o.availability)) N.loc[lang].CONFIG = {availability:str(o.availability)};
@@ -297,6 +297,8 @@ var labKind = function(v){ return lbl('lab.k.', String(v).toLowerCase()); };
 /* a middle dot next to Persian digits reads as a Persian zero, so Persian uses a dash there */
 var sepN = function(){ return I18N.lang === 'fa' ? ' — ' : ' · '; };
 var up = function(v){ return I18N.lang === 'en' ? String(v).toUpperCase() : String(v); };
+/* lower-case display names only in English: Persian text keeps product names as written (Django, not django) */
+var lc = function(v){ return I18N.lang === 'en' ? String(v).toLowerCase() : String(v); };
 /* attributes for a block of authored content: dir=auto always, lang only when its script differs from the page */
 var ca = function(text){ var l = I18N.detect(text); return ' dir="auto"' + (l && l !== I18N.lang ? ' lang="'+l+'"' : ''); };
 /* technical strings (paths, ids, URLs, e-mail) keep left-to-right order inside right-to-left text */
@@ -360,7 +362,11 @@ function techListHTML(ids){
   return '<ul class="techlist">'+ids.map(function(id){ return '<li><a href="#stack" data-focus="'+esc(id)+'">'+esc(TECH[id].n)+'</a><span'+ca(TECH[id].r)+'>'+esc(TECH[id].r)+'</span></li>'; }).join('')+'</ul>';
 }
 var host = function(u){ return str(u).replace(/^https?:\/\//,'').replace(/\/$/,''); };
-var domName = function(k){ return (DOMAINS[k] && DOMAINS[k].n) || k || ''; };
+/* a group that is only a technology kind (no category name behind it) is labelled from the dictionary */
+var domName = function(k){
+  var d = DOMAINS[k], n = (d && d.n) || k || '';
+  return (d && d.n === k && I18N.has('kind.'+k, 'en')) ? tr('kind.'+k) : n;
+};
 var domText = function(k){ return (DOMAINS[k] && DOMAINS[k].r) || ''; };
 var techIds = function(key, val){ return Object.keys(TECH).filter(function(k){ return TECH[k][key] === val; }); };
 var graphGroups = function(){ return GRAPH_ORDER.filter(function(g){ return techIds('g', g).length; }); };
@@ -406,6 +412,7 @@ function activeLearn(){ return LEARN.filter(function(l){return l.s!=='queued';})
 function usedIn(id){ return PROJ.filter(function(p){return p.uses.indexOf(id)>-1;}); }
 function contactChannels(){
   var ch = [];
+  if(CONFIG.telegram) ch.push([tr('ch.TELEGRAM'),tr('ch.quick'),host(CONFIG.telegram),CONFIG.telegram,false,tr('btn.telegram')]);
   if(CONFIG.email) ch.push([tr('ch.EMAIL'),tr('ch.direct'),CONFIG.email,null,true]);
   if(CONFIG.github) ch.push([tr('ch.GITHUB'),tr('ch.source'),host(CONFIG.github),CONFIG.github,false]);
   if(CONFIG.linkedin) ch.push([tr('ch.LINKEDIN'),tr('ch.pro'),host(CONFIG.linkedin),CONFIG.linkedin,false]);
@@ -430,7 +437,7 @@ function buildRail(){
   var act = activeLearn();
   if(act.length){
     act.forEach(function(l){
-      h += '<a href="#learning">'+glyph(l.s)+'<span'+ca(l.n)+'>'+esc(l.n.toLowerCase())+'<small>'+esc(lstate(l.s))+'</small></span></a>';
+      h += '<a href="#learning">'+glyph(l.s)+'<span'+ca(l.n)+'>'+lc(esc(l.n))+'<small>'+esc(lstate(l.s))+'</small></span></a>';
     });
   } else {
     h += '<span class="empty-note">'+tr('rail.none')+'</span>';
@@ -754,12 +761,12 @@ function inspectHTML(id){
     } else return inspectIdle();
   } else {
     var t = TECH[id]; if(!t) return inspectIdle();
-    kind = tr('insp.kind.component',{d:domName(t.d).toLowerCase()}); name = t.n; text = t.r; textAttr = ca(text);
+    kind = tr('insp.kind.component',{d:lc(domName(t.d))}); name = t.n; text = t.r; textAttr = ca(text);
     var req = t.needs, by = Object.keys(TECH).filter(function(k){return TECH[k].needs.indexOf(id)>-1;});
     rel = '<div><span class="lbl">'+tr('insp.usedIn')+'</span><span class="chips">' +
-      (usedIn(id).map(function(p){return '<button class="chip" data-pin="m:'+p.id+'">'+esc(p.name.toLowerCase())+'</button>';}).join('') +
-      (LEARN_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:learning">'+esc(tr('name.learning').toLowerCase())+'</button>':'') +
-      (LAB_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:lab">'+esc(tr('name.lab').toLowerCase())+'</button>':'') || '<span class="chip">'+tr('insp.nothing')+'</span>') + '</span></div>';
+      (usedIn(id).map(function(p){return '<button class="chip" data-pin="m:'+p.id+'">'+lc(esc(p.name))+'</button>';}).join('') +
+      (LEARN_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:learning">'+lc(esc(tr('name.learning')))+'</button>':'') +
+      (LAB_LINKS.indexOf(id)>-1?'<button class="chip" data-pin="m:lab">'+lc(esc(tr('name.lab')))+'</button>':'') || '<span class="chip">'+tr('insp.nothing')+'</span>') + '</span></div>';
     if(req.length) rel += '<div><span class="lbl">'+tr('insp.requires')+'</span>'+chips(req,true)+'</div>';
     if(by.length) rel += '<div><span class="lbl">'+tr('insp.requiredBy')+'</span>'+chips(by,true)+'</div>';
     var ns = LAB.filter(function(l){ return l.tags.indexOf(id) > -1; });
@@ -812,12 +819,12 @@ function viewAbout(){
     [tr('glance.BUILDS'), esc(builds.t), '#projects', tr('glance.projects'), copyAttr(builds)],
     [tr('glance.USES'), esc(uses.t), '#stack', tr('glance.stack'), copyAttr(uses)],
     [tr('glance.PROJECTS'), esc(tr('about.projectsGlance',{n:dg(PROJ.length)})), '#projects', tr('glance.open'), ''],
-    [tr('glance.CONTACT'), esc(tr('about.contactGlance')), '#contact', tr('glance.open'), '']
+    [tr('glance.CONTACT'), esc(tr(CONFIG.telegram ? 'about.contactGlanceTg' : 'about.contactGlance')), '#contact', tr('glance.open'), '']
   ];
   var kv = [
     [tr('kv.ROLE'), esc(tr('role')), ''], [tr('kv.FOCUS'), esc(focus.t), copyAttr(focus)],
     [tr('kv.FRAMEWORKS'), 'Django · DRF · Laravel · Gin', ''], [tr('kv.LANGUAGES'), 'Python · PHP · Go · JavaScript', ''],
-    [tr('kv.PLATFORM'), 'Linux', ''], [tr('kv.DATA'), 'PostgreSQL · MySQL · Redis', ''], [tr('kv.STATUS'), esc(CONFIG.availability), ca(CONFIG.availability)]
+    [tr('kv.PLATFORM'), 'Linux', ''], [tr('kv.DATA'), 'PostgreSQL · SQLite · Redis', ''], [tr('kv.STATUS'), esc(CONFIG.availability), ca(CONFIG.availability)]
   ].filter(function(r){ return r[1]; });
   return '<section class="view">' + head('/maziyar/about', tr('about.title'), ABOUT.lede, langNotice([ABOUT.lede].concat(ABOUT.body))) +
     '<dl class="glance">'+gl.map(function(g){return '<div><dt>'+g[0]+'</dt><dd'+g[4]+'>'+g[1]+'</dd><a href="'+g[2]+'">'+g[3]+'</a></div>';}).join('')+'</dl>' +
@@ -965,7 +972,7 @@ function techDesc(id, text){
   return '<span class="role" dir="auto"><span id="'+did+'">'+esc(d.head)+
     (d.ell ? '<span class="ell" aria-hidden="true">\u2026</span>' : '')+
     '<span class="more" hidden>'+esc(d.rest)+'</span></span>'+
-    '<button type="button" class="more-btn" data-more aria-expanded="false" aria-controls="'+did+'">Read more</button></span>';
+    '<button type="button" class="more-btn" data-more aria-expanded="false" aria-controls="'+did+'">'+esc(tr('btn.more'))+'</button></span>';
 }
 
 /* ----- stack ----- */
@@ -982,13 +989,13 @@ function viewStack(){
           var by = Object.keys(TECH).filter(function(k){ return TECH[k].needs.indexOf(id) > -1; });
           var ns = LAB.filter(function(l){ return l.tags.indexOf(id) > -1; });
           var ls = LEARN.filter(function(l){ return l.t.indexOf(id) > -1; });
-          var jump = function(k){ return '<a href="#stack" data-rowjump="'+esc(k)+'" dir="auto">'+esc(TECH[k].n.toLowerCase())+'</a>'; };
+          var jump = function(k){ return '<a href="#stack" data-rowjump="'+esc(k)+'" dir="auto">'+lc(esc(TECH[k].n))+'</a>'; };
           var dep = '';
           if(t.needs.length) dep += '<span>'+tr('dep.requires')+' '+t.needs.map(jump).join(sep)+'</span>';
           if(by.length) dep += '<span>'+tr('dep.requiredBy')+' '+by.map(jump).join(sep)+'</span>';
           if(u.length) dep += '<span>'+tr('dep.usedIn')+' '+u.map(function(p){return '<a href="#'+esc(p.id)+'" dir="ltr">'+esc(p.id)+'</a>';}).join(' ')+'</span>';
           if(ns.length) dep += '<span>'+tr('dep.notes')+' '+ns.slice(0,3).map(function(l){ return '<a href="#lab/'+esc(l.id)+'" dir="ltr">'+esc(l.id)+'</a>'; }).join(' ')+(ns.length > 3 ? ' <a href="#lab">+'+dg(ns.length-3)+'</a>' : '')+'</span>';
-          if(ls.length) dep += '<span>'+tr('dep.learning')+' '+ls.map(function(l){ return '<a href="#learning" data-anchor="l-'+esc(l.id)+'"'+ca(l.n)+'>'+esc(l.n.toLowerCase())+'</a>'; }).join(' ')+'</span>';
+          if(ls.length) dep += '<span>'+tr('dep.learning')+' '+ls.map(function(l){ return '<a href="#learning" data-anchor="l-'+esc(l.id)+'"'+ca(l.n)+'>'+lc(esc(l.n))+'</a>'; }).join(' ')+'</span>';
           if(!dep) dep = '<span>'+tr('dep.none')+'</span>';
           return '<div class="srow" id="s-'+id+'" data-id="'+id+'"><div class="hd"><b>'+esc(t.n)+'</b></div>'+techDesc(id, t.r)+'<div class="dep">'+dep+'</div></div>';
         }).join('') + '</section>';
@@ -1026,7 +1033,7 @@ function initStack(){
     if(more) more.hidden = !open;
     if(ell) ell.hidden = open;
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    b.textContent = open ? 'Show less' : 'Read more';
+    b.textContent = open ? tr('btn.less') : tr('btn.more');
   });
   grid.addEventListener('click', function(e){ var j = e.target.closest('[data-rowjump]'); if(j){ e.preventDefault(); reveal(j.dataset.rowjump); } });
   /* arriving from a technology link (case study, note, learning, palette) highlights that row */
@@ -1040,7 +1047,7 @@ function initStack(){
 function viewLearning(){
   var row = function(l){
     var rel = relatedFor(l.t, {learn:l.id});
-    var work = rel.projects.slice(0,3).map(function(r){ return '<a href="#'+esc(r.x.id)+'"'+ca(r.x.name)+'>'+esc(r.x.name.toLowerCase())+'</a>'; })
+    var work = rel.projects.slice(0,3).map(function(r){ return '<a href="#'+esc(r.x.id)+'"'+ca(r.x.name)+'>'+lc(esc(r.x.name))+'</a>'; })
       .concat(rel.notes.slice(0,3).map(function(r){ return '<a href="#lab/'+esc(r.x.id)+'" dir="ltr">'+esc(r.x.id)+'</a>'; }));
     return '<div class="lrow '+l.s+'" id="l-'+esc(l.id)+'">'+glyph(l.s)+'<span class="ln"'+ca(l.n)+'>'+esc(l.n)+'</span><span class="ls">'+esc(up(lstate(l.s)))+'</span><div>'+
       (l.note?'<p'+ca(l.note)+'>'+esc(l.note)+'</p>':'')+(l.t.length?techLinks(l.t):'')+
@@ -1170,11 +1177,11 @@ function viewNote(n){
 /* ----- contact ----- */
 function viewContact(){
   var ch = contactChannels();
-  var words = ['', tr('contact.n1'), tr('contact.n2'), tr('contact.n3')];
-  return '<section class="view">' + head('/maziyar/contact', tr('contact.title'), ch.length ? words[ch.length]+(CONFIG.email?tr('contact.fastest'):'') : '') +
+  var words = ['', tr('contact.n1'), tr('contact.n2'), tr('contact.n3'), tr('contact.n4')];
+  return '<section class="view">' + head('/maziyar/contact', tr('contact.title'), CONFIG.telegram ? tr('contact.ledeTg') : (ch.length ? words[ch.length]+(CONFIG.email?tr('contact.fastest'):'') : '')) +
     '<div class="eps">' + (ch.length ? ch.map(function(c){
       return '<div class="ep"><div><h2>'+esc(c[0])+'</h2><div class="chan">'+esc(up(c[1]))+'</div></div><div class="addr" dir="ltr">'+esc(c[2])+'</div><div class="acts">' +
-        (c[4] ? '<button class="btn" data-copy="'+esc(c[2])+'">'+tr('btn.copy')+'</button><a class="btn" href="mailto:'+esc(c[2])+'">'+tr('btn.compose')+'</a>' : '<a class="btn ext" href="'+esc(c[3])+'" target="_blank" rel="noopener" aria-label="'+esc(tr('btn.open')+': '+c[0]+' '+tr('ext.newtab'))+'">'+tr('btn.open')+'</a>') + '</div></div>';
+        (c[4] ? '<button class="btn" data-copy="'+esc(c[2])+'">'+tr('btn.copy')+'</button><a class="btn" href="mailto:'+esc(c[2])+'">'+tr('btn.compose')+'</a>' : '<a class="btn ext" href="'+esc(c[3])+'" target="_blank" rel="noopener" aria-label="'+esc((c[5] ? c[5] : tr('btn.open')+': '+c[0])+' '+tr('ext.newtab'))+'">'+esc(c[5] || tr('btn.open'))+'</a>') + '</div></div>';
     }).join('') : empty(tr('contact.empty'))) + '</div>' +
     (CONFIG.availability ? '<p class="reach"><i class="dot"></i><span'+ca(CONFIG.availability)+'>'+esc(CONFIG.availability)+'</span></p>' : '') + '</section>';
 }
@@ -1232,7 +1239,7 @@ document.addEventListener('keydown', function(e){
 /* the CURRENTLY word cycles through active learning areas */
 function startCurrentlyRotation(){
   if(reduce) return;
-  var wordsNow = function(){ return [tr('word.learning')].concat(activeLearn().map(function(l){ return l.n.toLowerCase(); })); };
+  var wordsNow = function(){ return [tr('word.learning')].concat(activeLearn().map(function(l){ return lc(l.n); })); };
   if(wordsNow().length < 2) return;
   var i = 0;
   setInterval(function(){
@@ -1256,10 +1263,10 @@ var pal = {el:null, input:null, list:null, live:null, items:[], all:[], sel:0, r
 var PAL_GROUP = ['Pages','Projects','Notes','Technologies','Learning'];
 function palItems(){
   var out = [];
-  NAV.forEach(function(n){ out.push({g:'Pages', t:n[0] === 'home' ? tr('name.home') : tr('name.'+n[0]), h:n[0] === 'home' ? '/' : n[1], k:n[0]+' '+(n[0] === 'home' ? 'home' : ''), hash:'#'+n[0]}); });
+  NAV.forEach(function(n){ out.push({g:'Pages', t:n[0] === 'home' ? tr('name.home') : tr('name.'+n[0]), h:n[0] === 'home' ? '/' : n[0]+'/', k:n[0]+' '+(n[0] === 'home' ? 'home' : ''), hash:'#'+n[0]}); });
   PROJ.forEach(function(p){ out.push({g:'Projects', t:p.name, h:p.lang || p.kind, k:[p.kind, p.desc, p.uses.map(techName).join(' ')].join(' '), hash:'#'+p.id}); });
   LAB.forEach(function(l){ out.push({g:'Notes', t:l.t, h:[labKind(l.kind), labStatus(l.s)].filter(Boolean).join(' · '), k:[l.d, l.kind, l.s, l.tags.map(techName).join(' ')].join(' '), hash:'#lab/'+l.id}); });
-  Object.keys(TECH).forEach(function(id){ var t = TECH[id]; out.push({g:'Technologies', t:t.n, h:domName(t.d).toLowerCase(), k:t.r, hash:'#stack', focus:id}); });
+  Object.keys(TECH).forEach(function(id){ var t = TECH[id]; out.push({g:'Technologies', t:t.n, h:lc(domName(t.d)), k:t.r, hash:'#stack', focus:id}); });
   LEARN.forEach(function(l){ out.push({g:'Learning', t:l.n, h:lstate(l.s), k:[l.note, l.s, l.t.map(techName).join(' ')].join(' '), hash:'#learning', anchor:'l-'+l.id}); });
   return out;
 }

@@ -37,7 +37,7 @@ TECH: {
   websockets:{n:'WebSockets', d:'systems', g:'systems', r:'Long-lived connections for live data: lifecycle, fan-out and slow clients.', needs:['networking']},
   apis:{n:'APIs', d:'systems', g:'systems', r:'REST design, versioning, authentication, pagination and error contracts.', needs:['networking']},
   postgresql:{n:'PostgreSQL', d:'data', g:'data', r:'Primary relational database. Constraints, indexes and query plans.', needs:[]},
-  mysql:{n:'MySQL', d:'data', g:'data', r:'Relational database common in Laravel projects.', needs:[]},
+  SQLite:{n:'SQLite', d:'data', g:'data', r:'Relational database common in Laravel projects.', needs:[]},
   redis:{n:'Redis', d:'data', g:'data', r:'In-memory store for caches, token state and channel layers.', needs:[]},
   git:{n:'Git', d:'tools', g:'tools', r:'Version control and the unit of every change.', needs:[]},
   docker:{n:'Docker', d:'tools', g:'tools', r:'Reproducible environments for services and their dependencies.', needs:['linux']},

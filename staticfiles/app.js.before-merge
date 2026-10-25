@@ -492,7 +492,7 @@ function viewAbout(){
   ];
   var kv = [
     ['ROLE','backend developer'],['FOCUS','reliable systems'],['FRAMEWORKS','Django · DRF · Laravel · Gin'],['LANGUAGES','Python · PHP · Go · JavaScript'],
-    ['PLATFORM','Linux'],['DATA','PostgreSQL · MySQL · Redis'],['STATUS',CONFIG.availability]
+    ['PLATFORM','Linux'],['DATA','PostgreSQL · SQLite · Redis'],['STATUS',CONFIG.availability]
   ].filter(function(r){ return r[1]; });
   return '<section class="view">' + head('/maziyar/about','About',ABOUT.lede) +
     '<dl class="glance">'+gl.map(function(g){return '<div><dt>'+g[0]+'</dt><dd>'+g[1]+'</dd><a href="'+g[2]+'">'+g[3]+' →</a></div>';}).join('')+'</dl>' +
